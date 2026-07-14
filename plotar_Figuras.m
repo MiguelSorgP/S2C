@@ -1,5 +1,5 @@
-function plot_ber_gui_Completo()
-% PLOT_BER_GUI_COMPLETO - Graphical user interface to visualize and compare OCC simulation metrics and noise histograms.
+function plotar_Figuras(initialDir)
+% PLOTAR_FIGURAS - Graphical user interface to visualize and compare OCC simulation metrics and noise histograms.
 
 % 1) Setup paths relative to script location
 scriptDir = fileparts(mfilename('fullpath'));
@@ -12,10 +12,14 @@ if ~exist(defaultDir, 'dir')
 end
 
 % Ask user to choose the folder containing the .mat files
-dadosBerDir = uigetdir(defaultDir, 'Select the folder containing the simulation .mat files');
-if isequal(dadosBerDir, 0)
-    % User cancelled
-    return;
+if nargin < 1 || isempty(initialDir)
+    dadosBerDir = uigetdir(defaultDir, 'Select the folder containing the simulation .mat files');
+    if isequal(dadosBerDir, 0)
+        % User cancelled
+        return;
+    end
+else
+    dadosBerDir = initialDir;
 end
 
 % 2) Scan chosen folder for result files (*.mat)
@@ -78,17 +82,47 @@ freqCheckBoxes = cell(1, length(uniqueFreqs));
 
 % 3) Create Main UI Figure
 fig = uifigure('Name', 'OCC BER Curve Viewer', ...
-    'Position', [150 150 820 600], ...
+    'Position', [150 150 820 650], ...
     'Color', [0.96 0.96 0.98], ...
     'Resize', 'on');
 
-% Grid layout (1 row, 2 columns)
+% Grid layout (2 rows, 2 columns)
+% Row 1 (Folder selection): 45 pixels
+% Row 2 (Main panels): Weight 1 (remaining space)
 % Column 1 (Selection Panel): 340 pixels
 % Column 2 (List and Options): Weight 1 (remaining space)
-gl = uigridlayout(fig, [1, 2]);
+gl = uigridlayout(fig, [2, 2]);
 gl.ColumnWidth = {340, '1x'};
+gl.RowHeight = {45, '1x'};
 gl.Padding = [15 15 15 15];
 gl.ColumnSpacing = 15;
+gl.RowSpacing = 10;
+
+% --- TOP PANEL: FOLDER SELECTION DISPLAY ---
+pnlFolder = uipanel(gl, ...
+    'Title', 'Active Folder', ...
+    'FontWeight', 'bold', ...
+    'ForegroundColor', [0.2 0.2 0.2], ...
+    'BackgroundColor', [0.96 0.96 0.98]);
+pnlFolder.Layout.Row = 1;
+pnlFolder.Layout.Column = [1 2];
+
+glFolder = uigridlayout(pnlFolder, [1, 2]);
+glFolder.ColumnWidth = {'1x', 150};
+glFolder.Padding = [10 2 10 2];
+glFolder.ColumnSpacing = 10;
+glFolder.RowSpacing = 0;
+
+lblFolder = uilabel(glFolder, ...
+    'Text', dadosBerDir, ...
+    'FontSize', 11, ...
+    'FontWeight', 'bold', ...
+    'FontColor', [0.3 0.3 0.3]);
+
+btnChangeFolder = uibutton(glFolder, ...
+    'Text', 'Select Folder...', ...
+    'FontSize', 11, ...
+    'ButtonPushedFcn', @(src, event) changeFolderCallback());
 
 % --- LEFT PANEL: SELECTION CRITERIA (CHECKBOXES) ---
 pnlLeft = uipanel(gl, ...
@@ -97,6 +131,8 @@ pnlLeft = uipanel(gl, ...
     'FontWeight', 'bold', ...
     'ForegroundColor', [0.2 0.2 0.2], ...
     'BackgroundColor', [0.96 0.96 0.98]);
+pnlLeft.Layout.Row = 2;
+pnlLeft.Layout.Column = 1;
 
 % Inner grid layout for Selection Criteria panel
 glLeft = uigridlayout(pnlLeft, [5, 1]);
@@ -215,6 +251,8 @@ pnlRight = uipanel(gl, ...
     'FontWeight', 'bold', ...
     'ForegroundColor', [0.2 0.2 0.2], ...
     'BackgroundColor', [0.96 0.96 0.98]);
+pnlRight.Layout.Row = 2;
+pnlRight.Layout.Column = 2;
 
 glRight = uigridlayout(pnlRight, [5, 1]);
 glRight.RowHeight = {25, '1x', 40, 40, 50};
@@ -277,6 +315,15 @@ updateSelectedFiles();
 
 
 % --- CALLBACK AND HELPER FUNCTIONS ---
+
+% Callback to change active folder and restart GUI
+    function changeFolderCallback()
+        newDir = uigetdir(dadosBerDir, 'Select the folder containing the simulation .mat files');
+        if ischar(newDir) || isstring(newDir)
+            close(fig);
+            plotar_Figuras(newDir);
+        end
+    end
 
 % Toggles all checkboxes to true or false
     function setAllCheckboxes(val)
