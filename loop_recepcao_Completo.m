@@ -43,7 +43,7 @@ correcaoPerspectiva = false;
 % Flag para carregar coordenadas de ROI a partir de um arquivo CSV de resultados (ex: resultados_ROI.csv)
 %    true  = Abre uma janela de seleção para selecionar o CSV e usa suas coordenadas
 %    false = Usa as opções de detecção/seleção normais do roiFlag
-usarCsvRoi = false;
+usarCsvRoi = true;
 
 % 5) Flags de seleção dos quadros de interesse
 %    1 = Automática (usa variação temporal para detectar o final do vídeo e definir start/end frames)
@@ -548,66 +548,66 @@ for i = 1:numVideos
                 for iPn = 1:lengthOnePnDB
                     OnePnLinear = 10^(OnePnDB(iPn)/10);
                     Pn = 1/OnePnLinear;
-                    
+
                     errosTotal = 0;
                     bitsTotal = totalBits * MC;
-                    
+
                     accum_SER = 0;
                     accum_symbolMSE = 0;
                     accum_symbolNMSE = 0;
-                    
+
                     fprintf('  Iniciando Monte Carlo para 1/Pn = %d dB (%d repetições vetorizadas na GPU)...\n', OnePnDB(iPn), MC);
-                    
+
                     % Para cada bloco, calculamos as métricas de forma vetorizada para todos os MC
                     for blci = 1:numBlocksI
                         for blcj = 1:numBlocksJ
                             vgray_b = gpuArray(vgray_cell{blci, blcj});
                             vgrayRx_b = gpuArray(vgrayRx_cell{blci, blcj});
-                            
+
                             % Adiciona o ruído para todas as iterações MC na GPU de forma vetorizada
                             noise = sqrt(Pn) * randn(M*N, K*F, MC, 'gpuArray');
                             Aux2_all = vgrayRx_b.' + noise; % broadcasting automático
-                            
+
                             % Executa o receptor KRF para todos os MC simultaneamente
                             [erro_S_all, ~, Bmod_all, ~] = OCC_Rx_Miguel(M, N, K, F, scale, vgray_b, Sm_gpu, Aux2_all);
-                            
+
                             % SER para todos os MC
                             block_SER = SER_OCC(Sm_gpu, S0_gpu, S1_gpu, Bmod_all, P, M, N, S);
-                            
+
                             % symbolMSE para todos os MC
                             block_symbolMSE = sum((Sm_gpu - Bmod_all).^2, [1, 2]) / numel(Sm_gpu);
                             block_symbolMSE = reshape(block_symbolMSE, 1, MC);
-                            
+
                             accum_SER = accum_SER + sum(block_SER);
                             accum_symbolMSE = accum_symbolMSE + sum(block_symbolMSE);
                             accum_symbolNMSE = accum_symbolNMSE + sum(erro_S_all);
-                            
+
                             % Decodificação e BER do último bloco
                             if blci == numBlocksI && blcj == numBlocksJ
                                 Bmod_reshaped = reshape(Bmod_all, P, S, M*N, MC);
                                 dist0 = sum((Bmod_reshaped - S0_gpu).^2, 1);
                                 dist1 = sum((Bmod_reshaped - S1_gpu).^2, 1);
                                 msg_hat_all = reshape(dist0 < dist1, S, M*N, MC);
-                                
+
                                 msg_hat_trimmed_all = msg_hat_all(2:end, :, :);
                                 bitErrors_all = sum(msg_trimmed ~= msg_hat_trimmed_all, [1, 2]);
                                 errosTotal = gather(sum(bitErrors_all));
                             end
                         end
                     end
-                    
+
                     numBlocks = numBlocksI * numBlocksJ;
                     totalSamples = numBlocks * MC;
-                    
+
                     BERvals(iPn) = errosTotal / bitsTotal;
                     SERvals(iPn) = gather(accum_SER) / totalSamples;
                     symbolMSEvals(iPn) = gather(accum_symbolMSE) / totalSamples;
                     symbolNMSEvals(iPn) = gather(accum_symbolNMSE) / totalSamples;
-                    
+
                     fprintf('  BER acumulado em 1/Pn [dB] %d dB = %.6f\n', OnePnDB(iPn), BERvals(iPn));
                     fprintf('  SER acumulado em 1/Pn [dB] %d dB = %.6f\n', OnePnDB(iPn), SERvals(iPn));
                     fprintf('  Symbol NMSE acumulado em 1/Pn [dB] %d dB = %.6f\n', OnePnDB(iPn), symbolNMSEvals(iPn));
-                    
+
                     if BERvals(iPn) == 0
                         fprintf('BER atingiu 0. Interrompendo varredura de SNR.\n');
                         break;
