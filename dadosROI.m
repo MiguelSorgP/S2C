@@ -16,6 +16,11 @@ videoDir = 'G:\Meu Drive\Mestrado\ArtigosEmAndamento\IEEEacess2026\Dados_Gravaco
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
 numVideos = numel(videoFiles);
 
+% ROI Detection Mode:
+% 1 = Automatic (default)
+% 2 = Manual (interactive, initialized with automatic detection)
+roiDetectionMode = 2;
+
 % ==========================================
 % MAP FOR y_position AND x_position
 % Leave these maps here for easy modification
@@ -128,9 +133,19 @@ for i = 1:numVideos
         [recordedVideo, numFrames] = readGrayscaleVideo(vidObj,true);
         fprintf('Total frames read: %d\n', numFrames);
 
-        % 2) Automatic ROI Detection
-        fprintf('Running automatic ROI detection...\n');
-        roiPosition = automaticROI_v2(recordedVideo, false);
+        % 2) ROI Detection
+        if roiDetectionMode == 1
+            fprintf('Running automatic ROI detection...\n');
+            roiPosition = automaticROI_v2(recordedVideo, false);
+        elseif roiDetectionMode == 2
+            fprintf('Running automatic ROI detection for pre-filling...\n');
+            autoRoiPosition = automaticROI_v2(recordedVideo, false);
+            
+            fprintf('Opening manual ROI selection with 4-point precision...\n');
+            roiPosition = manualQuadROI(recordedVideo, autoRoiPosition);
+        else
+            error('Invalid roiDetectionMode. Must be 1 (automatic) or 2 (manual).');
+        end
 
         % Vertices
         x_tl = roiPosition(1, 1); y_tl = roiPosition(1, 2);
