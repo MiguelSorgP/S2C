@@ -58,7 +58,7 @@ endManual = 1348;
 % 6) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
@@ -73,7 +73,12 @@ normFlag = 0;
 % Determina a quantidade de frames iniciais a serem usados como imagem de fundo médio (multiplicado por repeatedFrames)
 numBackgroundMultiplier = 15;
 
-% 8) Flag para filtrar vídeos específicos
+% 8) Algoritmo de recepção/decodificação:
+%    1 = OCC-KRF (Khatri-Rao Factorization, direto, rápido, não-iterativo)
+%    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
+rxAlgorithm = 2;
+
+% 9) Flag para filtrar vídeos específicos
 %    false = Processa todos os vídeos .mp4 da pasta de gravacoes
 %    true  = Processa apenas a lista de vídeos abaixo
 filtrarVideos = true;
@@ -502,7 +507,7 @@ for i = 1:numVideos
                 vgrayRx_b = vgrayRx_cell{blci, blcj};
 
                 Aux2 = vgrayRx_b.';
-                [erro_S, ~, Bmod_temp, ~] = OCC_Rx_Miguel(M, N, K, F, scale, vgray_b, Sm, Aux2);
+                [erro_S, ~, Bmod_temp, ~] = OCC_Rx(rxAlgorithm, M, N, K, F, scale, vgray_b, Sm, Aux2);
                 Bmod_clean = Bmod_temp;
 
                 SER_clean_blocks(blci, blcj) = SER_clean_blocks(blci, blcj) + SER_OCC(Sm, S0, S1, Bmod_temp, P, M, N, S);
@@ -568,8 +573,8 @@ for i = 1:numVideos
                             noise = sqrt(Pn) * randn(M*N, K*F, MC, 'gpuArray');
                             Aux2_all = vgrayRx_b.' + noise; % broadcasting automático
 
-                            % Executa o receptor KRF para todos os MC simultaneamente
-                            [erro_S_all, ~, Bmod_all, ~] = OCC_Rx_Miguel(M, N, K, F, scale, vgray_b, Sm_gpu, Aux2_all);
+                            % Executa o receptor para todos os MC simultaneamente (KRF ou ALS)
+                            [erro_S_all, ~, Bmod_all, ~] = OCC_Rx(rxAlgorithm, M, N, K, F, scale, vgray_b, Sm_gpu, Aux2_all);
 
                             % SER para todos os MC
                             block_SER = SER_OCC(Sm_gpu, S0_gpu, S1_gpu, Bmod_all, P, M, N, S);
@@ -653,7 +658,7 @@ for i = 1:numVideos
                                 Aux2 = vgrayRx_b.';
                                 Aux2 = Aux2 + sqrt(Pn) * randn(size(Aux2));
 
-                                [erro_S, ~, Bmod_temp, ~] = OCC_Rx_Miguel(M, N, K, F, scale, vgray_b, Sm, Aux2);
+                                [erro_S, ~, Bmod_temp, ~] = OCC_Rx(rxAlgorithm, M, N, K, F, scale, vgray_b, Sm, Aux2);
                                 Bmod_local = Bmod_temp;
 
                                 block_SER = SER_OCC(Sm, S0, S1, Bmod_temp, P, M, N, S);
