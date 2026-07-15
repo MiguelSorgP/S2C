@@ -56,14 +56,14 @@ Bmod = B * deltaB * perm;
 
 ### B. Ambiguidade de Escala ($\mathbf{\Delta}$)
 Conforme a **Proposição 4** da Letter, a ambiguidade de escala é resolvida ao tornar conhecida uma linha da matriz de símbolos $\mathbf{S}$ e uma linha da matriz do vídeo $\mathbf{X}$.
-1. **Símbolos:** A primeira linha de $\mathbf{S}$ é preenchida com uns. No receptor, elimina-se a escala de $\mathbf{S}$ dividindo a estimativa pela sua primeira linha: `Bmod = B ./ B(1, :);` (em `OCC_Rx_Miguel.m:L29`).
+1. **Símbolos:** A primeira linha de $\mathbf{S}$ é preenchida com uns. No receptor, elimina-se a escala de $\mathbf{S}$ dividindo a estimativa pela sua primeira linha: `Bmod = B ./ B(1, :);` (em `OCC_Rx.m`).
 2. **Vídeo:** O primeiro frame do vídeo $\mathbf{X}$ é definido como uma tela branca de referência (todos os valores iguais a 1). Isso é garantido na função de extração de blocos do transmissor (`bloco_extraction.m:L9-11`):
    ```matlab
    if f == 1
        vgray(f, :) = ones(1, M*N);
    end
    ```
-   No receptor, a ambiguidade de escala no vídeo é removida multiplicando o vídeo estimado pela razão do primeiro frame do vídeo original conhecido e o primeiro frame do vídeo estimado (`OCC_Rx_Miguel.m:L30`):
+   No receptor, a ambiguidade de escala no vídeo é removida multiplicando o vídeo estimado pela razão do primeiro frame do vídeo original conhecido e o primeiro frame do vídeo estimado (`OCC_Rx.m`):
    ```matlab
    Cmod = (C.') .* (vgray(1, :) ./ C(:, 1).');
    ```
@@ -92,7 +92,10 @@ Este script executa o processamento do vídeo gravado pela câmera para extrair 
 4. **Sincronização Temporal Fina por Alinhamento de Fase:** Como a câmera captura em uma taxa superior à exibição da tela (`fpsRx > fpsTx`), os frames são gravados em duplicidade. A função `selectFramesAutomatically.m` calcula a diferença absoluta entre quadros adjacentes para localizar o início e o fim da transmissão. Além disso, realiza um alinhamento de fase de transição para identificar exatamente a defasagem $p_{trans}$ dentro do padrão periódico de repetição.
 5. **Remoção de Fundo e Normalização:** Opcionalmente, subtrai-se a imagem média de fundo silenciosa (`backgroundImage`) para eliminar reflexos estáticos no ambiente de gravação.
 6. **Média de Quadros Repetidos (Downsampling):** Com base no fator de amostragem temporal `repeatedFrames`, a função `meanRepeatedFrames.m` integra consecutivamente blocos de frames para reduzir a dimensão temporal da captura de volta à dimensão nominal de $K \cdot F$.
-7. **Detecção LSKRF (Receptor Principal):** Invoca a função `OCC_Rx_Miguel.m` que executa a fatoração de Khatri-Rao (`KRF_OCC.m`) pixel a pixel. Ela também elimina as ambiguidades de permutação e escala.
+7. **Algoritmo de Recepção Principal:** Invoca a função `OCC_Rx.m`, que agora suporta os dois algoritmos através da flag `rxAlgorithm`:
+   - **OCC-KRF (`rxAlgorithm = 1`)**: Executa a fatoração de Khatri-Rao (`KRF_OCC.m`) pixel a pixel de forma não-iterativa e rápida.
+   - **OCC-ALS (`rxAlgorithm = 2`)**: Executa a decomposição tensorial clássica de Mínimos Quadrados Alternados de forma iterativa e semi-cega (estimando conjuntamente os símbolos, o vídeo e a matriz de degradação do canal).
+   Ambos os algoritmos eliminam as ambiguidades de permutação e escala nas estimativas finais.
 8. **Decodificação de Mensagem e Metadados:** A função `decode_msg.m` recebe a matriz de símbolos de informação purificada $\mathbf{B}_{mod}$. Ela reconstrói os bits por meio da distância euclidiana mínima entre o sinal recebido e as formas de onda de referência `S0` (bit 1) e `S1` (bit 0). Em seguida, extrai a sequência de metadados integrada no transmissor:
    - **Cabeçalho:** 9 bits contínuos de valor 1.
    - **ID do transmissor:** 3 bits (`0 0 1`).
@@ -124,7 +127,7 @@ A2(:,m) = (V(:,1)')*sqrt(Xi(1,1));
 ```
 Esse processo é repetido para todos os pixels, gerando as matrizes de estimativas brutas de símbolos e do vídeo sem necessidade de iterações, garantindo altíssima velocidade.
 
-### B. Algoritmo Iterativo ALS em `ALS_OCC.m` (Método do Artigo da Letter)
+### B. Algoritmo Iterativo ALS em `OCC_Rx.m` / `ALS_OCC.m` (Método do Artigo da Letter)
 Diferente do KRF, o ALS é um processo iterativo clássico para obter a decomposição PARAFAC global por otimização de mínimos quadrados alternados.
 Em cada iteração, minimiza-se a diferença quadrática para um fator mantendo os outros dois fixos. As updates em mínimos quadrados ordinários são dadas por:
 1. **Símbolos $\mathbf{S}$ (usando unfolding modo 2):**
@@ -132,13 +135,11 @@ Em cada iteração, minimiza-se a diferença quadrática para um fator mantendo 
 2. **Degradação $\mathbf{H}$ (usando unfolding modo 1):**
    $$\hat{\mathbf{H}}^T = (\hat{\mathbf{S}} \diamond \hat{\mathbf{X}})^{\dagger} \mathbf{Y}_{(1)}^T$$
 3. **Vídeo $\mathbf{X}$ (usando unfolding modo 3):**
-   $$\hat{\mathbf{X}}^T = (\hat{\mathbf{X}} \diamond \hat{\mathbf{H}})^{\dagger} \mathbf{Y}_{(3)}^T$$
+   $$\hat{\mathbf{X}}^T = (\hat{\mathbf{S}} \diamond \hat{\mathbf{H}})^{\dagger} \mathbf{Y}_{(3)}^T$$
 
-No arquivo `ALS_OCC.m`, observa-se que a linha de código dedicada à estimativa de $\mathbf{X}$ está comentada:
-```matlab
-%Cchap = (inv((Bchap.'*Bchap).*(Achap.'*Achap))*(khatri(Bchap,Achap).')*X3).';
-```
-Isso indica que o código é executado no modo **semi-cego supervisionado**, no qual a matriz do vídeo original $\mathbf{X}$ (`Cchap`) é mantida fixa (como piloto/conhecido no receptor), atualizando-se iterativamente apenas a matriz de símbolos $\mathbf{B}$ e a matriz de borramento de canal $\mathbf{A}$.
+Na recepção real implementada em `OCC_Rx.m`, o receptor **não conhece** o vídeo transmitido $\mathbf{X}$ e, portanto, executa a estimativa conjunta completa e semi-cega atualizando iterativamente os três fatores: a degradação (`Achap`), os símbolos (`Bchap`) e o vídeo (`Cchap`), resolvendo também as ambiguidades de escala e reordenação (permutação) de colunas.
+
+Para otimizar o processamento paralelo com Monte Carlo (AWGN) usando aceleração por GPU, o laço de iterações do ALS foi totalmente vetorizado no plano tridimensional `[dim, dim, MC]` utilizando as funções nativas de matrizes de páginas do MATLAB (`pagemtimes` e `pagemldivide`), permitindo computar todas as realizações Monte Carlo simultaneamente em hardware gráfico com alto desempenho. Um laço sequencial em CPU atua como fallback caso a máquina não possua tais recursos gráficos ou suporte do MATLAB.
 
 ---
 
