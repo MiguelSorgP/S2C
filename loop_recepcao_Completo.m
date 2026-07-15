@@ -40,11 +40,6 @@ roiPositionFixed = [438.523696203079, 600.600218915312, 50.1333354146174, 51.850
 %    false = Desativada (sempre usa crop normal, convertendo ROIs poligonais em retângulos envolventes)
 correcaoPerspectiva = false;
 
-% Flag para carregar coordenadas de ROI a partir de um arquivo CSV de resultados (ex: resultados_ROI.csv)
-%    true  = Abre uma janela de seleção para selecionar o CSV e usa suas coordenadas
-%    false = Usa as opções de detecção/seleção normais do roiFlag
-usarCsvRoi = true;
-
 % 5) Flags de seleção dos quadros de interesse
 %    1 = Automática (usa variação temporal para detectar o final do vídeo e definir start/end frames)
 %    2 = Nenhum corte (usa o vídeo inteiro do começo ao fim)
@@ -78,10 +73,47 @@ numBackgroundMultiplier = 15;
 %    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
 rxAlgorithm = 2;
 
-% 9) Flag para filtrar vídeos específicos
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                         PERGUNTAS DO CONSOLE                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 1) Pergunta se deseja seguir um checkpoint existente
+choice = input('Deseja seguir a partir de um checkpoint existente? (Sim/Não) [Não]: ', 's');
+if isempty(choice)
+    choice = 'Não';
+end
+if strcmpi(choice, 'Sim') || strcmpi(choice, 's')
+    choice = 'Sim';
+else
+    choice = 'Não';
+end
+
+% 2) Pergunta se deseja carregar coordenadas de ROI a partir de um arquivo CSV de resultados (ex: resultados_ROI.csv)
+%    true  = Abre uma janela de seleção para selecionar o CSV e usa suas coordenadas
+%    false = Usa as opções de detecção/seleção normais do roiFlag
+usarCsvRoiChoice = input('Deseja carregar coordenadas de ROI a partir de um arquivo CSV? (Sim/Não) [Não]: ', 's');
+if isempty(usarCsvRoiChoice)
+    usarCsvRoiChoice = 'Não';
+end
+if strcmpi(usarCsvRoiChoice, 'Sim') || strcmpi(usarCsvRoiChoice, 's')
+    usarCsvRoi = true;
+else
+    usarCsvRoi = false;
+end
+
+% 3) Pergunta se deseja filtrar vídeos específicos
 %    false = Processa todos os vídeos .mp4 da pasta de gravacoes
 %    true  = Abre uma interface gráfica para selecionar os vídeos interativamente
-filtrarVideos = true;
+filtrarChoice = input('Deseja filtrar vídeos específicos? (Sim/Não) [Não]: ', 's');
+if isempty(filtrarChoice)
+    filtrarChoice = 'Não';
+end
+if strcmpi(filtrarChoice, 'Sim') || strcmpi(filtrarChoice, 's')
+    filtrarVideos = true;
+else
+    filtrarVideos = false;
+end
 
 
 % Verifica se a GPU está disponível e se pode ser usada
@@ -96,20 +128,10 @@ else
     fprintf('GPU não detectada ou indisponível. Usando processamento paralelo na CPU.\n');
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                         GERENCIAMENTO DO CHECKPOINT                   %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Pergunta se deseja seguir um checkpoint existente
-choice = input('Deseja seguir a partir de um checkpoint existente? (Sim/Não) [Não]: ', 's');
-if isempty(choice)
-    choice = 'Não';
-end
-if strcmpi(choice, 'Sim') || strcmpi(choice, 's')
-    choice = 'Sim';
-else
-    choice = 'Não';
-end
 
 if strcmp(choice, 'Sim')
     % Abre caixa de diálogo para selecionar o arquivo de checkpoint (.csv)
