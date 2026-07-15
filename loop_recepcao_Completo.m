@@ -73,6 +73,12 @@ numBackgroundMultiplier = 15;
 %    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
 rxAlgorithm = 2;
 
+% 9) Flag para salvar as imagens da ROI detectada (pasta imagesROI)
+%    true  = Cria a pasta e salva as imagens de ROI (.jpg) para verificação visual
+%    false = Desativa o salvamento das imagens de ROI
+salvarImagensROI = false;
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                         PERGUNTAS DO CONSOLE                          %%
@@ -196,7 +202,7 @@ end
 
 % Pasta de imagens ROI
 imagesRoiDir = fullfile(scriptDir, 'imagesROI');
-if ~exist(imagesRoiDir, 'dir')
+if salvarImagensROI && ~exist(imagesRoiDir, 'dir')
     mkdir(imagesRoiDir);
 end
 
@@ -369,24 +375,26 @@ for i = 1:numVideos
         roiPosition = roiPosition_orig;
 
         % Salva um JPEG da ROI silenciosamente (sem exibir a figura na tela)
-        if exist(roiImgPath, 'file')
-            delete(roiImgPath);
+        if salvarImagensROI
+            if exist(roiImgPath, 'file')
+                delete(roiImgPath);
+            end
+            fig = figure('Visible', 'off');
+            lastFrame = recordedVideo(:, :, :, end);
+            imshow(lastFrame, []);
+            hold on;
+            if size(roiPosition_orig, 1) == 4 && size(roiPosition_orig, 2) == 2
+                x_coords = [roiPosition_orig(:, 1); roiPosition_orig(1, 1)];
+                y_coords = [roiPosition_orig(:, 2); roiPosition_orig(1, 2)];
+                plot(x_coords, y_coords, 'r-', 'LineWidth', 2);
+            else
+                rectangle('Position', roiPosition_orig, 'EdgeColor', 'r', 'LineWidth', 2);
+            end
+            hold off;
+            print(fig, roiImgPath, '-djpeg');
+            close(fig);
+            fprintf('Imagem da ROI salva com sucesso em: %s\n', roiImgPath);
         end
-        fig = figure('Visible', 'off');
-        lastFrame = recordedVideo(:, :, :, end);
-        imshow(lastFrame, []);
-        hold on;
-        if size(roiPosition_orig, 1) == 4 && size(roiPosition_orig, 2) == 2
-            x_coords = [roiPosition_orig(:, 1); roiPosition_orig(1, 1)];
-            y_coords = [roiPosition_orig(:, 2); roiPosition_orig(1, 2)];
-            plot(x_coords, y_coords, 'r-', 'LineWidth', 2);
-        else
-            rectangle('Position', roiPosition_orig, 'EdgeColor', 'r', 'LineWidth', 2);
-        end
-        hold off;
-        print(fig, roiImgPath, '-djpeg');
-        close(fig);
-        fprintf('Imagem da ROI salva com sucesso em: %s\n', roiImgPath);
 
         % 3) Recorta os frames
         isPerfectRectangle = true;
