@@ -22,35 +22,26 @@ matFileF5 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F5.mat'
 matFileF10 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F10.mat');
 matFiles = {matFileF5, matFileF10};
 
-% 3) Taxas de quadros
+% 3) Algoritmo de recepção/decodificação:
+%    1 = OCC-KRF (Khatri-Rao Factorization, direto, rápido, não-iterativo)
+%    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
+rxAlgorithm = 2;
+
+% 4) Taxas de quadros
 fpsTx = 3;   % Taxa de quadros do vídeo exibido (transmissão)
 
-% 4) Flags de seleção da ROI
-%    1 = Selecionar manualmente via drawrectangle
+% 5) Flags de seleção da ROI
+%    1 = Seleção automática (detecta a região que varia) - RECOMENDADO PARA AUTOMATIZAÇÃO
 %    2 = Usar o vídeo inteiro como ROI (nenhum recorte)
-%    3 = Seleção automática (detecta a região que varia) - RECOMENDADO PARA AUTOMATIZAÇÃO
-%    4 = Coordenadas fixas (definidas em roiPositionFixed abaixo)
-roiFlag = 3;
+%    3 = Selecionar manualmente via drawrectangle
+roiFlag = 1;
 
-% Posição da ROI fixa (usada se roiFlag == 4)
-roiPositionFixed = [438.523696203079, 600.600218915312, 50.1333354146174, 51.8509657500218];
-
-% Flag para correção de perspectiva:
-%    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)
-%    false = Desativada (sempre usa crop normal, convertendo ROIs poligonais em retângulos envolventes)
-correcaoPerspectiva = false;
-
-% 5) Flags de seleção dos quadros de interesse
+% 6) Flags de seleção dos quadros de interesse
 %    1 = Automática (usa variação temporal para detectar o final do vídeo e definir start/end frames)
 %    2 = Nenhum corte (usa o vídeo inteiro do começo ao fim)
-%    3 = Corte manual (usando os limites startManual e endManual abaixo)
 framesFlag = 1;
 
-% Limites para corte manual (usados se framesFlag == 3)
-startManual = 149;
-endManual = 1348;
-
-% 6) Flag para ruído (AWGN)
+% 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
 noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
@@ -59,7 +50,7 @@ noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
 MC = 1000;           % Número de repetições Monte Carlo (pode ser diminuído para teste)
 
-% 7) Flag para normalização e remoção de fundo (v3_norm)
+% 8) Flag para normalização e remoção de fundo (v3_norm)
 %    0 = Sem normalização / remoção de fundo
 %    1 = Com normalização / remoção de fundo e salvamento dos dados para histograma
 normFlag = 0;
@@ -68,15 +59,15 @@ normFlag = 0;
 % Determina a quantidade de frames iniciais a serem usados como imagem de fundo médio (multiplicado por repeatedFrames)
 numBackgroundMultiplier = 15;
 
-% 8) Algoritmo de recepção/decodificação:
-%    1 = OCC-KRF (Khatri-Rao Factorization, direto, rápido, não-iterativo)
-%    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
-rxAlgorithm = 2;
-
 % 9) Flag para salvar as imagens da ROI detectada (pasta imagesROI)
 %    true  = Cria a pasta e salva as imagens de ROI (.jpg) para verificação visual
 %    false = Desativa o salvamento das imagens de ROI
 salvarImagensROI = false;
+
+% 10) Flag para correção de perspectiva:
+%    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)
+%    false = Desativada (sempre usa crop normal, convertendo ROIs poligonais em retângulos envolventes)
+correcaoPerspectiva = false;
 
 
 
@@ -358,16 +349,14 @@ for i = 1:numVideos
                 ];
             fprintf('Coordenadas de ROI carregadas com sucesso a partir do CSV.\n');
         elseif roiFlag == 1
-            fprintf('\n--- ROI MANUAL ---\n');
-            roiPosition_orig = manualROIfigure(recordedVideo);
+            fprintf('\n--- ROI AUTOMÁTICA ---\n');
+            roiPosition_orig = automaticROI_v2(recordedVideo, false);
         elseif roiFlag == 2
             fprintf('\n--- ROI = VÍDEO INTEIRO ---\n');
             roiPosition_orig = fullROI(recordedVideo);
         elseif roiFlag == 3
-            fprintf('\n--- ROI AUTOMÁTICA ---\n');
-            roiPosition_orig = automaticROI_v2(recordedVideo, false);
-        elseif roiFlag == 4
-            roiPosition_orig = roiPositionFixed;
+            fprintf('\n--- ROI MANUAL ---\n');
+            roiPosition_orig = manualROIfigure(recordedVideo);
         else
             error('Valor de roiFlag inválido!');
         end
@@ -442,8 +431,6 @@ for i = 1:numVideos
             [timeCroppedVideo, startFrame, endFrame] = selectFramesAutomatically(croppedVideo, desiredTotalFrames, repeatedFrames);
         elseif framesFlag == 2
             timeCroppedVideo = croppedVideo;
-        elseif framesFlag == 3
-            [timeCroppedVideo, startManual, endManual] = selectFramesManually(croppedVideo, startManual, endManual);
         end
 
         clear croppedVideo;
