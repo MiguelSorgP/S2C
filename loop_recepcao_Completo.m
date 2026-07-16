@@ -44,7 +44,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
@@ -541,6 +541,7 @@ for i = 1:numVideos
                 msg_trimmed = msg(2:end, :);
                 totalBits = numel(msg_trimmed);
 
+                reachedClean = false;
                 for iPn = 1:lengthOnePnDB
                     OnePnLinear = 10^(OnePnDB(iPn)/10);
                     Pn = 1/OnePnLinear;
@@ -608,6 +609,18 @@ for i = 1:numVideos
                         fprintf('BER atingiu 0. Interrompendo varredura de SNR.\n');
                         break;
                     end
+
+                    if BERvals(iPn) <= BER_clean
+                        reachedClean = true;
+                    end
+
+                    if reachedClean && iPn > 1
+                        if BERvals(iPn) >= BERvals(iPn-1)
+                            fprintf('BER atingiu o BER clean (%.6f) e parou de diminuir (atual: %.6f, anterior: %.6f). Interrompendo varredura de SNR e preenchendo o restante.\n', BER_clean, BERvals(iPn), BERvals(iPn-1));
+                            BERvals(iPn+1:end) = BERvals(iPn);
+                            break;
+                        end
+                    end
                 end
             else
                 % --- CAMINHO DE BACKUP NA CPU (PARFOR ORIGINAL) ---
@@ -623,6 +636,7 @@ for i = 1:numVideos
                     fprintf('Erro: %s\n', ME.message);
                 end
 
+                reachedClean = false;
                 for iPn = 1:lengthOnePnDB
                     OnePnLinear = 10^(OnePnDB(iPn)/10);
                     Pn = 1/OnePnLinear;
@@ -691,6 +705,18 @@ for i = 1:numVideos
                     if BERvals(iPn) == 0
                         fprintf('BER atingiu 0. Interrompendo varredura de SNR.\n');
                         break;
+                    end
+
+                    if BERvals(iPn) <= BER_clean
+                        reachedClean = true;
+                    end
+
+                    if reachedClean && iPn > 1
+                        if BERvals(iPn) >= BERvals(iPn-1)
+                            fprintf('BER atingiu o BER clean (%.6f) e parou de diminuir (atual: %.6f, anterior: %.6f). Interrompendo varredura de SNR e preenchendo o restante.\n', BER_clean, BERvals(iPn), BERvals(iPn-1));
+                            BERvals(iPn+1:end) = BERvals(iPn);
+                            break;
+                        end
                     end
                 end
             end
