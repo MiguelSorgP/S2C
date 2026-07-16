@@ -27,8 +27,7 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-% videoDir = fullfile(scriptDir, 'gravacoes_15_06');
-videoDir = 'G:\Meu Drive\Mestrado\ArtigosEmAndamento\IEEEacess2026\Dados_Gravacoes_15_06\dadosLuzesApagadas\gravacoes_07_07';
+videoDir = '../gravacoes_07_07';
 
 % 2) Arquivos .mat com os dados do vídeo original
 matFileF5 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F5.mat');
@@ -57,7 +56,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)

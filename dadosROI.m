@@ -1,7 +1,7 @@
 % DADOSROI - Processamento e mapeamento das coordenadas das ROIs extraídas dos vídeos.
 % Este script varre uma pasta de vídeos gravados, realiza a detecção de ROI
 % (automática ou manual) para cada vídeo, calcula as métricas geométricas de distorção
-% da ROI e mapeia as chaves do nome do vídeo para posições espaciais (x, y, z) 
+% da ROI e mapeia as chaves do nome do vídeo para posições espaciais (x, y, z)
 % e distância euclidiana real 3D, salvando todos os dados em um arquivo CSV.
 
 clc;
@@ -16,8 +16,8 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-% videoDir = fullfile(scriptDir, 'gravacoes_15_06');
-videoDir = 'G:\Meu Drive\Mestrado\ArtigosEmAndamento\IEEEacess2026\Dados_Gravacoes_15_06\dadosLuzesApagadas\gravacoes_07_07';
+videoDir = '../gravacoes_07_07';
+
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
 numVideos = numel(videoFiles);
@@ -146,7 +146,7 @@ for i = 1:numVideos
         elseif roiDetectionMode == 2
             fprintf('Running automatic ROI detection for pre-filling...\n');
             autoRoiPosition = automaticROI_v2(recordedVideo, false);
-            
+
             fprintf('Opening manual ROI selection with 4-point precision...\n');
             roiPosition = manualQuadROI(recordedVideo, autoRoiPosition);
         else

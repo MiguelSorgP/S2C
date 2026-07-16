@@ -23,7 +23,8 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório contendo as gravações de vídeo
-videoDir = 'G:\Meu Drive\Mestrado\ArtigosEmAndamento\IEEEacess2026\Dados_Gravacoes_15_06\dadosLuzesApagadas\gravacoes_07_07';
+videoDir = '../gravacoes_07_07';
+
 
 % 2) Flags de seleção da ROI
 %    1 = Selecionar manualmente via drawrectangle
@@ -459,10 +460,10 @@ if useGPU
     try
         Z1 = gpuArray.randn(size(variance_clean), 'single');
         Z2 = gpuArray.randn(size(variance_clean), 'single');
-        
+
         W = (numFrames - 2) + sqrt(2 * (numFrames - 2)) * Z2;
         W = max(W, 0);
-        
+
         lambda = numFrames * max(variance_clean, 0) / Pn;
         varianceImage = (Pn / numFrames) * ( (Z1 + sqrt(lambda)).^2 + W );
         varianceImage = gather(varianceImage);
