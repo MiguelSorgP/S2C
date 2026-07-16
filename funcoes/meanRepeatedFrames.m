@@ -1,15 +1,17 @@
 function finalVideo = meanRepeatedFrames(resizedVideo, repeatedFrames)
-    % MEANREPEATEDFRAMES Calcula a média de blocos de frames consecutivos
-    %   finalVideo = MEANREPEATEDFRAMES(resizedVideo, repeatedFrames) calcula
-    %   a média de cada bloco de 'repeatedFrames' frames consecutivos,
-    %   criando um novo vídeo com menor número de frames.
-    %
-    %   Entradas:
-    %       resizedVideo - Matriz 4D com os frames do vídeo redimensionado
-    %       repeatedFrames - Número de frames consecutivos a serem combinados
-    %
-    %   Saídas:
-    %       finalVideo - Matriz 4D com os frames resultantes da média
+% MEANREPEATEDFRAMES - Downsampling temporal integrando (por média) quadros repetidos.
+% Devido à maior taxa de amostragem na recepção em comparação com a transmissão
+% (fpsRx > fpsTx), cada frame transmitido aparece repetido por repeatedFrames na gravação.
+% Esta função calcula a média aritmética ao longo do tempo de cada bloco de frames
+% repetidos adjacentes, reduzindo o ruído temporal (filtro de média móvel decantadora)
+% e restaurando a dimensão temporal original nominal de K*F frames.
+%
+% Entradas:
+%   resizedVideo   - Matriz 4D com os frames do vídeo redimensionados [Mmax x Nmax x 1 x numFrames]
+%   repeatedFrames - Fator de sobreamostragem temporal (número de repetições por frame)
+%
+% Saídas:
+%   finalVideo     - Matriz 4D contendo os frames decimados/integrados por média [Mmax x Nmax x 1 x numNewFrames]
     
     % Calcula o número de frames no vídeo final
     numNewFrames = floor(size(resizedVideo,4) / repeatedFrames);

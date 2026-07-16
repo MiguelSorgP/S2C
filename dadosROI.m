@@ -1,29 +1,35 @@
+% DADOSROI - Processamento e mapeamento das coordenadas das ROIs extraídas dos vídeos.
+% Este script varre uma pasta de vídeos gravados, realiza a detecção de ROI
+% (automática ou manual) para cada vídeo, calcula as métricas geométricas de distorção
+% da ROI e mapeia as chaves do nome do vídeo para posições espaciais (x, y, z) 
+% e distância euclidiana real 3D, salvando todos os dados em um arquivo CSV.
+
 clc;
 clear all;
 close all;
 
-% Setup paths relative to script location
+% Configura os caminhos relativos à localização do script
 scriptDir = fileparts(mfilename('fullpath'));
 if isempty(scriptDir)
     scriptDir = pwd;
 end
 addpath(fullfile(scriptDir, 'funcoes'));
 
-% Directory containing videos
+% Diretório contendo os vídeos
 % videoDir = fullfile(scriptDir, 'gravacoes_15_06');
 videoDir = 'G:\Meu Drive\Mestrado\ArtigosEmAndamento\IEEEacess2026\Dados_Gravacoes_15_06\dadosLuzesApagadas\gravacoes_07_07';
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
 numVideos = numel(videoFiles);
 
-% ROI Detection Mode:
-% 1 = Automatic (default)
-% 2 = Manual (interactive, initialized with automatic detection)
+% Modo de Detecção de ROI:
+% 1 = Automático (padrão)
+% 2 = Manual (interativo, inicializado com detecção automática)
 roiDetectionMode = 2;
 
 % ==========================================
-% MAP FOR y_position AND x_position
-% Leave these maps here for easy modification
+% MAPEAR PARA y_position E x_position
+% Deixe estes mapeamentos aqui para fácil modificação
 % ==========================================
 y_map = [
     1.60, 1.596;
@@ -67,7 +73,7 @@ while exist(csvPath, 'file')
 end
 csvHeader = 'video_name,y_position,x_position,z_position,distance,frames,x_tl,y_tl,x_tr,y_tr,x_br,y_br,x_bl,y_bl,left_height,right_height,top_width,bottom_width,height_difference,width_difference,x_coordinate_difference,y_coordinate_difference';
 
-% Write header to CSV
+% Escreve o cabeçalho no CSV
 fid = fopen(csvPath, 'w');
 if fid == -1
     error('Could not create output CSV file: %s', csvPath);
@@ -83,14 +89,14 @@ for i = 1:numVideos
     fprintf('Processing video [%d of %d]: %s\n', i, numVideos, vName);
     fprintf('===========================================================================\n');
 
-    % Parse metadata from filename
+    % Extrai metadados do nome do arquivo
     tokens = regexp(vName, '^([\d\.]+)-(\d+)-f(\d+)(?:_dark)?\.mp4$', 'tokens');
     if ~isempty(tokens)
         y_key = str2double(tokens{1}{1});
         x_key = str2double(tokens{1}{2});
         frames = str2double(tokens{1}{3});
 
-        % Lookup y_position
+        % Busca y_position no mapa correspondente
         y_idx = find(abs(y_map(:, 1) - y_key) < 1e-4, 1);
         if ~isempty(y_idx)
             y_position = y_map(y_idx, 2);
@@ -99,7 +105,7 @@ for i = 1:numVideos
             warning('y_key %f not found in y_map for video %s', y_key, vName);
         end
 
-        % Lookup x_position
+        % Busca x_position no mapa correspondente
         x_idx = find(abs(x_map(:, 1) - x_key) < 1e-4, 1);
         if ~isempty(x_idx)
             x_position = x_map(x_idx, 2);
@@ -110,7 +116,7 @@ for i = 1:numVideos
 
         z_position = -0.13185;
 
-        % Calculate distance
+        % Calcula a distância euclidiana 3D
         if ~isnan(x_position) && ~isnan(y_position)
             distance = sqrt(x_position^2 + y_position^2 + z_position^2);
         else
@@ -126,14 +132,14 @@ for i = 1:numVideos
     end
 
     try
-        % 1) Read video
+        % 1) Lê o vídeo
         vidObj = VideoReader(videoFile);
         vidObj.CurrentTime = 0;
 
         [recordedVideo, numFrames] = readGrayscaleVideo(vidObj,true);
         fprintf('Total frames read: %d\n', numFrames);
 
-        % 2) ROI Detection
+        % 2) Detecção da ROI
         if roiDetectionMode == 1
             fprintf('Running automatic ROI detection...\n');
             roiPosition = automaticROI_v2(recordedVideo, false);
@@ -147,29 +153,29 @@ for i = 1:numVideos
             error('Invalid roiDetectionMode. Must be 1 (automatic) or 2 (manual).');
         end
 
-        % Vertices
+        % Vértices
         x_tl = roiPosition(1, 1); y_tl = roiPosition(1, 2);
         x_tr = roiPosition(2, 1); y_tr = roiPosition(2, 2);
         x_br = roiPosition(3, 1); y_br = roiPosition(3, 2);
         x_bl = roiPosition(4, 1); y_bl = roiPosition(4, 2);
 
-        % Heights (Left and Right)
+        % Alturas (Esquerda e Direita)
         left_height = abs(y_bl - y_tl);
         right_height = abs(y_br - y_tr);
 
-        % Widths (Top and Bottom)
+        % Larguras (Superior e Inferior)
         top_width = abs(x_tr - x_tl);
         bottom_width = abs(x_br - x_bl);
 
-        % Differences
+        % Diferenças
         height_diff = abs(left_height - right_height);
         width_diff = abs(top_width - bottom_width);
 
-        % Coordinate differences (to measure skew/tilt even if height/width differences are 0)
+        % Diferenças de coordenadas (para medir inclinação mesmo que alturas/larguras sejam iguais)
         x_coord_diff = abs(x_tl - x_bl);
         y_coord_diff = abs(y_tl - y_tr);
 
-        % Append results to CSV
+        % Anexa os resultados no arquivo CSV
         fid = fopen(csvPath, 'a');
         if fid ~= -1
             fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n', ...
@@ -187,7 +193,7 @@ for i = 1:numVideos
     catch ME
         fprintf('ERROR processing video %s:\n%s\n', vName, ME.message);
 
-        % Append error placeholder to CSV if parser succeeded
+        % Anexa marcador de erro no CSV se o parser funcionou
         fid = fopen(csvPath, 'a');
         if fid ~= -1
             fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%d,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN\n', ...
@@ -196,7 +202,7 @@ for i = 1:numVideos
         end
     end
 
-    % Clear variables to free memory
+    % Limpa as variáveis para liberar memória
     clear recordedVideo vidObj roiPosition;
 end
 

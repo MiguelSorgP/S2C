@@ -1,16 +1,15 @@
 function croppedVideo = cropVideoFrames(recordedVideo, roiPosition, numFrames)
-    % CROPVIDEOFRAMES Recorta a região de interesse de todos os frames do vídeo
-    %   croppedVideo = CROPVIDEOFRAMES(recordedVideo, roiPosition, numFrames)
-    %   recorta a região de interesse especificada em roiPosition
-    %   de cada frame do vídeo.
-    %
-    %   Entradas:
-    %       recordedVideo - Matriz 4D com os frames do vídeo original
-    %       roiPosition - Vetor [x y largura altura] com as coordenadas da ROI
-    %       numFrames - Número de frames a serem processados
-    %
-    %   Saídas:
-    %       croppedVideo - Matriz 4D com os frames recortados
+% CROPVIDEOFRAMES - Recorta a região de interesse (ROI) retangular de todos os frames do vídeo.
+% Esta função extrai a sub-imagem correspondente à ROI retangular de cada quadro do vídeo original
+% de forma sequencial ao longo do tempo.
+%
+% Entradas:
+%   recordedVideo - Matriz 4D com os frames do vídeo original (altura x largura x canal x frames)
+%   roiPosition   - Vetor [x y largura altura] com as coordenadas da ROI retangular
+%   numFrames     - Número de frames a serem processados
+%
+% Saídas:
+%   croppedVideo  - Matriz 4D com os frames recortados na dimensão da ROI (alturaROI x larguraROI x 1 x numFrames)
     
     % Recorta o primeiro frame para obter as dimensões da ROI
     firstFrameCropped = imcrop(recordedVideo(:,:,1,1), roiPosition);

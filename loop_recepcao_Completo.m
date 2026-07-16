@@ -1,8 +1,21 @@
+% LOOP_RECEPCAO_COMPLETO - Script principal para recepção, processamento e decodificação de vídeos S2C.
+% Este script implementa a cadeia completa de recepção de comunicações ópticas por câmera (OCC)
+% baseada em tela (Screen-to-Camera). O fluxo consiste em:
+% 1) Leitura de vídeo capturado pela câmera em escala de cinza.
+% 2) Extração da ROI correspondente à tela do transmissor (manual, automática ou via CSV).
+% 3) Correção geométrica de distorção de perspectiva (homografia 2D).
+% 4) Sincronização temporal fina por alinhamento de fase e busca de transições.
+% 5) Média de frames repetidos para downsampling temporal de fpsRx para fpsTx.
+% 6) Execução do algoritmo de recepção (OCC-KRF ou OCC-ALS) para estimar símbolos purificados.
+% 7) Decodificação de bits por distância euclidiana mínima e extração de metadados.
+% 8) Análise estatística de desempenho (BER, SER, MSE) por simulação de Monte Carlo sob ruído AWGN
+%    usando paralelização vetorizada 3D em GPU ou CPU com parfor.
+
 clc;
 clear all;
 close all;
 
-% Setup paths relative to script location
+% Configura os caminhos relativos à localização do script
 scriptDir = fileparts(mfilename('fullpath'));
 if isempty(scriptDir)
     scriptDir = pwd;

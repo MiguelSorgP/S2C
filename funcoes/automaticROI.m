@@ -1,14 +1,15 @@
 function roiPosition = automaticROI(recordedVideo)
-    % AUTOMATICROI Detecta automaticamente uma região de interesse baseada na variância temporal
-    %   roiPosition = AUTOMATICROI(recordedVideo) analisa todos os frames do
-    %   vídeo para identificar a região com maior movimento, retornando
-    %   as coordenadas da ROI que engloba esta região.
-    %
-    %   Entradas:
-    %       recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-    %
-    %   Saídas:
-    %       roiPosition - Vetor [x y largura altura] com as coordenadas da ROI detectada
+% AUTOMATICROI - Detecta automaticamente uma região de interesse (ROI) baseada na variância temporal.
+% Esta função analisa a variância temporal de todos os frames do vídeo para
+% identificar a região de pixels com maior variação (onde o transmissor está
+% piscando/exibindo o vídeo codificado), aplicando limiarização de Otsu
+% e morfologia matemática para extrair o retângulo envolvente da tela.
+%
+% Entradas:
+%   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%
+% Saídas:
+%   roiPosition - Vetor [x y largura altura] com as coordenadas da ROI detectada
     
     % Obtém as dimensões do vídeo 4D
     [altura, largura, ~, numFrames] = size(recordedVideo);

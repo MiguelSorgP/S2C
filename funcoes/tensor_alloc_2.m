@@ -1,14 +1,25 @@
 function y = tensor_alloc_2(x,org,posA)
+% TENSOR_ALLOC_2 - Permuta a ordenação de modos de um tensor vetorizado.
+% Esta função reorganiza os elementos de um vetor contendo a representação
+% linearizada de um tensor tridimensional, quadridimensional ou de quinta
+% ordem, mapeando-o para uma nova ordenação de dimensões.
 %
-% Changes the ordering of vector x to y
+% Entradas:
+%   x    - Vetor coluna contendo o tensor linearizado (tamanho N*P*F*K...)
+%   org  - Vetor com as dimensões originais do tensor, e.g. [I, J, K]
+%   posA - Vetor indicando a nova ordenação de modos, e.g. [3, 1, 2]
+%
+% Saídas:
+%   y    - Vetor coluna contendo o tensor reorganizado na nova ordem
+
 % org = [N P F K] -> [1 2 3 4]
-% posA  is the new ordering
+% posA é a nova ordenação (permutações)
 
 if size(posA)~=size(unique(posA)),
     disp('Error! Verify position')
 end
 
-%3rd order vectorized tensor
+% Tensor vetorizado de 3ª ordem
 if length(org)==3
     
     pos(1) = org(posA(1));
@@ -29,7 +40,7 @@ if length(org)==3
     
 end
 
-%4th order vectorized tensor
+% Tensor vetorizado de 4ª ordem
 if length(org)==4
     
     pos(1) = org(posA(1));

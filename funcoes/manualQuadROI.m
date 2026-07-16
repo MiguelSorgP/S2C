@@ -1,14 +1,16 @@
 function roiPosition = manualQuadROI(recordedVideo, autoRoiPosition)
-    % MANUALQUADROI Permite seleção manual de uma ROI de 4 pontos (quadrilátero)
-    %   inicializada com os pontos da detecção automática. Os pontos são restritos
-    %   à grade de pixels durante a movimentação.
-    %
-    %   Entradas:
-    %       recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-    %       autoRoiPosition - Matriz 4x2 [x, y] com os 4 vértices iniciais
-    %
-    %   Saídas:
-    %       roiPosition - Matriz 4x2 [x, y] com os 4 vértices ajustados
+% MANUALQUADROI - Interface para seleção manual de ROI em quadrilátero de 4 pontos.
+% Esta função abre uma interface gráfica (GUI) mostrando o primeiro frame do vídeo
+% e permite que o usuário movimente livremente quatro vértices (inicializados a
+% partir da detecção automática). Garante restrição à grade de pixels (snap to grid)
+% e retorna as coordenadas ajustadas finais na ordem correta.
+%
+% Entradas:
+%   recordedVideo   - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%   autoRoiPosition - Matriz 4x2 [x, y] com os 4 vértices iniciais da detecção automática
+%
+% Saídas:
+%   roiPosition     - Matriz 4x2 [x, y] com os 4 vértices ajustados finais
     
     % Cria a figura e eixos
     fig = figure('Name', 'Seleção Manual da ROI (4 Pontos)', 'NumberTitle', 'off');

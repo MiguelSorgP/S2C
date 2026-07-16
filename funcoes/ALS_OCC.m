@@ -1,4 +1,22 @@
 function [e,Achap,Bchap,Caux] = ALS_OCC(X3,A,B,C,Nit,rel_error)
+% ALS_OCC - Algoritmo iterativo Mínimos Quadrados Alternados (ALS) para decomposição PARAFAC.
+% Realiza o ajuste do modelo tensorial de terceira ordem (degradação A, símbolos B e vídeo C)
+% a partir do tensor de observações X3 (Modo 3 desdobrado), utilizando atualizações iterativas
+% de mínimos quadrados para aproximar as matrizes de fatores dos modos espacial, temporal e de codificação.
+%
+% Entradas:
+%   X3        - Matriz do tensor de recepção desdobrada no Modo 3 (dimensão MNF x K)
+%   A         - Estimativa inicial da matriz de degradação espacial (dimensão MN x JL)
+%   B         - Estimativa inicial da matriz de símbolos codificados (dimensão K x JL)
+%   C         - Estimativa inicial da matriz do vídeo original (dimensão F x JL)
+%   Nit       - Número máximo de iterações permitidas
+%   rel_error - Tolerância para erro relativo para critério de parada
+%
+% Saídas:
+%   e         - Vetor contendo o erro quadrático médio em cada iteração
+%   Achap     - Matriz de degradação estimada corrigida
+%   Bchap     - Matriz de símbolos estimada corrigida
+%   Caux      - Matriz do vídeo original estimada (transposta para dimensão JL x F)
 
 % A é a matriz de degradação
 % B é a matriz de símbolos
@@ -13,14 +31,14 @@ Achap = A.*(1+1*rand(size(A)));
 Bchap = B.*(1+1*rand(size(B)));
 Cchap = C.*(1+1*rand(size(C)));
 
-x3 = vec(X3); %fmdjm1 %Mode-3 unfold
+x3 = vec(X3); % fmdjm1 % Desdobramento no Modo 3
 
 
-x2 = tensor_alloc_2(x3,[MD K F],[3 1 2]); %x2 = fm1mdj
-X2 = reshape(x2,F*MD,K); % X2 = Fm1md_j % Mode-2 unfold
+x2 = tensor_alloc_2(x3,[MD K F],[3 1 2]); % x2 = fm1mdj
+X2 = reshape(x2,F*MD,K); % X2 = Fm1md_j % Desdobramento no Modo 2
 
-x1 = tensor_alloc_2(x3,[MD K F],[2 3 1]); %x1 = fjm1_md
-X1 = reshape(x1,K*F,MD); % X1 = Fjm1_md % Mode-1 unfold
+x1 = tensor_alloc_2(x3,[MD K F],[2 3 1]); % x1 = fjm1_md
+X1 = reshape(x1,K*F,MD); % X1 = Fjm1_md % Desdobramento no Modo 1
 
 err=1;
 nit = 1;

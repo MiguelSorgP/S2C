@@ -1,14 +1,14 @@
 function roiPosition = manualROIfigure(recordedVideo)
-    % MANUALROI Permite seleção manual de uma região de interesse (ROI)
-    %   roiPosition = MANUALROI(recordedVideo) exibe o primeiro frame do vídeo
-    %   e permite que o usuário desenhe e confirme um retângulo para definir
-    %   a região de interesse.
-    %
-    %   Entradas:
-    %       recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-    %
-    %   Saídas:
-    %       roiPosition - Vetor [x y largura altura] com as coordenadas da ROI selecionada
+% MANUALROIFIGURE - Interface gráfica para seleção manual de ROI retangular.
+% Esta função abre uma interface gráfica mostrando o primeiro frame do vídeo
+% e permite que o usuário desenhe interativamente um retângulo de ROI, confirmando
+% com um clique duplo. Em seguida, calcula uma margem de 10% e exibe a imagem recortada.
+%
+% Entradas:
+%   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%
+% Saídas:
+%   roiPosition   - Vetor [x y largura altura] com as coordenadas da ROI selecionada
     
     % Cria a figura e eixos
     fig = figure('Name', 'Seleção da ROI', 'NumberTitle', 'off');

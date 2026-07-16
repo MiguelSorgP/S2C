@@ -1,11 +1,17 @@
 function roiPosition = automaticROI_v2(recordedVideo, showFigure)
-    % AUTOMATICROI_CORNERS Detecta uma ROI em quadrilátero
-    %   encontrando os 4 pontos extremos da região de maior movimento.
-    %
-    %   Saídas:
-    %       roiPosition - Matriz 4x2 com os vértices do quadrilátero [x, y],
-    %                     na ordem: [Top-Left; Top-Right; Bottom-Right; Bottom-Left].
-    %
+% AUTOMATICROI_V2 - Detecta automaticamente uma ROI quadrilátera encontrando os 4 cantos extremos.
+% Esta função analisa a variância temporal das intensidades de pixels e detecta os
+% quatro cantos extremos da tela do transmissor, mesmo que ela esteja inclinada
+% (distorção de perspectiva). Os cantos são encontrados minimizando/maximizando
+% somas e diferenças de coordenadas (x + y e x - y).
+%
+% Entradas:
+%   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%   showFigure    - Flag booleano para exibir graficamente a ROI detectada (padrão: false)
+%
+% Saídas:
+%   roiPosition   - Matriz [4 x 2] contendo as coordenadas [x, y] dos 4 vértices
+%                   na ordem: [Top-Left; Top-Right; Bottom-Right; Bottom-Left].
 
     if nargin < 2
         showFigure = false;
@@ -81,10 +87,10 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
 
     % 4. Coleta os vértices [x, y] (ou seja, [col, row])
     
-    v_tl = [cols(idx_tl), rows(idx_tl)]; % Top-Left
-    v_tr = [cols(idx_tr), rows(idx_tr)]; % Top-Right
-    v_br = [cols(idx_br), rows(idx_br)]; % Bottom-Right
-    v_bl = [cols(idx_bl), rows(idx_bl)]; % Bottom-Left
+    v_tl = [cols(idx_tl), rows(idx_tl)]; % Superior-Esquerdo (Top-Left)
+    v_tr = [cols(idx_tr), rows(idx_tr)]; % Superior-Direito (Top-Right)
+    v_br = [cols(idx_br), rows(idx_br)]; % Inferior-Direito (Bottom-Right)
+    v_bl = [cols(idx_bl), rows(idx_bl)]; % Inferior-Esquerdo (Bottom-Left)
     
     % 5. Define a posição da ROI
     % Retorna na ordem: TL, TR, BR, BL (sentido horário)

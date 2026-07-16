@@ -1,5 +1,12 @@
 function plotar_Figuras(initialDir)
-% PLOTAR_FIGURAS - Graphical user interface to visualize and compare OCC simulation metrics and noise histograms.
+% PLOTAR_FIGURAS - Graphical user interface to visualize and compare OCC simulation metrics.
+% This script implements a GUI to compare Bit Error Rate (BER), Symbol Error Rate (SER),
+% and Mean Squared Error (MSE) metrics across different Screen-to-Camera (S2C) communication
+% algorithms (OCC-KRF and OCC-ALS). It also provides noise analysis tools such as 
+% histogram plotting of background noise and pixel value standard deviation.
+%
+% Input:
+%   initialDir (optional) - Path to the directory containing the simulation .mat result files.
 
 % 1) Setup paths relative to script location
 scriptDir = fileparts(mfilename('fullpath'));

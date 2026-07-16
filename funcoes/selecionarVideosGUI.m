@@ -1,11 +1,15 @@
 function videoFilesSelected = selecionarVideosGUI(videoFiles)
-    % SELECIONARVIDEOSGUI Abre uma interface gráfica para selecionar os vídeos a serem processados.
-    %
-    %   Entrada:
-    %       videoFiles - Struct array contendo a lista completa de vídeos (.mp4)
-    %
-    %   Saída:
-    %       videoFilesSelected - Struct array contendo apenas os vídeos selecionados pelo usuário.
+% SELECIONARVIDEOSGUI - Interface gráfica interativa para seleção e filtragem de vídeos gravados.
+% Esta função abre uma interface gráfica baseada em App Designer (uifigure e uigridlayout)
+% para que o usuário possa selecionar interativamente quais arquivos de vídeo da pasta
+% de gravações deseja processar. Permite filtrar vídeos em lote por distância física,
+% posição lateral da tela, taxa de amostragem/frames (f5/f10), e iluminação (com/sem luz).
+%
+% Entradas:
+%   videoFiles - Struct array com os metadados dos vídeos encontrados (saída da função dir)
+%
+% Saídas:
+%   videoFilesSelected - Struct array contendo apenas os vídeos selecionados pelo usuário
 
     names = {videoFiles.name}';
     n = numel(names);

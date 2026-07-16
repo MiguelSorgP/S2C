@@ -1,4 +1,19 @@
 function resizedVideo = resizeVideoFrames_v2(timeCroppedVideo, Mmax, Nmax, method)
+% RESIZEVIDEOFRAMES_V2 - Redimensiona todos os frames usando média de miolo de bloco (center_mean) ou imresize.
+% Esta versão aprimorada permite redimensionar o vídeo utilizando o método especial 'center_mean'.
+% Esse método divide o quadro em blocos Mmax x Nmax, localiza o centro (miolo) de cada bloco
+% (correspondente ao centro geométrico de cada LED da tela) e calcula a média das intensidades
+% de pixels nessa área central limpa, evitando efeitos de borramento nas bordas dos blocos.
+%
+% Entradas:
+%   timeCroppedVideo - Matriz 4D com os frames do vídeo a serem redimensionados
+%   Mmax             - Altura desejada em pixels (blocos)
+%   Nmax             - Largura desejada em pixels (blocos)
+%   method           - Método de redimensionamento ('center_mean' ou métodos do imresize como 'nearest')
+%
+% Saídas:
+%   resizedVideo     - Matriz 4D com os frames redimensionados (Mmax x Nmax x 1 x NoF_efetivo)
+
 % Se o método for 'center_mean', usa amostragem do miolo de cada bloco
 if nargin < 4
     method = 'nearest';

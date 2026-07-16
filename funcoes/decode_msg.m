@@ -1,5 +1,14 @@
 function [msg_hat, header_hat, id_hat, vertical_dimension, horizontal_dimension] = decode_msg(Bmod, S0, S1, P, M, N, S)
-    % DECODE_MSG decodifica a mensagem binária a partir da matriz de símbolos estimados (Bmod).
+% DECODE_MSG - Decodifica a mensagem binária a partir da matriz de símbolos estimados (Bmod).
+% Esta função executa a decodificação de máxima verossimilhança por distância euclidiana
+% mínima entre os símbolos recebidos de Bmod e os formatos de pulso BPPM de referência (S0, S1).
+% Em seguida, extrai os metadados contidos na mensagem de controle estruturada:
+%   - Cabeçalho de sincronização (9 bits)
+%   - ID do transmissor (3 bits)
+%   - Dimensão vertical em pixels (12 bits)
+%   - Dimensão horizontal em pixels (12 bits)
+% Converte os metadados de volta para valores decimais na CPU.
+
     %
     % Entradas:
     % Bmod: Matriz de símbolos estimados, dimensão: (S*P) x (M*N)

@@ -1,17 +1,17 @@
 function [timeCroppedVideo, startManual, endManual] = selectFramesManually(croppedVideo, startManual, endManual)
-    % SELECTFRAMESMANUALLY Seleciona um intervalo específico de frames manualmente
-    %   [timeCroppedVideo, startManual, endManual] = SELECTFRAMESMANUALLY(croppedVideo, startManual, endManual)
-    %   extrai um subconjunto de frames de um vídeo com base em índices fornecidos manualmente.
-    %
-    %   Entradas:
-    %       croppedVideo - Matriz 4D com os frames do vídeo recortado
-    %       startManual - Índice do primeiro frame a ser selecionado
-    %       endManual - Índice do último frame a ser selecionado
-    %
-    %   Saídas:
-    %       timeCroppedVideo - Matriz 4D com os frames selecionados
-    %       startManual - Índice ajustado do primeiro frame selecionado
-    %       endManual - Índice ajustado do último frame selecionado
+% SELECTFRAMESMANUALLY - Recorta temporalmente o vídeo com base em índices manuais.
+% Esta função extrai um intervalo contíguo de frames do vídeo gravado a partir de
+% índices fornecidos manualmente pelo usuário, aplicando verificações de limites.
+%
+% Entradas:
+%   croppedVideo - Matriz 4D com os frames do vídeo recortado
+%   startManual  - Índice manual de frame inicial desejado
+%   endManual    - Índice manual de frame final desejado
+%
+% Saídas:
+%   timeCroppedVideo - Matriz 4D com os frames recortados no intervalo desejado
+%   startManual      - Índice ajustado de frame inicial
+%   endManual        - Índice ajustado de frame final
     
     % Verifica limites usando as dimensões do vídeo recortado
     if endManual > size(croppedVideo, 4)

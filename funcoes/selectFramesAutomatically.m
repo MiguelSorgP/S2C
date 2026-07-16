@@ -1,18 +1,19 @@
 function [timeCroppedVideo, startFrame, endFrame] = selectFramesAutomatically(croppedVideo, desiredTotalFrames, repeatedFrames)
-    % SELECTFRAMESAUTOMATICALLY Seleciona os frames mais relevantes do vídeo
-    %   [timeCroppedVideo, startFrame, endFrame] = SELECTFRAMESAUTOMATICALLY(croppedVideo, desiredTotalFrames, repeatedFrames)
-    %   analisa as diferenças entre frames consecutivos para identificar 
-    %   o intervalo mais relevante do vídeo.
-    %
-    %   Entradas:
-    %       croppedVideo - Matriz 4D com os frames do vídeo recortado
-    %       desiredTotalFrames - Número total de frames desejados na saída
-    %       repeatedFrames - Número de frames adicionais após a última variação significativa
-    %
-    %   Saídas:
-    %       timeCroppedVideo - Matriz 4D com os frames selecionados
-    %       startFrame - Índice do primeiro frame selecionado
-    %       endFrame - Índice do último frame selecionado
+% SELECTFRAMESAUTOMATICALLY - Sincronização temporal e seleção automática de frames.
+% Esta função analisa a variação temporal de pixels para detectar o início e o fim da
+% transmissão (Downlink). Em seguida, executa um algoritmo de alinhamento de fase fina
+% (Phase Alignment) baseado no período de repetição de quadros (repeatedFrames) para
+% selecionar o melhor ponto de amostragem temporal para posterior processamento.
+%
+% Entradas:
+%   croppedVideo       - Matriz 4D com os frames do vídeo recortado
+%   desiredTotalFrames - Número total de frames nominal do bloco de vídeo original
+%   repeatedFrames     - Número de vezes que cada frame é duplicado na gravação
+%
+% Saídas:
+%   timeCroppedVideo   - Matriz 4D com o bloco sincronizado temporalmente
+%   startFrame         - Índice inicial de frame selecionado
+%   endFrame           - Índice final de frame selecionado
     
     % Inicializa a matriz de diferenças entre frames consecutivos
     frameDiff = zeros(size(croppedVideo, 4) - 1, 1);
@@ -31,7 +32,7 @@ function [timeCroppedVideo, startFrame, endFrame] = selectFramesAutomatically(cr
         frameDiffNorm = zeros(size(frameDiff));
     end
     
-    % Threshold de variação significativa
+    % Limiar de variação significativa
     largeVarThreshold = 0.20; 
     candidateIndices = find(frameDiffNorm > largeVarThreshold);
     

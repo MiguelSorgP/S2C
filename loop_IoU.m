@@ -1,8 +1,17 @@
+% LOOP_IOU - Script para avaliação do desempenho de detecção de ROI em condições de ruído.
+% Este script realiza simulações Monte Carlo adicionando ruído Gaussiano AWGN
+% temporal nos pixels de vídeo capturados. Ele calcula a variância de cada pixel e,
+% em seguida, aplica a segmentação por limiarização de Otsu e morfologia matemática
+% para encontrar a ROI ruidosa. Em seguida, calcula a métrica de Interseção sobre
+% União (IoU) entre a ROI ruidosa estimada e a ROI limpa de referência carregada do
+% CSV ou selecionada manualmente, traçando uma curva de acurácia de detecção em
+% função do nível de ruído (1/Pn).
+
 clc;
 clear all;
 close all;
 
-% Setup paths relative to script location
+% Configura os caminhos relativos à localização do script
 scriptDir = fileparts(mfilename('fullpath'));
 if isempty(scriptDir)
     scriptDir = pwd;
@@ -512,10 +521,10 @@ diff_coords = cols - rows;
 [~, idx_tr] = max(diff_coords);
 [~, idx_bl] = min(diff_coords);
 
-v_tl = [cols(idx_tl), rows(idx_tl)]; % Top-Left
-v_tr = [cols(idx_tr), rows(idx_tr)]; % Top-Right
-v_br = [cols(idx_br), rows(idx_br)]; % Bottom-Right
-v_bl = [cols(idx_bl), rows(idx_bl)]; % Bottom-Left
+v_tl = [cols(idx_tl), rows(idx_tl)]; % Superior-Esquerdo (Top-Left)
+v_tr = [cols(idx_tr), rows(idx_tr)]; % Superior-Direito (Top-Right)
+v_br = [cols(idx_br), rows(idx_br)]; % Inferior-Direito (Bottom-Right)
+v_bl = [cols(idx_bl), rows(idx_bl)]; % Inferior-Esquerdo (Bottom-Left)
 
 roiPosition = [v_tl;
     v_tr;

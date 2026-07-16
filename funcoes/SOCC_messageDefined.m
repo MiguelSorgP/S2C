@@ -1,4 +1,27 @@
 function [msg,S,S0,S1] = SOCC_message(M,N,P,K,K1,modOCC,factor)
+% SOCC_MESSAGEDEFINED - Gera uma mensagem de teste estruturada com cabeçalho de metadados e modula os símbolos.
+% Esta função cria uma sequência de bits binários que contém um cabeçalho estruturado
+% (piloto) composto de:
+%   - 9 bits iguais a 1 (sincronização de metadados)
+%   - 3 bits de ID do transmissor (0 0 1)
+%   - 12 bits para a dimensão vertical da tela
+%   - 12 bits para a dimensão horizontal da tela
+% A mensagem de controle é injetada no vetor de dados temporais e modulada, 
+% inserindo adicionalmente pilotos de escala e permutação na matriz de símbolos S.
+%
+% Entradas:
+%   M, N   - Dimensões espaciais do bloco
+%   P      - Fator de sobreamostragem (pulsos por símbolo)
+%   K      - Dimensão temporal de codificação (K = K1 * P)
+%   K1     - Número de bits por pixel
+%   modOCC - Esquema de modulação utilizado (e.g. 'BPPM')
+%   factor - Fator de controle de brilho
+%
+% Saídas:
+%   msg    - Matriz de bits estruturados gerados [K1 x M*N]
+%   S      - Matriz de símbolos modulados com pilotos inseridos [K x M*N]
+%   S0     - Forma de onda de referência para o bit 1
+%   S1     - Forma de onda de referência para o bit 0
 
 % Header com 9 bits todos iguais a 1
 header = ones(1, 9);

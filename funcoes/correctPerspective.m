@@ -1,14 +1,17 @@
 function correctedVideo = correctPerspective(recordedVideo, roiPosition, numFrames)
-% CORRECTPERSPECTIVE Corrige a perspectiva de um quadrilátero e recorta a região.
+% CORRECTPERSPECTIVE - Aplica homografia projetiva 2D para corrigir distorções de perspectiva.
+% Esta função retifica geometricamente a região inclinada definida pela ROI quadrilátera
+% (os 4 cantos da tela), mapeando-a de volta para um retângulo perfeito de destino.
+% O processo é repetido quadro a quadro para todo o vídeo.
 %
-%   Entradas:
-%       recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-%       roiPosition   - Matriz 4x2 com os vértices [x, y] da ROI quadrilátero,
-%                       na ordem: [Top-Left; Top-Right; Bottom-Right; Bottom-Left].
-%       numFrames     - Número de frames a serem processados
+% Entradas:
+%   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%   roiPosition   - Matriz 4x2 com as coordenadas [x, y] dos 4 vértices
+%                   na ordem: [Top-Left; Top-Right; Bottom-Right; Bottom-Left].
+%   numFrames     - Número de frames a serem processados
 %
-%   Saídas:
-%       correctedVideo - Matriz 4D com os frames corrigidos e recortados
+% Saídas:
+%   correctedVideo - Matriz 4D com os frames corrigidos e retificados
 
 % Extrai os vértices
 v_tl = roiPosition(1, :);

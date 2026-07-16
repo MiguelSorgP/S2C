@@ -1,13 +1,10 @@
-%% Resolução do Problema PnP (Perspective-n-Point) com Dados de ROI e Calibração
-% Autor: Antigravity
-% Data: 2026-06-19
-%
-% Este script carrega os dados de detecção de ROI em pixels do arquivo 'resultados_ROI_v3.csv',
-% aplica a correção de distorção de lente baseada nos parâmetros obtidos na calibração,
-% estima a pose 3D da câmera em relação ao alvo (PnP) usando dois métodos:
-%   1) Um solver customizado de homografia planar por DLT (sem dependência de toolboxes).
-%   2) O solver nativo do MATLAB (Image/Computer Vision Toolbox), se disponível.
-% Compara os resultados com as distâncias físicas reais registradas e plota os gráficos comparativos.
+% RESOLVERPNP - Script para resolução do problema PnP (Perspective-n-Point) com dados de ROI e calibração.
+% Este script carrega os dados de detecção de ROI em pixels do arquivo resultados_ROI.csv,
+% aplica a correção de distorção de lente baseada nos parâmetros intrínsecos (matriz K e distCoeffs) 
+% obtidos na calibração e estima a pose 3D da câmera em relação à tela (PnP) usando dois métodos:
+%   1) Um solver customizado de homografia planar por Transformação Linear Direta (DLT) com decomposição SO(3).
+%   2) O solver nativo do MATLAB (estimateWorldCameraPose), se disponível.
+% Salva os resultados (erros absolutos e coordenadas estimadas) em formato CSV.
 
 clear; clc; close all;
 
@@ -87,13 +84,13 @@ numRows = height(data);
 fprintf('Total de registros encontrados: %d\n', numRows);
 
 %% 3. Inicializar Vetores para Resultados do PnP
-% Custom Solver
+% Solver Customizado (DLT)
 pnp_custom_tx = zeros(numRows, 1);
 pnp_custom_ty = zeros(numRows, 1);
 pnp_custom_tz = zeros(numRows, 1);
 pnp_custom_dist = zeros(numRows, 1);
 
-% Built-in Solver (caso disponível)
+% Solver Embutido/Nativo do MATLAB (caso disponível)
 pnp_builtin_tx = zeros(numRows, 1);
 pnp_builtin_ty = zeros(numRows, 1);
 pnp_builtin_tz = zeros(numRows, 1);

@@ -1,3 +1,12 @@
+% GERARVIDEOS - Simulador de Transmissão de Vídeos S2C (Screen-to-Camera).
+% Este script simula o lado do transmissor em um sistema de comunicações
+% ópticas por câmera (OCC) baseado em tela. Ele realiza a modulação de
+% dados (símbolos) usando BPPM com inserção de pilotos físicos para correção
+% de ambiguidades geométricas e de escala, constrói o tensor de transmissão
+% pelo produto de Khatri-Rao do vídeo original e da mensagem (modelo PARAFAC),
+% simula a degradação espacial (borramento) pelo canal óptico e grava o vídeo
+% final em formato AVI não compactado para posterior processamento na recepção.
+
 clc;
 clear all; %close all;
 addpath(fullfile(pwd, 'funcoes'));

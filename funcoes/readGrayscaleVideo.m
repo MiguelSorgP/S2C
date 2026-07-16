@@ -1,19 +1,16 @@
 function [recordedVideo, numFrames] = readGrayscaleVideo(vidObj, useGPU)
-    % READGRAYSCALEVIDEO Lê frames de um objeto de vídeo e os converte para escala de cinza
-    %   [recordedVideo, numFrames] = READGRAYSCALEVIDEO(vidObj, useGPU) lê todos os frames
-    %   do objeto de vídeo vidObj, converte-os para escala de cinza e os armazena
-    %   em uma matriz 4D com precisão single.
-    %
-    %   Entradas:
-    %       vidObj - Objeto de vídeo MATLAB (VideoReader)
-    %       useGPU - Opcional. Flag booleana (true/false) para forçar/desativar
-    %                o uso de aceleração por GPU. Se omitido, o padrão é false
-    %                (processamento em CPU otimizado).
-    %
-    %   Saídas:
-    %       recordedVideo - Matriz 4D (altura x largura x 1 x numFrames) com
-    %                       os frames em escala de cinza (precisão single).
-    %       numFrames - Número de frames lidos
+% READGRAYSCALEVIDEO - Lê os frames de um arquivo de vídeo e os converte para escala de cinza.
+% Esta função lê sequencialmente todos os frames do objeto de vídeo (VideoReader),
+% converte-os para escala de cinza 2D e pré-aloca a matriz 4D resultante com precisão
+% single para otimização de RAM/VRAM. Suporta execução com aceleração por GPU se solicitado.
+%
+% Entradas:
+%   vidObj - Objeto de vídeo MATLAB (VideoReader)
+%   useGPU - Opcional. Flag booleana para forçar processamento na GPU (padrão: false)
+%
+% Saídas:
+%   recordedVideo - Matriz 4D [altura x largura x 1 x numFrames] em precisão single
+%   numFrames     - Número de frames lidos e decodificados com sucesso
     
     if nargin < 2
         useGPU = false;
