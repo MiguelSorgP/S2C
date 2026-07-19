@@ -16,7 +16,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-videoDir = '../gravacoes_07_07';
+videoDir = '../gravacoesOBS';
 
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
@@ -26,6 +26,11 @@ numVideos = numel(videoFiles);
 % 1 = Automático (padrão)
 % 2 = Manual (interativo, inicializado com detecção automática)
 roiDetectionMode = 2;
+
+% Flag para salvar as imagens da ROI detectada (pasta imagesROI)
+% true  = Cria a pasta e salva as imagens de ROI (.jpg) para verificação visual
+% false = Desativa o salvamento das imagens de ROI
+salvarImagensROI = true;
 
 % ==========================================
 % MAPEAR PARA y_position E x_position
@@ -60,6 +65,15 @@ fprintf('Total of %d videos found in: %s\n', numVideos, videoDir);
 outputDir = fullfile(scriptDir, 'resultadosROI');
 if ~exist(outputDir, 'dir')
     mkdir(outputDir);
+end
+
+% Pasta de imagens ROI
+if salvarImagensROI
+    folderName = datestr(now, 'dd_mm_yyyy_HH_MM');
+    imagesRoiDir = fullfile(scriptDir, 'imagesROI', folderName);
+    if ~exist(imagesRoiDir, 'dir')
+        mkdir(imagesRoiDir);
+    end
 end
 
 % Determine unique CSV filename to avoid overwriting
@@ -174,6 +188,30 @@ for i = 1:numVideos
         % Diferenças de coordenadas (para medir inclinação mesmo que alturas/larguras sejam iguais)
         x_coord_diff = abs(x_tl - x_bl);
         y_coord_diff = abs(y_tl - y_tr);
+
+        % Salva um JPEG da ROI silenciosamente (sem exibir a figura na tela)
+        if salvarImagensROI
+            [~, videoBaseName, ~] = fileparts(vName);
+            roiImgPath = fullfile(imagesRoiDir, [videoBaseName '.jpg']);
+            if exist(roiImgPath, 'file')
+                delete(roiImgPath);
+            end
+            fig = figure('Visible', 'off');
+            lastFrame = recordedVideo(:, :, :, end);
+            imshow(lastFrame, []);
+            hold on;
+            if size(roiPosition, 1) == 4 && size(roiPosition, 2) == 2
+                x_coords = [roiPosition(:, 1); roiPosition(1, 1)];
+                y_coords = [roiPosition(:, 2); roiPosition(1, 2)];
+                plot(x_coords, y_coords, 'r-', 'LineWidth', 2);
+            else
+                rectangle('Position', roiPosition, 'EdgeColor', 'r', 'LineWidth', 2);
+            end
+            hold off;
+            print(fig, roiImgPath, '-djpeg');
+            close(fig);
+            fprintf('Imagem da ROI salva com sucesso em: %s\n', roiImgPath);
+        end
 
         % Anexa os resultados no arquivo CSV
         fid = fopen(csvPath, 'a');
