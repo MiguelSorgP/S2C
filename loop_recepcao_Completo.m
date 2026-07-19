@@ -27,7 +27,7 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-videoDir = '../gravacoes_07_07';
+videoDir = '../gravacoes_17_07';
 
 % 2) Arquivos .mat com os dados do vídeo original
 matFileF5 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F5.mat');
@@ -37,7 +37,7 @@ matFiles = {matFileF5, matFileF10};
 % 3) Algoritmo de recepção/decodificação:
 %    1 = OCC-KRF (Khatri-Rao Factorization, direto, rápido, não-iterativo)
 %    2 = OCC-ALS (Alternating Least Squares, iterativo, estimativa conjunta de canal e vídeo)
-rxAlgorithm = 2;
+rxAlgorithm = 1;
 
 % 4) Taxas de quadros
 fpsTx = 3;   % Taxa de quadros do vídeo exibido (transmissão)
@@ -79,7 +79,7 @@ salvarImagensROI = false;
 % 10) Flag para correção de perspectiva:
 %    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)
 %    false = Desativada (sempre usa crop normal, convertendo ROIs poligonais em retângulos envolventes)
-correcaoPerspectiva = false;
+correcaoPerspectiva = true;
 
 
 
@@ -362,7 +362,7 @@ for i = 1:numVideos
             fprintf('Coordenadas de ROI carregadas com sucesso a partir do CSV.\n');
         elseif roiFlag == 1
             fprintf('\n--- ROI AUTOMÁTICA ---\n');
-            roiPosition_orig = automaticROI_v2(recordedVideo, false);
+            roiPosition_orig = automaticROI_v3(recordedVideo, false);
         elseif roiFlag == 2
             fprintf('\n--- ROI = VÍDEO INTEIRO ---\n');
             roiPosition_orig = fullROI(recordedVideo);

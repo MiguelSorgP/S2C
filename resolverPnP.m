@@ -1,6 +1,6 @@
 % RESOLVERPNP - Script para resolução do problema PnP (Perspective-n-Point) com dados de ROI e calibração.
 % Este script carrega os dados de detecção de ROI em pixels do arquivo resultados_ROI.csv,
-% aplica a correção de distorção de lente baseada nos parâmetros intrínsecos (matriz K e distCoeffs) 
+% aplica a correção de distorção de lente baseada nos parâmetros intrínsecos (matriz K e distCoeffs)
 % obtidos na calibração e estima a pose 3D da câmera em relação à tela (PnP) usando dois métodos:
 %   1) Um solver customizado de homografia planar por Transformação Linear Direta (DLT) com decomposição SO(3).
 %   2) O solver nativo do MATLAB (estimateWorldCameraPose), se disponível.
@@ -61,7 +61,8 @@ distCoeffs = [0.14557, -0.27056, 0.00633, -0.01086, 0.17090];
 % Tela quadrada de 24,03 cm x 24,03 cm. A origem (0,0,0) está no centro da ROI.
 % As coordenadas 3D (X, Y, Z) dos 4 cantos no referencial do mundo (em metros):
 % Z = 0 porque o alvo é plano.
-lado_m = 0.2403;
+% lado_m = 0.2403;
+lado_m = 0.0921;
 meio_lado = lado_m / 2;
 
 worldPoints3D = [

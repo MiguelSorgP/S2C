@@ -16,7 +16,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-videoDir = '../gravacoesOBS';
+videoDir = '../gravacoes_17_07';
 
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
@@ -38,6 +38,9 @@ salvarImagensROI = true;
 % ==========================================
 y_map = [
     1.60, 1.596;
+    1.2, 1.200;
+    1.8, 1.800;
+    2.4, 2.400;
     1.90, 1.896;
     2.20, 2.196;
     2.50, 2.496;
@@ -47,11 +50,11 @@ y_map = [
     ];
 
 x_map = [
-    1,  0.63;
+    1,  0.60;
     2,  0.315;
     3,  0.0;
     4, -0.315;
-    5, -0.63
+    5, -0.60
     ];
 % ==========================================
 
@@ -128,7 +131,8 @@ for i = 1:numVideos
             warning('x_key %f not found in x_map for video %s', x_key, vName);
         end
 
-        z_position = -0.13185;
+        % z_position = -0.13185;
+        z_position = 0.10395;
 
         % Calcula a distância euclidiana 3D
         if ~isnan(x_position) && ~isnan(y_position)
@@ -140,7 +144,8 @@ for i = 1:numVideos
         warning('Filename %s does not match expected pattern dist-pos-f[5|10].mp4', vName);
         y_position = NaN;
         x_position = NaN;
-        z_position = -0.13185;
+        % z_position = -0.13185;
+        z_position = 0.10395;
         distance = NaN;
         frames = NaN;
     end
