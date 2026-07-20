@@ -74,8 +74,13 @@ end
 if salvarImagensROI
     folderName = datestr(now, 'dd_mm_yyyy_HH_MM');
     imagesRoiDir = fullfile(scriptDir, 'imagesROI', folderName);
-    if ~exist(imagesRoiDir, 'dir')
-        mkdir(imagesRoiDir);
+    imagesRoiNoZoomDir = fullfile(imagesRoiDir, 'noZoom');
+    imagesRoiZoomDir = fullfile(imagesRoiDir, 'zoom');
+    if ~exist(imagesRoiNoZoomDir, 'dir')
+        mkdir(imagesRoiNoZoomDir);
+    end
+    if ~exist(imagesRoiZoomDir, 'dir')
+        mkdir(imagesRoiZoomDir);
     end
 end
 
@@ -197,7 +202,7 @@ for i = 1:numVideos
         % Salva um JPEG da ROI silenciosamente (sem exibir a figura na tela)
         if salvarImagensROI
             [~, videoBaseName, ~] = fileparts(vName);
-            roiImgPath = fullfile(imagesRoiDir, [videoBaseName '.jpg']);
+            roiImgPath = fullfile(imagesRoiNoZoomDir, [videoBaseName '.jpg']);
             if exist(roiImgPath, 'file')
                 delete(roiImgPath);
             end
@@ -216,6 +221,68 @@ for i = 1:numVideos
             print(fig, roiImgPath, '-djpeg');
             close(fig);
             fprintf('Imagem da ROI salva com sucesso em: %s\n', roiImgPath);
+
+            % --- SALVAR IMAGEM COM ZOOM ---
+            roiZoomImgPath = fullfile(imagesRoiZoomDir, [videoBaseName '.jpg']);
+            if exist(roiZoomImgPath, 'file')
+                delete(roiZoomImgPath);
+            end
+
+            % Obter dimensões da imagem
+            [img_h, img_w, ~] = size(lastFrame);
+
+            % Calcular limites da ROI
+            if size(roiPosition, 1) == 4 && size(roiPosition, 2) == 2
+                x_min = min(roiPosition(:, 1));
+                x_max = max(roiPosition(:, 1));
+                y_min = min(roiPosition(:, 2));
+                y_max = max(roiPosition(:, 2));
+            else
+                x_min = roiPosition(1);
+                y_min = roiPosition(2);
+                x_max = x_min + roiPosition(3);
+                y_max = y_min + roiPosition(4);
+            end
+            roi_width = x_max - x_min;
+            roi_height = y_max - y_min;
+
+            % Adicionar margem de 10%
+            margin_x = 0.10 * roi_width;
+            margin_y = 0.10 * roi_height;
+
+            x_min_idx = max(1, floor(x_min - margin_x));
+            x_max_idx = min(img_w, ceil(x_max + margin_x));
+            y_min_idx = max(1, floor(y_min - margin_y));
+            y_max_idx = min(img_h, ceil(y_max + margin_y));
+
+            % Recortar a imagem
+            croppedFrame = lastFrame(y_min_idx:y_max_idx, x_min_idx:x_max_idx, :);
+
+            % Ajustar coordenadas para a imagem recortada
+            roiPositionCropped = roiPosition;
+            if size(roiPosition, 1) == 4 && size(roiPosition, 2) == 2
+                roiPositionCropped(:, 1) = roiPosition(:, 1) - x_min_idx + 1;
+                roiPositionCropped(:, 2) = roiPosition(:, 2) - y_min_idx + 1;
+            else
+                roiPositionCropped(1) = roiPosition(1) - x_min_idx + 1;
+                roiPositionCropped(2) = roiPosition(2) - y_min_idx + 1;
+            end
+
+            % Desenhar a ROI com linha mais fina no frame recortado
+            figZoom = figure('Visible', 'off');
+            imshow(croppedFrame, []);
+            hold on;
+            if size(roiPositionCropped, 1) == 4 && size(roiPositionCropped, 2) == 2
+                x_coords_cropped = [roiPositionCropped(:, 1); roiPositionCropped(1, 1)];
+                y_coords_cropped = [roiPositionCropped(:, 2); roiPositionCropped(1, 2)];
+                plot(x_coords_cropped, y_coords_cropped, 'r-', 'LineWidth', 0.5);
+            else
+                rectangle('Position', roiPositionCropped, 'EdgeColor', 'r', 'LineWidth', 0.5);
+            end
+            hold off;
+            print(figZoom, roiZoomImgPath, '-djpeg');
+            close(figZoom);
+            fprintf('Imagem da ROI com zoom salva com sucesso em: %s\n', roiZoomImgPath);
         end
 
         % Anexa os resultados no arquivo CSV
