@@ -16,7 +16,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-videoDir = '../gravacoes_17_07';
+videoDir = '../gravacoesOBS';
 
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));

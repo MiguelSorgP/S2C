@@ -26,7 +26,7 @@ F = 10; % Máximo número de frames para a captura. Quanto maior número de fram
 Mmax  = 8; % Dimensoes maximas da tela
 Nmax  = 8; % Dimensoes maximas da tela
 
-S = 10; P = 2; M = 2; N = 2;  % Dimensoões de cada bloco de vídeo
+S = 10; P = 2; M = 4; N = 4;  % Dimensoões de cada bloco de vídeo
 K = S*P;              % Número de pulsos por pixel (subquadros).
 
 factor = 0;

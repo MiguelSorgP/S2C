@@ -27,11 +27,11 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-videoDir = '../gravacoes_17_07';
+videoDir = '../gravacoesOBS';
 
 % 2) Arquivos .mat com os dados do vídeo original
-matFileF5 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F5.mat');
-matFileF10 = fullfile('videosUsados15_06', 'dados_video_Mmax8_Nmax8_M2_N2_F10.mat');
+matFileF5 = 'videosGerados\dados_video_Mmax8_Nmax8_M4_N4_F5.mat';
+matFileF10 = 'videosGerados\dados_video_Mmax8_Nmax8_M4_N4_F10.mat';
 matFiles = {matFileF5, matFileF10};
 
 % 3) Algoritmo de recepção/decodificação:
@@ -56,7 +56,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
@@ -79,7 +79,7 @@ salvarImagensROI = false;
 % 10) Flag para correção de perspectiva:
 %    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)
 %    false = Desativada (sempre usa crop normal, convertendo ROIs poligonais em retângulos envolventes)
-correcaoPerspectiva = true;
+correcaoPerspectiva = false;
 
 
 
