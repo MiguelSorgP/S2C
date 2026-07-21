@@ -16,7 +16,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-videoDir = '../gravacoesOBS';
+videoDir = '../gravacoes_20_07';
 
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
@@ -33,28 +33,34 @@ roiDetectionMode = 1;
 salvarImagensROI = true;
 
 % ==========================================
-% MAPEAR PARA y_position E x_position
+% MAPEAR PARA y_position, x_position E z_position
 % Deixe estes mapeamentos aqui para fácil modificação
 % ==========================================
+% Mapeamento da chave 'y' (ex: 1y -> chave 1) para a posição Y real em metros
 y_map = [
-    1.60, 1.596;
-    1.2, 1.200;
-    1.8, 1.800;
-    2.4, 2.400;
-    1.90, 1.896;
-    2.20, 2.196;
-    2.50, 2.496;
-    2.80, 2.796;
-    3.10, 3.096;
-    3.40, 3.396
+    1, 0.75;
+    2, 1.00;
+    3, 1.25;
+    4, 1.50;
+    5, 1.75;
+    6, 2.00;
+    7, 2.25;
+    8, 2.50
     ];
 
+% Mapeamento da chave 'x' (ex: 1x -> chave 1) para a posição X real em metros
 x_map = [
-    1,  0.60;
-    2,  0.315;
+    1,  0.350;
+    2,  0.175;
     3,  0.0;
-    4, -0.315;
-    5, -0.60
+    4, -0.175;
+    5, -0.350
+    ];
+
+% Mapeamento da chave 'z' (ex: 0z -> chave 0) para a posição Z real em metros
+z_map = [
+    0, -0.114;
+    1,  0.126
     ];
 % ==========================================
 
@@ -111,48 +117,56 @@ for i = 1:numVideos
     fprintf('Processing video [%d of %d]: %s\n', i, numVideos, vName);
     fprintf('===========================================================================\n');
 
-    % Extrai metadados do nome do arquivo
-    tokens = regexp(vName, '^([\d\.]+)-(\d+)-f(\d+)(?:_dark)?\.mp4$', 'tokens');
-    if ~isempty(tokens)
-        y_key = str2double(tokens{1}{1});
-        x_key = str2double(tokens{1}{2});
-        frames = str2double(tokens{1}{3});
+    % Extrai metadados do nome do arquivo usando o parser unificado
+    info = parseVideoName(vName);
 
+    y_key = info.y_key;
+    x_key = info.x_key;
+    z_key = info.z_key;
+    frames = info.frames;
+
+    y_position = NaN;
+    x_position = NaN;
+    z_position = NaN;
+    distance = NaN;
+
+    if info.is_valid
         % Busca y_position no mapa correspondente
-        y_idx = find(abs(y_map(:, 1) - y_key) < 1e-4, 1);
-        if ~isempty(y_idx)
-            y_position = y_map(y_idx, 2);
-        else
-            y_position = NaN;
-            warning('y_key %f not found in y_map for video %s', y_key, vName);
+        if ~isnan(y_key)
+            y_idx = find(abs(y_map(:, 1) - y_key) < 1e-4, 1);
+            if ~isempty(y_idx)
+                y_position = y_map(y_idx, 2);
+            else
+                warning('y_key %f nao encontrada no y_map para o video %s', y_key, vName);
+            end
         end
 
         % Busca x_position no mapa correspondente
-        x_idx = find(abs(x_map(:, 1) - x_key) < 1e-4, 1);
-        if ~isempty(x_idx)
-            x_position = x_map(x_idx, 2);
-        else
-            x_position = NaN;
-            warning('x_key %f not found in x_map for video %s', x_key, vName);
+        if ~isnan(x_key)
+            x_idx = find(abs(x_map(:, 1) - x_key) < 1e-4, 1);
+            if ~isempty(x_idx)
+                x_position = x_map(x_idx, 2);
+            else
+                warning('x_key %f nao encontrada no x_map para o video %s', x_key, vName);
+            end
         end
 
-        % z_position = -0.13185;
-        z_position = 0.10395;
+        % Busca z_position no mapa correspondente
+        if ~isnan(z_key)
+            z_idx = find(abs(z_map(:, 1) - z_key) < 1e-4, 1);
+            if ~isempty(z_idx)
+                z_position = z_map(z_idx, 2);
+            else
+                warning('z_key %f nao encontrada no z_map para o video %s', z_key, vName);
+            end
+        end
 
         % Calcula a distância euclidiana 3D
-        if ~isnan(x_position) && ~isnan(y_position)
+        if ~isnan(x_position) && ~isnan(y_position) && ~isnan(z_position)
             distance = sqrt(x_position^2 + y_position^2 + z_position^2);
-        else
-            distance = NaN;
         end
     else
-        warning('Filename %s does not match expected pattern dist-pos-f[5|10].mp4', vName);
-        y_position = NaN;
-        x_position = NaN;
-        % z_position = -0.13185;
-        z_position = 0.10395;
-        distance = NaN;
-        frames = NaN;
+        warning('Nome de arquivo %s nao segue os padroes esperados (novo/antigo). Metadados espaciais serao definidos como NaN.', vName);
     end
 
     try
@@ -166,10 +180,10 @@ for i = 1:numVideos
         % 2) Detecção da ROI
         if roiDetectionMode == 1
             fprintf('Running automatic ROI detection...\n');
-            roiPosition = automaticROI_v3(recordedVideo, false);
+            roiPosition = automaticROI_v2(recordedVideo, false);
         elseif roiDetectionMode == 2
             fprintf('Running automatic ROI detection for pre-filling...\n');
-            autoRoiPosition = automaticROI_v3(recordedVideo, false);
+            autoRoiPosition = automaticROI_v2(recordedVideo, false);
 
             fprintf('Opening manual ROI selection with 4-point precision...\n');
             roiPosition = manualQuadROI(recordedVideo, autoRoiPosition);
@@ -288,7 +302,7 @@ for i = 1:numVideos
         % Anexa os resultados no arquivo CSV
         fid = fopen(csvPath, 'a');
         if fid ~= -1
-            fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n', ...
+            fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%.0f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n', ...
                 vName, y_position, x_position, z_position, distance, frames, ...
                 x_tl, y_tl, x_tr, y_tr, x_br, y_br, x_bl, y_bl, ...
                 left_height, right_height, top_width, bottom_width, ...
@@ -306,7 +320,7 @@ for i = 1:numVideos
         % Anexa marcador de erro no CSV se o parser funcionou
         fid = fopen(csvPath, 'a');
         if fid ~= -1
-            fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%d,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN\n', ...
+            fprintf(fid, '%s,%.4f,%.4f,%.5f,%.5f,%.0f,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN\n', ...
                 vName, y_position, x_position, z_position, distance, frames);
             fclose(fid);
         end

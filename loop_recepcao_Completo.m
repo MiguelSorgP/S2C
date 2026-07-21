@@ -27,7 +27,7 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-videoDir = '../gravacoesOBS';
+videoDir = '../gravacoes_20_07';
 
 % 2) Arquivos .mat com os dados do vídeo original
 matFileF5 = 'videosGerados\dados_video_Mmax8_Nmax8_M4_N4_F5.mat';
@@ -56,7 +56,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
@@ -299,14 +299,46 @@ for i = 1:numVideos
     fprintf('===========================================================================\n');
 
     % Determina e carrega o arquivo .mat correspondente ao vídeo
-    if ~isempty(strfind(lower(vName), 'f5'))
+    info = parseVideoName(vName);
+    if info.frames == 5 || ~isempty(strfind(lower(vName), 'f5'))
         matFileLocal = matFileF5;
-    elseif ~isempty(strfind(lower(vName), 'f10'))
+        matFileLocalPath = fullfile(scriptDir, matFileLocal);
+    elseif info.frames == 10 || ~isempty(strfind(lower(vName), 'f10'))
         matFileLocal = matFileF10;
+        matFileLocalPath = fullfile(scriptDir, matFileLocal);
     else
-        error('Nome do vídeo não contém "f5" ou "f10": %s', vName);
+        fprintf('\n[AVISO] Nao foi possivel determinar a frequencia (f5/f10) para o video: %s\n', vName);
+        fprintf('Selecione o arquivo de parametros .mat correspondente:\n');
+        fprintf('1 - %s (F=5)\n', matFileF5);
+        fprintf('2 - %s (F=10)\n', matFileF10);
+        fprintf('3 - Escolher outro arquivo .mat interativamente\n');
+
+        userOpt = 0;
+        while userOpt ~= 1 && userOpt ~= 2 && userOpt ~= 3
+            userOpt = input('Digite sua opcao (1, 2 ou 3): ');
+            if isempty(userOpt)
+                userOpt = 0;
+            end
+        end
+
+        if userOpt == 1
+            matFileLocal = matFileF5;
+            matFileLocalPath = fullfile(scriptDir, matFileLocal);
+        elseif userOpt == 2
+            matFileLocal = matFileF10;
+            matFileLocalPath = fullfile(scriptDir, matFileLocal);
+        else
+            % Abre interface de selecao de arquivo
+            fprintf('Selecione o arquivo .mat de parametros...\n');
+            [selFile, selPath] = uigetfile(fullfile(scriptDir, 'videosGerados', '*.mat'), ...
+                'Selecione o arquivo de parametros .mat');
+            if isequal(selFile, 0)
+                error('Selecao de arquivo .mat cancelada. Nao e possivel processar o video %s sem parametros.', vName);
+            end
+            matFileLocal = selFile;
+            matFileLocalPath = fullfile(selPath, selFile);
+        end
     end
-    matFileLocalPath = fullfile(scriptDir, matFileLocal);
 
     fprintf('Carregando arquivo de parâmetros .mat: %s...\n', matFileLocal);
     load(matFileLocalPath, ...

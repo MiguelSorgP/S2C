@@ -44,47 +44,37 @@ if isempty(fileNames)
     return;
 end
 
-% Parse files to extract unique distances, positions, and frequencies
+% Parse files to extract unique distances, positions, heights (Z) and frequencies
 uniqueDists = {};
 uniquePos = {};
+uniqueZ = {};
 uniqueFreqs = {};
 
 for i = 1:length(fileNames)
     fName = fileNames{i};
-    % Remove extension and suffix to get parameters
-    cleaned = strrep(fName, '_resultado.mat', '');
-    cleaned = strrep(cleaned, '_fundo.mat', '');
-    cleaned = strrep(cleaned, '.mat', '');
-    cleaned = strrep(cleaned, '_dark', '');
-    cleaned = strrep(cleaned, '_DARK', '');
-    parts = strsplit(cleaned, '-');
-    if length(parts) >= 3
-        uniqueDists{end+1} = parts{1};
-        uniquePos{end+1} = parts{2};
-        uniqueFreqs{end+1} = parts{3};
-    end
+    info = parseVideoName(fName);
+    uniqueDists{end+1} = info.y_key_str;
+    uniquePos{end+1} = info.x_key_str;
+    uniqueZ{end+1} = info.z_key_str;
+    uniqueFreqs{end+1} = info.frames_str;
 end
 
 uniqueDists = unique(uniqueDists);
-% Sort distances numerically
-distNums = cellfun(@str2double, uniqueDists);
-[~, idx] = sort(distNums);
-uniqueDists = uniqueDists(idx);
+uniqueDists = sortKeysWithSuffix(uniqueDists);
 
 uniquePos = unique(uniquePos);
-% Sort positions numerically
-posNums = cellfun(@str2double, uniquePos);
-[~, idx] = sort(posNums);
-uniquePos = uniquePos(idx);
+uniquePos = sortKeysWithSuffix(uniquePos);
+
+uniqueZ = unique(uniqueZ);
+uniqueZ = sortKeysWithSuffix(uniqueZ);
 
 uniqueFreqs = unique(uniqueFreqs);
-% Sort frequencies
-[~, idx] = sort(uniqueFreqs);
-uniqueFreqs = uniqueFreqs(idx);
+uniqueFreqs = sortKeysWithSuffix(uniqueFreqs);
 
 % Arrays to store checkbox component handles
 distCheckBoxes = cell(1, length(uniqueDists));
 posCheckBoxes = cell(1, length(uniquePos));
+zCheckBoxes = cell(1, length(uniqueZ));
 freqCheckBoxes = cell(1, length(uniqueFreqs));
 
 % 3) Create Main UI Figure
@@ -142,14 +132,14 @@ pnlLeft.Layout.Row = 2;
 pnlLeft.Layout.Column = 1;
 
 % Inner grid layout for Selection Criteria panel
-glLeft = uigridlayout(pnlLeft, [5, 1]);
-glLeft.RowHeight = {'1.8x', '1.6x', '1x', 60, 45};
+glLeft = uigridlayout(pnlLeft, [6, 1]);
+glLeft.RowHeight = {'1.6x', '1.4x', '1.2x', '1x', 60, 45};
 glLeft.Padding = [10 10 10 10];
 glLeft.RowSpacing = 10;
 
-% 3.1) Distances Panel
+% 3.1) Distances Panel (Y)
 pnlDist = uipanel(glLeft, ...
-    'Title', 'Distances', ...
+    'Title', 'Distances (Y)', ...
     'FontWeight', 'bold', ...
     'BackgroundColor', [0.96 0.96 0.98]);
 numDistRows = max(1, ceil(length(uniqueDists)/2));
@@ -160,15 +150,21 @@ glDist.ColumnSpacing = 8;
 
 for d = 1:length(uniqueDists)
     distVal = uniqueDists{d};
+    if endsWith(distVal, 'y')
+        distText = distVal;
+    else
+        distText = [distVal ' m'];
+    end
     distCheckBoxes{d} = uicheckbox(glDist, ...
-        'Text', [distVal ' m'], ...
+        'Text', distText, ...
         'Value', true, ...
+        'Tag', distVal, ...
         'ValueChangedFcn', @(src, event) updateSelectedFiles());
 end
 
-% 3.2) Positions Panel
+% 3.2) Positions Panel (X)
 pnlPos = uipanel(glLeft, ...
-    'Title', 'Positions', ...
+    'Title', 'Positions (X)', ...
     'FontWeight', 'bold', ...
     'BackgroundColor', [0.96 0.96 0.98]);
 
@@ -184,18 +180,40 @@ glPos.ColumnSpacing = 8;
 
 for p = 1:length(uniquePos)
     posVal = uniquePos{p};
-    if isKey(posNames, posVal)
-        posText = posNames(posVal);
+    posValClean = regexprep(posVal, '[^\d\.]', '');
+    if isKey(posNames, posValClean)
+        posText = posNames(posValClean);
     else
         posText = ['Pos ' posVal];
     end
     posCheckBoxes{p} = uicheckbox(glPos, ...
         'Text', posText, ...
         'Value', true, ...
+        'Tag', posVal, ...
         'ValueChangedFcn', @(src, event) updateSelectedFiles());
 end
 
-% 3.3) Frequencies Panel
+% 3.3) Heights Panel (Z)
+pnlZ = uipanel(glLeft, ...
+    'Title', 'Heights (Z)', ...
+    'FontWeight', 'bold', ...
+    'BackgroundColor', [0.96 0.96 0.98]);
+numZRows = max(1, ceil(length(uniqueZ)/2));
+glZ = uigridlayout(pnlZ, [numZRows, 2]);
+glZ.Padding = [8 8 8 8];
+glZ.RowSpacing = 5;
+glZ.ColumnSpacing = 8;
+
+for z = 1:length(uniqueZ)
+    zVal = uniqueZ{z};
+    zCheckBoxes{z} = uicheckbox(glZ, ...
+        'Text', zVal, ...
+        'Value', true, ...
+        'Tag', zVal, ...
+        'ValueChangedFcn', @(src, event) updateSelectedFiles());
+end
+
+% 3.4) Frequencies Panel (F)
 pnlFreq = uipanel(glLeft, ...
     'Title', 'Frequencies (F)', ...
     'FontWeight', 'bold', ...
@@ -211,10 +229,11 @@ for f = 1:length(uniqueFreqs)
     freqCheckBoxes{f} = uicheckbox(glFreq, ...
         'Text', upper(freqVal), ...
         'Value', true, ...
+        'Tag', freqVal, ...
         'ValueChangedFcn', @(src, event) updateSelectedFiles());
 end
 
-% 3.4) Lighting Condition Panel
+% 3.5) Lighting Condition Panel
 pnlLightCond = uipanel(glLeft, ...
     'Title', 'Lighting Condition', ...
     'FontWeight', 'bold', ...
@@ -340,6 +359,9 @@ updateSelectedFiles();
         for p_idx = 1:length(posCheckBoxes)
             posCheckBoxes{p_idx}.Value = val;
         end
+        for z_idx = 1:length(zCheckBoxes)
+            zCheckBoxes{z_idx}.Value = val;
+        end
         for f_idx = 1:length(freqCheckBoxes)
             freqCheckBoxes{f_idx}.Value = val;
         end
@@ -365,6 +387,14 @@ updateSelectedFiles();
                 selectedPos{end+1} = uniquePos{p_idx}; %#ok<AGROW>
             end
         end
+
+        % Gather checked heights (Z)
+        selectedZ = {};
+        for z_idx = 1:length(zCheckBoxes)
+            if zCheckBoxes{z_idx}.Value
+                selectedZ{end+1} = uniqueZ{z_idx}; %#ok<AGROW>
+            end
+        end
         
         % Gather checked frequencies
         selectedFreqs = {};
@@ -378,30 +408,19 @@ updateSelectedFiles();
         matchedFiles = {};
         for idx_file = 1:length(fileNames)
             fName = fileNames{idx_file};
+            info = parseVideoName(fName);
             
             % Check lighting condition of the file
-            isDarkFile = contains(fName, '_dark', 'IgnoreCase', true);
-            lightingMatch = (isDarkFile && chkDark.Value) || (~isDarkFile && chkLight.Value);
+            lightingMatch = (info.is_dark && chkDark.Value) || (~info.is_dark && chkLight.Value);
             if ~lightingMatch
                 continue;
             end
             
-            cleaned = strrep(fName, '_resultado.mat', '');
-            cleaned = strrep(cleaned, '_fundo.mat', '');
-            cleaned = strrep(cleaned, '.mat', '');
-            cleaned = strrep(cleaned, '_dark', '');
-            cleaned = strrep(cleaned, '_DARK', '');
-            parts = strsplit(cleaned, '-');
-            if length(parts) >= 3
-                distVal = parts{1};
-                posVal = parts{2};
-                freqVal = parts{3};
-                
-                if any(strcmp(distVal, selectedDists)) && ...
-                        any(strcmp(posVal, selectedPos)) && ...
-                        any(strcmp(freqVal, selectedFreqs))
-                    matchedFiles{end+1} = fName; %#ok<AGROW>
-                end
+            if any(strcmp(info.y_key_str, selectedDists)) && ...
+                    any(strcmp(info.x_key_str, selectedPos)) && ...
+                    any(strcmp(info.z_key_str, selectedZ)) && ...
+                    any(strcmp(info.frames_str, selectedFreqs))
+                matchedFiles{end+1} = fName; %#ok<AGROW>
             end
         end
         
@@ -480,20 +499,17 @@ updateSelectedFiles();
                 colorIdx = mod(k-1, size(colors, 1)) + 1;
                 curveColor = colors(colorIdx, :);
                 
-                % Legend formatting
-                cleaned = strrep(fName, '_resultado.mat', '');
-                cleaned = strrep(cleaned, '_fundo.mat', '');
-                cleaned = strrep(cleaned, '.mat', '');
-                cleaned = strrep(cleaned, '_dark', '');
-                cleaned = strrep(cleaned, '_DARK', '');
-                parts = strsplit(cleaned, '-');
-                
-                if chkLegendClean.Value && length(parts) >= 3
-                    distStr = parts{1};
-                    posCode = parts{2};
-                    rateStr = upper(parts{3});
+                % Legend formatting using parseVideoName
+                info = parseVideoName(fName);
+                if chkLegendClean.Value && info.is_valid
+                    distStr = info.y_key_str;
+                    posCode = info.x_key_str;
+                    rateStr = upper(info.frames_str);
+                    zStr = info.z_key_str;
+                    suffixStr = info.suffix;
                     
-                    switch posCode
+                    posCodeNum = regexprep(posCode, '[^\d\.]', '');
+                    switch posCodeNum
                         case '1'
                             posName = 'Left';
                         case '2'
@@ -505,15 +521,23 @@ updateSelectedFiles();
                         case '5'
                             posName = 'Right';
                         otherwise
-                            posName = ['Position ' posCode];
+                            posName = ['Pos ' posCode];
                     end
-                    isDarkFile = contains(fName, '_dark', 'IgnoreCase', true);
-                    if isDarkFile
+                    
+                    if info.is_dark
                         lightStr = 'Dark';
                     else
                         lightStr = 'Light';
                     end
-                    legendLabel = sprintf('%s m - %s - %s (%s) (\\mu=%.2f, \\sigma=%.2f)', distStr, posName, rateStr, lightStr, muVal, sigmaVal);
+                    
+                    if ~isempty(suffixStr)
+                        suffixLabel = [' [' suffixStr ']'];
+                    else
+                        suffixLabel = '';
+                    end
+                    
+                    legendLabel = sprintf('%s - %s - %s - %s (%s)%s (\\mu=%.2f, \\sigma=%.2f)', ...
+                        distStr, posName, zStr, rateStr, lightStr, suffixLabel, muVal, sigmaVal);
                 else
                     legendLabel = sprintf('%s (\\mu=%.2f, \\sigma=%.2f)', strrep(fName, '_', '\_'), muVal, sigmaVal);
                 end
@@ -621,20 +645,17 @@ updateSelectedFiles();
                 
                 plotHandles(end+1) = h; %#ok<AGROW>
                 
-                % Legend formatting
-                cleaned = strrep(fName, '_resultado.mat', '');
-                cleaned = strrep(cleaned, '_fundo.mat', '');
-                cleaned = strrep(cleaned, '.mat', '');
-                cleaned = strrep(cleaned, '_dark', '');
-                cleaned = strrep(cleaned, '_DARK', '');
-                parts = strsplit(cleaned, '-');
-                
-                if chkLegendClean.Value && length(parts) >= 3
-                    distStr = parts{1};
-                    posCode = parts{2};
-                    rateStr = upper(parts{3});
+                % Legend formatting using parseVideoName
+                info = parseVideoName(fName);
+                if chkLegendClean.Value && info.is_valid
+                    distStr = info.y_key_str;
+                    posCode = info.x_key_str;
+                    rateStr = upper(info.frames_str);
+                    zStr = info.z_key_str;
+                    suffixStr = info.suffix;
                     
-                    switch posCode
+                    posCodeNum = regexprep(posCode, '[^\d\.]', '');
+                    switch posCodeNum
                         case '1'
                             posName = 'Left';
                         case '2'
@@ -646,15 +667,23 @@ updateSelectedFiles();
                         case '5'
                             posName = 'Right';
                         otherwise
-                            posName = ['Position ' posCode];
+                            posName = ['Pos ' posCode];
                     end
-                    isDarkFile = contains(fName, '_dark', 'IgnoreCase', true);
-                    if isDarkFile
+                    
+                    if info.is_dark
                         lightStr = 'Dark';
                     else
                         lightStr = 'Light';
                     end
-                    legendLabels{end+1} = sprintf('%s m - %s - %s (%s)', distStr, posName, rateStr, lightStr); %#ok<AGROW>
+                    
+                    if ~isempty(suffixStr)
+                        suffixLabel = [' [' suffixStr ']'];
+                    else
+                        suffixLabel = '';
+                    end
+                    
+                    legendLabels{end+1} = sprintf('%s - %s - %s - %s (%s)%s', ...
+                        distStr, posName, zStr, rateStr, lightStr, suffixLabel); %#ok<AGROW>
                 else
                     legendLabels{end+1} = strrep(fName, '_', '\_'); %#ok<AGROW>
                 end

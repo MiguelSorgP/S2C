@@ -61,8 +61,7 @@ distCoeffs = [0.14557, -0.27056, 0.00633, -0.01086, 0.17090];
 % Tela quadrada de 24,03 cm x 24,03 cm. A origem (0,0,0) está no centro da ROI.
 % As coordenadas 3D (X, Y, Z) dos 4 cantos no referencial do mundo (em metros):
 % Z = 0 porque o alvo é plano.
-% lado_m = 0.2403;
-lado_m = 0.0921;
+lado_m = 0.2403;
 meio_lado = lado_m / 2;
 
 worldPoints3D = [

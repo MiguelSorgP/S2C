@@ -25,6 +25,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     % Parâmetros para os filtros
     uniqueDists = {};
     uniquePos = {};
+    uniqueZ = {};
     uniqueFreqs = {};
     hasLight = false;
     hasDark = false;
@@ -32,48 +33,32 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     % Parse dos nomes dos vídeos
     for i = 1:n
         fName = names{i};
-        [~, cleaned, ~] = fileparts(fName);
+        info = parseVideoName(fName);
         
-        isDark = ~isempty(strfind(lower(cleaned), '_dark'));
-        if isDark
+        if info.is_dark
             hasDark = true;
         else
             hasLight = true;
         end
         
-        cleaned = strrep(cleaned, '_dark', '');
-        cleaned = strrep(cleaned, '_DARK', '');
-        
-        parts = strsplit(cleaned, '-');
-        if numel(parts) >= 3
-            uniqueDists{end+1} = parts{1};
-            uniquePos{end+1} = parts{2};
-            uniqueFreqs{end+1} = parts{3};
-        end
+        uniqueDists{end+1} = info.y_key_str;
+        uniquePos{end+1} = info.x_key_str;
+        uniqueZ{end+1} = info.z_key_str;
+        uniqueFreqs{end+1} = info.frames_str;
     end
     
     % Ordena e remove duplicados
     uniqueDists = unique(uniqueDists);
-    if ~isempty(uniqueDists)
-        distNums = cellfun(@str2double, uniqueDists);
-        distNums(isnan(distNums)) = Inf;
-        [~, idx] = sort(distNums);
-        uniqueDists = uniqueDists(idx);
-    end
+    uniqueDists = sortKeysWithSuffix(uniqueDists);
     
     uniquePos = unique(uniquePos);
-    if ~isempty(uniquePos)
-        posNums = cellfun(@str2double, uniquePos);
-        posNums(isnan(posNums)) = Inf;
-        [~, idx] = sort(posNums);
-        uniquePos = uniquePos(idx);
-    end
+    uniquePos = sortKeysWithSuffix(uniquePos);
+    
+    uniqueZ = unique(uniqueZ);
+    uniqueZ = sortKeysWithSuffix(uniqueZ);
     
     uniqueFreqs = unique(uniqueFreqs);
-    if ~isempty(uniqueFreqs)
-        [~, idx] = sort(uniqueFreqs);
-        uniqueFreqs = uniqueFreqs(idx);
-    end
+    uniqueFreqs = sortKeysWithSuffix(uniqueFreqs);
     
     % Mapeamento amigável para posições laterais (semelhante ao plotar_Figuras.m)
     posNames = containers.Map({'1', '2', '3', '4', '5'}, ...
@@ -82,6 +67,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     % Componentes da GUI que serão acessados nas funções internas
     distCheckBoxes = cell(1, length(uniqueDists));
     posCheckBoxes = cell(1, length(uniquePos));
+    zCheckBoxes = cell(1, length(uniqueZ));
     freqCheckBoxes = cell(1, length(uniqueFreqs));
     chkLight = [];
     chkDark = [];
@@ -125,13 +111,13 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     pnlLeft.Layout.Row = 2;
     pnlLeft.Layout.Column = 1;
     
-    glLeft = uigridlayout(pnlLeft, [5, 1]);
-    glLeft.RowHeight = {'1.8x', '1.6x', '1x', 60, 45};
+    glLeft = uigridlayout(pnlLeft, [6, 1]);
+    glLeft.RowHeight = {'1.6x', '1.4x', '1.2x', '1x', 60, 45};
     glLeft.Padding = [10 10 10 10];
     glLeft.RowSpacing = 10;
     
-    % 1) Painel de Distâncias
-    pnlDist = uipanel(glLeft, 'Title', 'Distâncias', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
+    % 1) Painel de Distâncias (Y)
+    pnlDist = uipanel(glLeft, 'Title', 'Distâncias (Y)', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
     numDistRows = max(1, ceil(length(uniqueDists)/2));
     glDist = uigridlayout(pnlDist, [numDistRows, 2]);
     glDist.Padding = [8 8 8 8];
@@ -139,14 +125,20 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     glDist.ColumnSpacing = 8;
     for d = 1:length(uniqueDists)
         distVal = uniqueDists{d};
+        if endsWith(distVal, 'y')
+            distText = distVal;
+        else
+            distText = [distVal ' m'];
+        end
         distCheckBoxes{d} = uicheckbox(glDist, ...
-            'Text', [distVal ' m'], ...
+            'Text', distText, ...
             'Value', true, ...
+            'Tag', distVal, ...
             'ValueChangedFcn', @(src, event) applyFilters());
     end
     
-    % 2) Painel de Posições
-    pnlPos = uipanel(glLeft, 'Title', 'Posições Laterais', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
+    % 2) Painel de Posições (X)
+    pnlPos = uipanel(glLeft, 'Title', 'Posições Laterais (X)', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
     numPosRows = max(1, ceil(length(uniquePos)/2));
     glPos = uigridlayout(pnlPos, [numPosRows, 2]);
     glPos.Padding = [8 8 8 8];
@@ -154,8 +146,9 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     glPos.ColumnSpacing = 8;
     for p = 1:length(uniquePos)
         posVal = uniquePos{p};
-        if isKey(posNames, posVal)
-            posText = posNames(posVal);
+        posValClean = regexprep(posVal, '[^\d\.]', '');
+        if isKey(posNames, posValClean)
+            posText = posNames(posValClean);
         else
             posText = ['Pos ' posVal];
         end
@@ -166,7 +159,23 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
             'ValueChangedFcn', @(src, event) applyFilters());
     end
     
-    % 3) Painel de Frequências
+    % 3) Painel de Alturas (Z)
+    pnlZ = uipanel(glLeft, 'Title', 'Alturas (Z)', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
+    numZRows = max(1, ceil(length(uniqueZ)/2));
+    glZ = uigridlayout(pnlZ, [numZRows, 2]);
+    glZ.Padding = [8 8 8 8];
+    glZ.RowSpacing = 5;
+    glZ.ColumnSpacing = 8;
+    for z = 1:length(uniqueZ)
+        zVal = uniqueZ{z};
+        zCheckBoxes{z} = uicheckbox(glZ, ...
+            'Text', zVal, ...
+            'Value', true, ...
+            'Tag', zVal, ...
+            'ValueChangedFcn', @(src, event) applyFilters());
+    end
+    
+    % 4) Painel de Frequências (F)
     pnlFreq = uipanel(glLeft, 'Title', 'Frequências (F)', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
     numFreqRows = max(1, ceil(length(uniqueFreqs)/2));
     glFreq = uigridlayout(pnlFreq, [numFreqRows, 2]);
@@ -182,7 +191,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
             'ValueChangedFcn', @(src, event) applyFilters());
     end
     
-    % 4) Painel de Condições de Iluminação
+    % 5) Painel de Condições de Iluminação
     pnlLightCond = uipanel(glLeft, 'Title', 'Condição de Iluminação', 'FontWeight', 'bold', 'BackgroundColor', [0.96 0.96 0.98]);
     glLightCond = uigridlayout(pnlLightCond, [1, 2]);
     glLightCond.Padding = [8 8 8 8];
@@ -202,7 +211,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
             'ValueChangedFcn', @(src, event) applyFilters());
     end
     
-    % 5) Botões de Controle Geral dos Filtros
+    % 6) Botões de Controle Geral dos Filtros
     glGlobalButtons = uigridlayout(glLeft, [1, 2]);
     glGlobalButtons.ColumnWidth = {'1x', '1x'};
     glGlobalButtons.Padding = [0 0 0 0];
@@ -293,9 +302,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
         checkedDists = {};
         for dIdx = 1:numel(distCheckBoxes)
             if distCheckBoxes{dIdx}.Value
-                txt = distCheckBoxes{dIdx}.Text;
-                val = strrep(txt, ' m', '');
-                checkedDists{end+1} = val;
+                checkedDists{end+1} = distCheckBoxes{dIdx}.Tag;
             end
         end
         
@@ -303,6 +310,13 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
         for pIdx = 1:numel(posCheckBoxes)
             if posCheckBoxes{pIdx}.Value
                 checkedPos{end+1} = posCheckBoxes{pIdx}.Tag;
+            end
+        end
+
+        checkedZ = {};
+        for zIdx = 1:numel(zCheckBoxes)
+            if zCheckBoxes{zIdx}.Value
+                checkedZ{end+1} = zCheckBoxes{zIdx}.Tag;
             end
         end
         
@@ -326,36 +340,19 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
         tData = t.Data;
         for rowIdx = 1:size(tData, 1)
             vName = tData.Nome_do_Video{rowIdx};
-            [~, cleaned, ~] = fileparts(vName);
+            info = parseVideoName(vName);
             
-            isDark = ~isempty(strfind(lower(cleaned), '_dark'));
-            cleaned = strrep(cleaned, '_dark', '');
-            cleaned = strrep(cleaned, '_DARK', '');
-            
-            parts = strsplit(cleaned, '-');
-            if numel(parts) >= 3
-                dVal = parts{1};
-                pVal = parts{2};
-                fVal = parts{3};
-                
-                matchDist = ismember(dVal, checkedDists);
-                matchPos = ismember(pVal, checkedPos);
-                matchFreq = ismember(fVal, checkedFreqs);
-                if isDark
-                    matchLight = checkedDark;
-                else
-                    matchLight = checkedLight;
-                end
-                
-                tData.Selecionar(rowIdx) = matchDist && matchPos && matchFreq && matchLight;
+            matchDist = ismember(info.y_key_str, checkedDists);
+            matchPos = ismember(info.x_key_str, checkedPos);
+            matchZ = ismember(info.z_key_str, checkedZ);
+            matchFreq = ismember(info.frames_str, checkedFreqs);
+            if info.is_dark
+                matchLight = checkedDark;
             else
-                % Se o arquivo não segue o padrão de nomenclatura, mantém a regra de luz
-                if isDark
-                    tData.Selecionar(rowIdx) = checkedDark;
-                else
-                    tData.Selecionar(rowIdx) = checkedLight;
-                end
+                matchLight = checkedLight;
             end
+            
+            tData.Selecionar(rowIdx) = matchDist && matchPos && matchZ && matchFreq && matchLight;
         end
         t.Data = tData;
         updateCount(t, lblCount);
@@ -367,6 +364,9 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
         end
         for pIdx = 1:numel(posCheckBoxes)
             posCheckBoxes{pIdx}.Value = val;
+        end
+        for zIdx = 1:numel(zCheckBoxes)
+            zCheckBoxes{zIdx}.Value = val;
         end
         for fIdx = 1:numel(freqCheckBoxes)
             freqCheckBoxes{fIdx}.Value = val;

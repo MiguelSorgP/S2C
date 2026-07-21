@@ -2144,10 +2144,10 @@
                 }
             }
 
-            // Extract unique values for filter lists
-            const yVals = [...new Set(rawData.map(row => Number(row.y_position).toFixed(3)))].map(Number).sort((a,b) => a-b);
-            const xVals = [...new Set(rawData.map(row => Number(row.x_position).toFixed(3)))].map(Number).sort((a,b) => a-b);
-            const frameVals = [...new Set(rawData.map(row => row.frames))].filter(v => v !== null && !isNaN(v)).sort((a,b) => a-b);
+            // Extract unique values for filter lists (ignoring NaN/null values from arbitrary filenames)
+            const yVals = [...new Set(rawData.map(row => row.y_position).filter(v => v !== null && v !== undefined && !isNaN(v)).map(v => Number(v).toFixed(3)))].map(Number).sort((a,b) => a-b);
+            const xVals = [...new Set(rawData.map(row => row.x_position).filter(v => v !== null && v !== undefined && !isNaN(v)).map(v => Number(v).toFixed(3)))].map(Number).sort((a,b) => a-b);
+            const frameVals = [...new Set(rawData.map(row => row.frames))].filter(v => v !== null && v !== undefined && !isNaN(v)).sort((a,b) => a-b);
 
             // Populate checkboxes in sidebar
             populateFilterGroup('y-filters', yVals, 'y', 'm');
