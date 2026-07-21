@@ -59,24 +59,28 @@ function info = parseVideoName(vName)
     info.is_dark = isDark;
     
     % 1. Tenta o novo formato: ex: 1y_4x_0z_f5_v1 ou 1y_4x_0z_f5
-    % Regex: ^([\d\.]+)y_([\d\.]+)x_([\d\.]+)z_f(\d+)(?:_(.+))?$
-    tokens_new = regexp(cleaned, '^([\d\.]+)y_([\d\.]+)x_([\d\.]+)z_f(\d+)(?:_(.+))?$', 'tokens');
+    % Regex da parte base: ^([\d\.]+)y_([\d\.]+)x_([\d\.]+)z_f(\d+)
+    [matchStart, matchEnd] = regexp(cleaned, '^([\d\.]+)y_([\d\.]+)x_([\d\.]+)z_f(\d+)', 'start', 'end');
     
-    if ~isempty(tokens_new)
+    if ~isempty(matchStart)
+        tokens_new = regexp(cleaned, '^([\d\.]+)y_([\d\.]+)x_([\d\.]+)z_f(\d+)', 'tokens');
         info.is_valid = true;
         info.format = 'new';
         info.y_key = str2double(tokens_new{1}{1});
         info.x_key = str2double(tokens_new{1}{2});
         info.z_key = str2double(tokens_new{1}{3});
         info.frames = str2double(tokens_new{1}{4});
-        if numel(tokens_new{1}) >= 5 && ~isempty(tokens_new{1}{5})
-            info.suffix = tokens_new{1}{5};
-        end
         
         info.y_key_str = [tokens_new{1}{1} 'y'];
         info.x_key_str = [tokens_new{1}{2} 'x'];
         info.z_key_str = [tokens_new{1}{3} 'z'];
         info.frames_str = ['f' tokens_new{1}{4}];
+        
+        % O que restar após o casamento base é o sufixo
+        remainder = cleaned(matchEnd+1:end);
+        % Remove underscores no início/fim
+        remainder = regexprep(remainder, '^_+|_+$', '');
+        info.suffix = remainder;
         return;
     end
     

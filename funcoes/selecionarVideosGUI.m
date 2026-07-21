@@ -246,7 +246,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
                 'ColumnEditable', [true, false], ...
                 'ColumnWidth', {80, 480}, ...
                 'ColumnName', {'Selecionar', 'Nome do Vídeo'}, ...
-                'CellEditCallback', @(src, event) updateCount(src, lblCount));
+                'CellEditCallback', @updateCount);
             
     glControls = uigridlayout(glRight, [1, 3]);
     glControls.ColumnWidth = {150, 150, '1x'};
@@ -255,11 +255,11 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     
     uibutton(glControls, ...
              'Text', 'Selecionar Todos', ...
-             'ButtonPushedFcn', @(src, event) selectAllTable(t, lblCount));
+             'ButtonPushedFcn', @selectAllTable);
          
     uibutton(glControls, ...
              'Text', 'Desmarcar Todos', ...
-             'ButtonPushedFcn', @(src, event) deselectAllTable(t, lblCount));
+             'ButtonPushedFcn', @deselectAllTable);
          
     lblCount = uilabel(glControls, ...
                        'Text', sprintf('Selecionados: %d de %d', n, n), ...
@@ -355,7 +355,7 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
             tData.Selecionar(rowIdx) = matchDist && matchPos && matchZ && matchFreq && matchLight;
         end
         t.Data = tData;
-        updateCount(t, lblCount);
+        updateCount();
     end
 
     function setAllFilters(val)
@@ -381,20 +381,35 @@ function videoFilesSelected = selecionarVideosGUI(videoFiles)
     end
 
     function updateCount(tableObj, labelObj)
+        if nargin < 1 || isempty(tableObj) || ~isa(tableObj, 'matlab.ui.control.Table')
+            tableObj = t;
+        end
+        if nargin < 2 || isempty(labelObj) || ~isa(labelObj, 'matlab.ui.control.Label')
+            labelObj = lblCount;
+        end
+        if isempty(tableObj) || ~isvalid(tableObj) || isempty(labelObj) || ~isvalid(labelObj)
+            return;
+        end
         tableData = tableObj.Data;
         numSelected = sum(tableData.Selecionar);
         total = size(tableData, 1);
         labelObj.Text = sprintf('Selecionados: %d de %d', numSelected, total);
     end
 
-    function selectAllTable(tableObj, labelObj)
-        tableObj.Data.Selecionar(:) = true;
-        updateCount(tableObj, labelObj);
+    function selectAllTable(~, ~)
+        if isempty(t) || ~isvalid(t)
+            return;
+        end
+        t.Data.Selecionar(:) = true;
+        updateCount();
     end
 
-    function deselectAllTable(tableObj, labelObj)
-        tableObj.Data.Selecionar(:) = false;
-        updateCount(tableObj, labelObj);
+    function deselectAllTable(~, ~)
+        if isempty(t) || ~isvalid(t)
+            return;
+        end
+        t.Data.Selecionar(:) = false;
+        updateCount();
     end
 
     function confirmSelection(figHandle)

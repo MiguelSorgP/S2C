@@ -56,7 +56,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
