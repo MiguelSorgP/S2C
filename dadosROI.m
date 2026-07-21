@@ -180,10 +180,10 @@ for i = 1:numVideos
         % 2) Detecção da ROI
         if roiDetectionMode == 1
             fprintf('Running automatic ROI detection...\n');
-            roiPosition = automaticROI_v2(recordedVideo, false);
+            roiPosition = automaticROI_v3(recordedVideo, false);
         elseif roiDetectionMode == 2
             fprintf('Running automatic ROI detection for pre-filling...\n');
-            autoRoiPosition = automaticROI_v2(recordedVideo, false);
+            autoRoiPosition = automaticROI_v3(recordedVideo, false);
 
             fprintf('Opening manual ROI selection with 4-point precision...\n');
             roiPosition = manualQuadROI(recordedVideo, autoRoiPosition);
