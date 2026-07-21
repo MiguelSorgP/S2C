@@ -76,6 +76,8 @@ distCheckBoxes = cell(1, length(uniqueDists));
 posCheckBoxes = cell(1, length(uniquePos));
 zCheckBoxes = cell(1, length(uniqueZ));
 freqCheckBoxes = cell(1, length(uniqueFreqs));
+curveCheckBoxes = {};
+
 
 % 3) Create Main UI Figure
 fig = uifigure('Name', 'OCC BER Curve Viewer', ...
@@ -285,16 +287,33 @@ glRight.RowHeight = {25, '1x', 40, 40, 50};
 glRight.Padding = [10 10 10 10];
 glRight.RowSpacing = 8;
 
-uilabel(glRight, ...
-    'Text', 'The following curves match your criteria and will be plotted:', ...
+% Header with label and Select/Clear All buttons for matched curves
+glCurvesHeader = uigridlayout(glRight, [1, 3]);
+glCurvesHeader.ColumnWidth = {'1x', 75, 75};
+glCurvesHeader.Padding = [0 0 0 0];
+glCurvesHeader.ColumnSpacing = 5;
+
+uilabel(glCurvesHeader, ...
+    'Text', 'The following curves match your criteria:', ...
     'FontSize', 11, ...
     'FontWeight', 'bold');
 
-% Read-only preview listbox of matched files
-lstFiles = uilistbox(glRight, ...
-    'Items', {}, ...
-    'Multiselect', 'off', ...
-    'FontSize', 11);
+uibutton(glCurvesHeader, ...
+    'Text', 'Select All', ...
+    'FontSize', 10, ...
+    'ButtonPushedFcn', @(src, event) setMatchedCurveCheckboxes(true));
+
+uibutton(glCurvesHeader, ...
+    'Text', 'Clear All', ...
+    'FontSize', 10, ...
+    'ButtonPushedFcn', @(src, event) setMatchedCurveCheckboxes(false));
+glCurvesHeader.RowHeight = {'1x'};
+
+% Scrollable panel containing checkboxes for matched curves
+pnlMatchedCurves = uipanel(glRight, ...
+    'Scrollable', 'on', ...
+    'BackgroundColor', [1 1 1], ...
+    'BorderType', 'line');
 
 % Additional options (legend formatting, grid)
 glOptions = uigridlayout(glRight, [1, 2]);
@@ -370,6 +389,15 @@ updateSelectedFiles();
         updateSelectedFiles();
     end
 
+% Toggles all matched curve checkboxes to true or false
+    function setMatchedCurveCheckboxes(val)
+        for c_idx = 1:length(curveCheckBoxes)
+            if isvalid(curveCheckBoxes{c_idx})
+                curveCheckBoxes{c_idx}.Value = val;
+            end
+        end
+    end
+
 % Dynamically updates the list of matched files based on checked options
     function updateSelectedFiles()
         % Gather checked distances
@@ -424,15 +452,52 @@ updateSelectedFiles();
             end
         end
         
-        lstFiles.Items = matchedFiles;
+        % Clear previous curve checkboxes
+        delete(pnlMatchedCurves.Children);
+        curveCheckBoxes = {};
+        
+        if isempty(matchedFiles)
+            glNoFiles = uigridlayout(pnlMatchedCurves, [1, 1]);
+            glNoFiles.Padding = [10 10 10 10];
+            glNoFiles.BackgroundColor = [1 1 1];
+            uilabel(glNoFiles, ...
+                'Text', 'No files match the selected criteria.', ...
+                'FontSize', 11, ...
+                'FontAngle', 'italic', ...
+                'FontColor', [0.5 0.5 0.5]);
+        else
+            numMatched = length(matchedFiles);
+            glMatched = uigridlayout(pnlMatchedCurves, [numMatched, 1]);
+            glMatched.ColumnWidth = {'1x'};
+            glMatched.RowHeight = repmat({24}, 1, numMatched);
+            glMatched.Padding = [8 8 8 8];
+            glMatched.RowSpacing = 2;
+            glMatched.BackgroundColor = [1 1 1];
+
+            curveCheckBoxes = cell(1, numMatched);
+            for k = 1:numMatched
+                fName = matchedFiles{k};
+                curveCheckBoxes{k} = uicheckbox(glMatched, ...
+                    'Text', fName, ...
+                    'Value', true, ...
+                    'Tag', fName, ...
+                    'FontSize', 11);
+            end
+        end
     end
 
 % Loads data and plots all matched curves or noise histograms
     function plotCurves()
-        selected = lstFiles.Items;
+        selected = {};
+        for k = 1:length(curveCheckBoxes)
+            if isvalid(curveCheckBoxes{k}) && curveCheckBoxes{k}.Value
+                selected{end+1} = curveCheckBoxes{k}.Tag; %#ok<AGROW>
+            end
+        end
+        
         if isempty(selected)
             uialert(fig, ...
-                'Please select criteria that match at least one data file.', ...
+                'Please select (check) at least one curve to plot.', ...
                 'No Selection', ...
                 'Icon', 'warning');
             return;
