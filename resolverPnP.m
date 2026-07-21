@@ -50,8 +50,8 @@ end
 % --- Parâmetros Intrínsecos da Câmera (Matriz K) ---
 % Do arquivo dadosCalibracao.md:
 % K = [871.0972, 0, 584.7885; 0, 876.3460, 369.9214; 0, 0, 1]
-K = [871.0972,        0, 584.7885;
-    0, 876.3460, 369.9214;
+K = [871.0972,        0, 640;
+    0, 876.3460, 360;
     0,        0,        1];
 
 % Coeficientes de Distorção da Lente: [k1, k2, p1, p2, k3]
