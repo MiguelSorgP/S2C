@@ -60,7 +60,7 @@ noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
-MC = 1000;           % Número de repetições Monte Carlo (pode ser diminuído para teste)
+MC = 10000;           % Número de repetições Monte Carlo (pode ser diminuído para teste)
 
 % 8) Flag para normalização e remoção de fundo (v3_norm)
 %    0 = Sem normalização / remoção de fundo
