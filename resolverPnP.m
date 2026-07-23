@@ -47,15 +47,44 @@ if ~exist(csvInputPath, 'file')
     error('Arquivo de entrada não encontrado: %s\nPor favor, execute o script no diretório correto ou verifique o caminho.', csvInputPath);
 end
 
-% --- Parâmetros Intrínsecos da Câmera (Matriz K) ---
+% --- Parâmetros Intrínsecos Padrão da Câmera (Matriz K) ---
 % Do arquivo dadosCalibracao.md:
 % K = [871.0972, 0, 584.7885; 0, 876.3460, 369.9214; 0, 0, 1]
 K = [871.0972,        0, 640;
     0, 876.3460, 360;
     0,        0,        1];
 
-% Coeficientes de Distorção da Lente: [k1, k2, p1, p2, k3]
+% Coeficientes de Distorção Padrão da Lente: [k1, k2, p1, p2, k3]
 distCoeffs = [0.14557, -0.27056, 0.00633, -0.01086, 0.17090];
+
+% --- Seleção Opcional de Matriz de Calibração Personalizada ---
+calibDir = fullfile(scriptPath, 'matrizesCalibracao');
+if ~exist(calibDir, 'dir')
+    mkdir(calibDir);
+end
+
+choiceCalib = input('Deseja escolher outra matriz de calibração? (Sim/Não) [Não]: ', 's');
+if isempty(choiceCalib)
+    choiceCalib = 'Não';
+end
+
+if strcmpi(choiceCalib, 'Sim') || strcmpi(choiceCalib, 's')
+    [calibFile, calibFilePath] = uigetfile(fullfile(calibDir, '*.m'), ...
+        'Selecione a matriz de calibração (*.m)');
+    if ~isequal(calibFile, 0) && ~isequal(calibFilePath, 0)
+        fullCalibPath = fullfile(calibFilePath, calibFile);
+        try
+            run(fullCalibPath);
+            fprintf('>> Matriz de calibração personalizada carregada com sucesso de:\n   %s\n', fullCalibPath);
+        catch ME
+            fprintf('>> Erro ao carregar arquivo de calibração (%s). Usando parâmetros padrão.\n', ME.message);
+        end
+    else
+        fprintf('>> Seleção de calibração cancelada. Usando matriz de calibração padrão.\n');
+    end
+else
+    fprintf('>> Usando matriz de calibração padrão.\n');
+end
 
 % --- Dimensões Físicas do Alvo (ROI) ---
 % Tela quadrada de 24,03 cm x 24,03 cm. A origem (0,0,0) está no centro da ROI.
