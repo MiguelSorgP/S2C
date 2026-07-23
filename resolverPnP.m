@@ -15,8 +15,14 @@ if isempty(scriptPath)
     scriptPath = pwd;
 end
 
+% Pasta dos resultados de ROI (cria se não existir)
+roiDir = fullfile(scriptPath, 'resultadosROI');
+if ~exist(roiDir, 'dir')
+    mkdir(roiDir);
+end
+
 % Abrir tela de seleção para o usuário escolher o arquivo CSV de entrada
-[fileName, filePath] = uigetfile('*.csv', 'Selecione o arquivo CSV de entrada (resultados_ROI.csv)', scriptPath);
+[fileName, filePath] = uigetfile(fullfile(roiDir, '*.csv'), 'Selecione o arquivo CSV de entrada (resultados_ROI.csv)');
 if isequal(fileName,0) || isequal(filePath,0)
     disp('Seleção de arquivo cancelada pelo usuário. Encerrando script.');
     return;
@@ -256,6 +262,10 @@ data.error_x_abs = abs(data.pnp_custom_x - data.x_position);
 data.error_y_abs = abs(data.pnp_custom_y - data.z_position);
 data.error_z_abs = abs(data.pnp_custom_z - data.y_position); % Equivalente a error_depth_abs
 
+% Erro euclidiano 3D de posicionamento
+data.error_3d_abs = sqrt(data.error_x_abs.^2 + data.error_y_abs.^2 + data.error_z_abs.^2);
+erroMedio3D = mean(data.error_3d_abs);
+
 if use_built_in
     data.pnp_builtin_x = pnp_builtin_tx;
     data.pnp_builtin_y = pnp_builtin_ty;
@@ -267,7 +277,22 @@ if use_built_in
     data.error_builtin_x_abs = abs(data.pnp_builtin_x - data.x_position);
     data.error_builtin_y_abs = abs(data.pnp_builtin_y - data.z_position);
     data.error_builtin_z_abs = abs(data.pnp_builtin_z - data.y_position);
+    data.error_builtin_3d_abs = sqrt(data.error_builtin_x_abs.^2 + data.error_builtin_y_abs.^2 + data.error_builtin_z_abs.^2);
 end
+
+% Exibir relatório de Erro Médio 3D no console antes de salvar
+fprintf('\n====================================================\n');
+fprintf('ERRO MÉDIO DE POSICIONAMENTO 3D\n');
+fprintf('====================================================\n');
+fprintf('Erro Médio 3D (Solver Customizado): %.4f m (%.2f cm)\n', erroMedio3D, erroMedio3D * 100);
+fprintf('  -> Erro Médio em X:             %.4f m (%.2f cm)\n', mean(data.error_x_abs), mean(data.error_x_abs) * 100);
+fprintf('  -> Erro Médio em Y:             %.4f m (%.2f cm)\n', mean(data.error_y_abs), mean(data.error_y_abs) * 100);
+fprintf('  -> Erro Médio em Z (profundidade): %.4f m (%.2f cm)\n', mean(data.error_z_abs), mean(data.error_z_abs) * 100);
+if use_built_in
+    erroMedio3D_builtin = mean(data.error_builtin_3d_abs);
+    fprintf('Erro Médio 3D (Solver Nativo MATLAB): %.4f m (%.2f cm)\n', erroMedio3D_builtin, erroMedio3D_builtin * 100);
+end
+fprintf('====================================================\n');
 
 
 %% 6. Salvar Tabela com Resultados
