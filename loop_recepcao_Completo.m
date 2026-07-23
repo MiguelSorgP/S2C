@@ -56,7 +56,7 @@ framesFlag = 1;
 % 7) Flag para ruído (AWGN)
 %    0 = sem ruído
 %    1 = com ruído
-noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
+noiseFlag = 0; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
@@ -394,7 +394,7 @@ for i = 1:numVideos
             fprintf('Coordenadas de ROI carregadas com sucesso a partir do CSV.\n');
         elseif roiFlag == 1
             fprintf('\n--- ROI AUTOMÁTICA ---\n');
-            roiPosition_orig = automaticROI_v3(recordedVideo, false);
+            roiPosition_orig = automaticROI_v2(recordedVideo, true);
         elseif roiFlag == 2
             fprintf('\n--- ROI = VÍDEO INTEIRO ---\n');
             roiPosition_orig = fullROI(recordedVideo);

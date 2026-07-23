@@ -7,7 +7,7 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
 %
 % Entradas:
 %   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-%   showFigure    - Flag booleano para exibir graficamente a ROI detectada (padrão: false)
+%   showFigure    - Flag booleano para exibir graficamente cada etapa do método e a ROI detectada (padrão: false)
 %
 % Saídas:
 %   roiPosition   - Matriz [4 x 2] contendo as coordenadas [x, y] dos 4 vértices
@@ -16,7 +16,6 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
     if nargin < 2
         showFigure = false;
     end
-
 
     % Obtém as dimensões do vídeo 4D
     [altura, largura, ~, numFrames] = size(recordedVideo);
@@ -27,7 +26,7 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
     
     % Processa cada frame incrementalmente
     for t = 1:numFrames
-        frameGray = recordedVideo(:,:,1,t);
+        frameGray = double(recordedVideo(:,:,1,t));
         sumPixels = sumPixels + frameGray;
         sumSqPixels = sumSqPixels + frameGray.^2;
     end
@@ -37,15 +36,24 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
     varianceImage = (sumSqPixels / numFrames) - (meanPixels).^2;
     
     % Normaliza a variância e aplica thresholding de Otsu
-    varianceNorm = varianceImage / max(varianceImage(:));
-    level = graythresh(varianceNorm);
-    threshold = level * max(varianceImage(:));
-    movingPixels = varianceImage > threshold;
-
-    % Remove pequenas áreas (ruído) com morfologia
-    movingPixels = bwareaopen(movingPixels, 50);
+    maxVar = max(varianceImage(:));
+    if maxVar == 0
+        varianceNorm = varianceImage;
+        threshold = 0;
+        level = 0;
+    else
+        varianceNorm = varianceImage / maxVar;
+        level = graythresh(varianceNorm);
+        threshold = level * maxVar;
+    end
     
-    % Encontra o maior componente conectado
+    % Etapa 2: Binarização por limiarização de Otsu
+    movingPixelsInitial = varianceImage > threshold;
+
+    % Etapa 3: Remove pequenas áreas (ruído) com morfologia
+    movingPixels = bwareaopen(movingPixelsInitial, 50);
+    
+    % Etapa 4: Encontra o maior componente conectado
     cc = bwconncomp(movingPixels);
     if cc.NumObjects == 0
         error('Nenhum componente conectado encontrado. Ajuste o limiar ou verifique os frames.');
@@ -56,7 +64,7 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
     largestComponent(cc.PixelIdxList{idx}) = true;
     
     % ====================================================================
-    % == INÍCIO DA NOVA LÓGICA (Encontrar os 4 cantos extremos) ==
+    % == ENCONTRAR OS 4 CANTOS EXTREMOS ==
     % ====================================================================
 
     % 1. Encontra as coordenadas (row, col) de todos os pixels na máscara
@@ -86,7 +94,6 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
     [~, idx_bl] = min(diff_coords);
 
     % 4. Coleta os vértices [x, y] (ou seja, [col, row])
-    
     v_tl = [cols(idx_tl), rows(idx_tl)]; % Superior-Esquerdo (Top-Left)
     v_tr = [cols(idx_tr), rows(idx_tr)]; % Superior-Direito (Top-Right)
     v_br = [cols(idx_br), rows(idx_br)]; % Inferior-Direito (Bottom-Right)
@@ -98,24 +105,64 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
                    v_tr;
                    v_br;
                    v_bl];
-                   
-    % Opcional: Se os pontos não estiverem únicos (ex: um quadrado perfeito)
-    % podemos forçar a unicidade, embora para dados reais seja improvável.
-    % Esta função é mais simples e assume que os 4 cantos são distintos.
 
-    % Exibe a figura mostrando o último quadro com a ROI detectada em vermelho
+    % Exibe a figura com a visualização de cada etapa do método
     if showFigure
-        figure('Name', 'Último Quadro - ROI Detectada', 'NumberTitle', 'off');
+        figure('Name', 'Etapas da Detecção Automática da ROI (v2)', 'NumberTitle', 'off', 'Position', [100, 100, 1200, 700]);
+        
+        % 1. Variância Temporal Normalizada
+        subplot(2, 3, 1);
+        imshow(varianceNorm, []);
+        title('1. Variância Temporal');
+        colorbar;
+        
+        % 2. Mascara Binária Inicial (Otsu)
+        subplot(2, 3, 2);
+        imshow(movingPixelsInitial);
+        title(sprintf('2. Limiar de Otsu (Nível = %.3f)', level));
+        
+        % 3. Filtragem Morfológica (Remoção de Ruído)
+        subplot(2, 3, 3);
+        imshow(movingPixels);
+        title('3. Remoção de Ruído (bwareaopen)');
+        
+        % 4. Maior Componente Conectado
+        subplot(2, 3, 4);
+        imshow(largestComponent);
+        title('4. Maior Componente Conectado');
+        
+        % 5. Detecção dos 4 Cantos Extremos
+        subplot(2, 3, 5);
+        imshow(largestComponent);
+        hold on;
+        x_coords = [roiPosition(:, 1); roiPosition(1, 1)];
+        y_coords = [roiPosition(:, 2); roiPosition(1, 2)];
+        plot(x_coords, y_coords, 'r--', 'LineWidth', 1.5);
+        
+        c_colors = {'r', 'g', 'b', 'm'};
+        c_labels = {'TL', 'TR', 'BR', 'BL'};
+        for i = 1:4
+            plot(roiPosition(i, 1), roiPosition(i, 2), 'o', 'MarkerSize', 8, ...
+                'MarkerFaceColor', c_colors{i}, 'MarkerEdgeColor', 'w');
+            text(roiPosition(i, 1) + 5, roiPosition(i, 2) + 5, c_labels{i}, ...
+                'Color', 'yellow', 'FontSize', 10, 'FontWeight', 'bold');
+        end
+        title('5. Cantos Extremos na Máscara');
+        hold off;
+        
+        % 6. Resultado Final no Último Quadro
+        subplot(2, 3, 6);
         lastFrame = recordedVideo(:, :, :, numFrames);
         imshow(lastFrame, []);
         hold on;
-        % Desenha o quadrilátero da ROI em vermelho
-        % roiPosition é uma matriz 4x2: [TL; TR; BR; BL]
-        % Para fechar o quadrilátero, repetimos o primeiro ponto no final
-        x_coords = [roiPosition(:, 1); roiPosition(1, 1)];
-        y_coords = [roiPosition(:, 2); roiPosition(1, 2)];
         plot(x_coords, y_coords, 'r-', 'LineWidth', 2);
-        title('Último Quadro com a ROI Detectada (em vermelho)');
+        plot(roiPosition(:, 1), roiPosition(:, 2), 'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r');
+        for i = 1:4
+            text(roiPosition(i, 1) + 5, roiPosition(i, 2) + 5, c_labels{i}, ...
+                'Color', 'cyan', 'FontSize', 10, 'FontWeight', 'bold');
+        end
+        title('6. ROI Final no Quadro');
         hold off;
     end
 end
+
