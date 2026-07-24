@@ -1,0 +1,688 @@
+
+########################################################################
+PROCESSANDO VÍDEO COM OTIMIZAÇÃO 3D PNP: 20260720_201450.mp4
+########################################################################
+Caminho do vídeo: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\videos\20260720_201450.mp4
+Pasta de saída: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt
+Dataset ROI ground-truth: c:\Users\migue\Documents\AmbienteMestrado\S2C\resultadosROI/resultados_ROI_otsu05_2007.csv (62 registros)
+Video: 1280x720, ~1970 frames
+Frames amostrados: 394 | views validas acumuladas: 117
+
+--- RESULTADO BASELINE (Amostragem Padrao 40 views) ---
+RMS Reproj: 0.2887 px
+K Baseline: fx=881.07, fy=886.53, cx=611.44, cy=366.04
+Erro Medio 3D PnP: 0.0810 m (8.10 cm) [X: 6.80 cm, Y: 0.97 cm, Z: 3.14 cm]
+
+========================================================================
+INICIANDO BUSCA DO SUBCONJUNTO OTIMIZADO DE FRAMES...
+Teto de iteracoes: 3000 | faixa de views: [10, 40]
+========================================================================
+
+[Passo 1/2] Iniciando Busca Gulosa de Remocao (Backward Elimination) a partir de 117 views...
+  -> [GULOSO INICIAL] Todas as 117 views: Erro 3D = 0.0759 m (7.59 cm) | RMS = 0.2818 px
+  -> [GULOSO Rodada 1] Avaliando remocao de 1 view dentre 117 views...
+      ...avaliados 23/117 candidatos | Melhor Erro 3D ate agora: 7.56 cm
+      ...avaliados 46/117 candidatos | Melhor Erro 3D ate agora: 7.56 cm
+      ...avaliados 69/117 candidatos | Melhor Erro 3D ate agora: 7.56 cm
+      ...avaliados 92/117 candidatos | Melhor Erro 3D ate agora: 7.49 cm
+      ...avaliados 115/117 candidatos | Melhor Erro 3D ate agora: 7.11 cm
+      ...avaliados 117/117 candidatos | Melhor Erro 3D ate agora: 7.11 cm
+  -> [GULOSO Rodada 1 CONCLUIDA] Removida view. Views restantes: 116 | Erro 3D: 0.0711 m (7.11 cm) | RMS: 0.2803 px
+  -> [GULOSO Rodada 2] Avaliando remocao de 1 view dentre 116 views...
+      ...avaliados 23/116 candidatos | Melhor Erro 3D ate agora: 7.08 cm
+      ...avaliados 46/116 candidatos | Melhor Erro 3D ate agora: 7.08 cm
+      ...avaliados 69/116 candidatos | Melhor Erro 3D ate agora: 7.08 cm
+      ...avaliados 92/116 candidatos | Melhor Erro 3D ate agora: 7.04 cm
+      ...avaliados 115/116 candidatos | Melhor Erro 3D ate agora: 6.79 cm
+      ...avaliados 116/116 candidatos | Melhor Erro 3D ate agora: 6.79 cm
+  -> [GULOSO Rodada 2 CONCLUIDA] Removida view. Views restantes: 115 | Erro 3D: 0.0679 m (6.79 cm) | RMS: 0.2791 px
+  -> [GULOSO Rodada 3] Avaliando remocao de 1 view dentre 115 views...
+      ...avaliados 23/115 candidatos | Melhor Erro 3D ate agora: 6.76 cm
+      ...avaliados 46/115 candidatos | Melhor Erro 3D ate agora: 6.76 cm
+      ...avaliados 69/115 candidatos | Melhor Erro 3D ate agora: 6.76 cm
+      ...avaliados 92/115 candidatos | Melhor Erro 3D ate agora: 6.74 cm
+      ...avaliados 115/115 candidatos | Melhor Erro 3D ate agora: 6.47 cm
+  -> [GULOSO Rodada 3 CONCLUIDA] Removida view. Views restantes: 114 | Erro 3D: 0.0647 m (6.47 cm) | RMS: 0.2778 px
+  -> [GULOSO Rodada 4] Avaliando remocao de 1 view dentre 114 views...
+      ...avaliados 22/114 candidatos | Melhor Erro 3D ate agora: 6.43 cm
+      ...avaliados 44/114 candidatos | Melhor Erro 3D ate agora: 6.43 cm
+      ...avaliados 66/114 candidatos | Melhor Erro 3D ate agora: 6.43 cm
+      ...avaliados 88/114 candidatos | Melhor Erro 3D ate agora: 6.43 cm
+      ...avaliados 110/114 candidatos | Melhor Erro 3D ate agora: 6.21 cm
+      ...avaliados 114/114 candidatos | Melhor Erro 3D ate agora: 6.21 cm
+  -> [GULOSO Rodada 4 CONCLUIDA] Removida view. Views restantes: 113 | Erro 3D: 0.0621 m (6.21 cm) | RMS: 0.2766 px
+  -> [GULOSO Rodada 5] Avaliando remocao de 1 view dentre 113 views...
+      ...avaliados 22/113 candidatos | Melhor Erro 3D ate agora: 6.17 cm
+      ...avaliados 44/113 candidatos | Melhor Erro 3D ate agora: 6.17 cm
+      ...avaliados 66/113 candidatos | Melhor Erro 3D ate agora: 6.17 cm
+      ...avaliados 88/113 candidatos | Melhor Erro 3D ate agora: 6.17 cm
+      ...avaliados 110/113 candidatos | Melhor Erro 3D ate agora: 6.02 cm
+      ...avaliados 113/113 candidatos | Melhor Erro 3D ate agora: 6.02 cm
+  -> [GULOSO Rodada 5 CONCLUIDA] Removida view. Views restantes: 112 | Erro 3D: 0.0602 m (6.02 cm) | RMS: 0.2761 px
+  -> [GULOSO Rodada 6] Avaliando remocao de 1 view dentre 112 views...
+      ...avaliados 22/112 candidatos | Melhor Erro 3D ate agora: 5.97 cm
+      ...avaliados 44/112 candidatos | Melhor Erro 3D ate agora: 5.97 cm
+      ...avaliados 66/112 candidatos | Melhor Erro 3D ate agora: 5.97 cm
+      ...avaliados 88/112 candidatos | Melhor Erro 3D ate agora: 5.97 cm
+      ...avaliados 110/112 candidatos | Melhor Erro 3D ate agora: 5.82 cm
+      ...avaliados 112/112 candidatos | Melhor Erro 3D ate agora: 5.82 cm
+  -> [GULOSO Rodada 6 CONCLUIDA] Removida view. Views restantes: 111 | Erro 3D: 0.0582 m (5.82 cm) | RMS: 0.2750 px
+  -> [GULOSO Rodada 7] Avaliando remocao de 1 view dentre 111 views...
+      ...avaliados 22/111 candidatos | Melhor Erro 3D ate agora: 5.78 cm
+      ...avaliados 44/111 candidatos | Melhor Erro 3D ate agora: 5.78 cm
+      ...avaliados 66/111 candidatos | Melhor Erro 3D ate agora: 5.78 cm
+      ...avaliados 88/111 candidatos | Melhor Erro 3D ate agora: 5.77 cm
+      ...avaliados 110/111 candidatos | Melhor Erro 3D ate agora: 5.64 cm
+      ...avaliados 111/111 candidatos | Melhor Erro 3D ate agora: 5.64 cm
+  -> [GULOSO Rodada 7 CONCLUIDA] Removida view. Views restantes: 110 | Erro 3D: 0.0564 m (5.64 cm) | RMS: 0.2741 px
+  -> [GULOSO Rodada 8] Avaliando remocao de 1 view dentre 110 views...
+      ...avaliados 22/110 candidatos | Melhor Erro 3D ate agora: 5.60 cm
+      ...avaliados 44/110 candidatos | Melhor Erro 3D ate agora: 5.60 cm
+      ...avaliados 66/110 candidatos | Melhor Erro 3D ate agora: 5.60 cm
+      ...avaliados 88/110 candidatos | Melhor Erro 3D ate agora: 5.58 cm
+      ...avaliados 110/110 candidatos | Melhor Erro 3D ate agora: 5.50 cm
+  -> [GULOSO Rodada 8 CONCLUIDA] Removida view. Views restantes: 109 | Erro 3D: 0.0550 m (5.50 cm) | RMS: 0.2740 px
+  -> [GULOSO Rodada 9] Avaliando remocao de 1 view dentre 109 views...
+      ...avaliados 21/109 candidatos | Melhor Erro 3D ate agora: 5.45 cm
+      ...avaliados 42/109 candidatos | Melhor Erro 3D ate agora: 5.45 cm
+      ...avaliados 63/109 candidatos | Melhor Erro 3D ate agora: 5.45 cm
+      ...avaliados 84/109 candidatos | Melhor Erro 3D ate agora: 5.45 cm
+      ...avaliados 105/109 candidatos | Melhor Erro 3D ate agora: 5.39 cm
+      ...avaliados 109/109 candidatos | Melhor Erro 3D ate agora: 5.39 cm
+  -> [GULOSO Rodada 9 CONCLUIDA] Removida view. Views restantes: 108 | Erro 3D: 0.0539 m (5.39 cm) | RMS: 0.2733 px
+  -> [GULOSO Rodada 10] Avaliando remocao de 1 view dentre 108 views...
+      ...avaliados 21/108 candidatos | Melhor Erro 3D ate agora: 5.35 cm
+      ...avaliados 42/108 candidatos | Melhor Erro 3D ate agora: 5.35 cm
+      ...avaliados 63/108 candidatos | Melhor Erro 3D ate agora: 5.35 cm
+      ...avaliados 84/108 candidatos | Melhor Erro 3D ate agora: 5.34 cm
+      ...avaliados 105/108 candidatos | Melhor Erro 3D ate agora: 5.31 cm
+      ...avaliados 108/108 candidatos | Melhor Erro 3D ate agora: 5.31 cm
+  -> [GULOSO Rodada 10 CONCLUIDA] Removida view. Views restantes: 107 | Erro 3D: 0.0530 m (5.30 cm) | RMS: 0.2739 px
+  -> [GULOSO Rodada 11] Avaliando remocao de 1 view dentre 107 views...
+      ...avaliados 21/107 candidatos | Melhor Erro 3D ate agora: 5.26 cm
+      ...avaliados 42/107 candidatos | Melhor Erro 3D ate agora: 5.26 cm
+      ...avaliados 63/107 candidatos | Melhor Erro 3D ate agora: 5.26 cm
+      ...avaliados 84/107 candidatos | Melhor Erro 3D ate agora: 5.24 cm
+      ...avaliados 105/107 candidatos | Melhor Erro 3D ate agora: 5.22 cm
+      ...avaliados 107/107 candidatos | Melhor Erro 3D ate agora: 5.22 cm
+  -> [GULOSO Rodada 11 CONCLUIDA] Removida view. Views restantes: 106 | Erro 3D: 0.0522 m (5.22 cm) | RMS: 0.2745 px
+  -> [GULOSO Rodada 12] Avaliando remocao de 1 view dentre 106 views...
+      ...avaliados 21/106 candidatos | Melhor Erro 3D ate agora: 5.18 cm
+      ...avaliados 42/106 candidatos | Melhor Erro 3D ate agora: 5.17 cm
+      ...avaliados 63/106 candidatos | Melhor Erro 3D ate agora: 5.17 cm
+      ...avaliados 84/106 candidatos | Melhor Erro 3D ate agora: 5.15 cm
+      ...avaliados 105/106 candidatos | Melhor Erro 3D ate agora: 5.15 cm
+      ...avaliados 106/106 candidatos | Melhor Erro 3D ate agora: 5.15 cm
+  -> [GULOSO Rodada 12 CONCLUIDA] Removida view. Views restantes: 105 | Erro 3D: 0.0514 m (5.14 cm) | RMS: 0.2743 px
+  -> [GULOSO Rodada 13] Avaliando remocao de 1 view dentre 105 views...
+      ...avaliados 21/105 candidatos | Melhor Erro 3D ate agora: 5.10 cm
+      ...avaliados 42/105 candidatos | Melhor Erro 3D ate agora: 5.10 cm
+      ...avaliados 63/105 candidatos | Melhor Erro 3D ate agora: 5.10 cm
+      ...avaliados 84/105 candidatos | Melhor Erro 3D ate agora: 5.05 cm
+      ...avaliados 105/105 candidatos | Melhor Erro 3D ate agora: 5.05 cm
+  -> [GULOSO Rodada 13 CONCLUIDA] Removida view. Views restantes: 104 | Erro 3D: 0.0505 m (5.05 cm) | RMS: 0.2744 px
+  -> [GULOSO Rodada 14] Avaliando remocao de 1 view dentre 104 views...
+      ...avaliados 20/104 candidatos | Melhor Erro 3D ate agora: 5.01 cm
+      ...avaliados 40/104 candidatos | Melhor Erro 3D ate agora: 5.00 cm
+      ...avaliados 60/104 candidatos | Melhor Erro 3D ate agora: 5.00 cm
+      ...avaliados 80/104 candidatos | Melhor Erro 3D ate agora: 4.98 cm
+      ...avaliados 100/104 candidatos | Melhor Erro 3D ate agora: 4.98 cm
+      ...avaliados 104/104 candidatos | Melhor Erro 3D ate agora: 4.98 cm
+  -> [GULOSO Rodada 14 CONCLUIDA] Removida view. Views restantes: 103 | Erro 3D: 0.0498 m (4.98 cm) | RMS: 0.2745 px
+  -> [GULOSO Rodada 15] Avaliando remocao de 1 view dentre 103 views...
+      ...avaliados 20/103 candidatos | Melhor Erro 3D ate agora: 4.93 cm
+      ...avaliados 40/103 candidatos | Melhor Erro 3D ate agora: 4.93 cm
+      ...avaliados 60/103 candidatos | Melhor Erro 3D ate agora: 4.93 cm
+      ...avaliados 80/103 candidatos | Melhor Erro 3D ate agora: 4.91 cm
+      ...avaliados 100/103 candidatos | Melhor Erro 3D ate agora: 4.91 cm
+      ...avaliados 103/103 candidatos | Melhor Erro 3D ate agora: 4.91 cm
+  -> [GULOSO Rodada 15 CONCLUIDA] Removida view. Views restantes: 102 | Erro 3D: 0.0491 m (4.91 cm) | RMS: 0.2747 px
+  -> [GULOSO Rodada 16] Avaliando remocao de 1 view dentre 102 views...
+      ...avaliados 20/102 candidatos | Melhor Erro 3D ate agora: 4.86 cm
+      ...avaliados 40/102 candidatos | Melhor Erro 3D ate agora: 4.85 cm
+      ...avaliados 60/102 candidatos | Melhor Erro 3D ate agora: 4.85 cm
+      ...avaliados 80/102 candidatos | Melhor Erro 3D ate agora: 4.85 cm
+      ...avaliados 100/102 candidatos | Melhor Erro 3D ate agora: 4.85 cm
+      ...avaliados 102/102 candidatos | Melhor Erro 3D ate agora: 4.85 cm
+  -> [GULOSO Rodada 16 CONCLUIDA] Removida view. Views restantes: 101 | Erro 3D: 0.0485 m (4.85 cm) | RMS: 0.2742 px
+  -> [GULOSO Rodada 17] Avaliando remocao de 1 view dentre 101 views...
+      ...avaliados 20/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+      ...avaliados 40/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+      ...avaliados 60/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+      ...avaliados 80/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+      ...avaliados 100/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+      ...avaliados 101/101 candidatos | Melhor Erro 3D ate agora: 4.80 cm
+  -> [GULOSO Rodada 17 CONCLUIDA] Removida view. Views restantes: 100 | Erro 3D: 0.0480 m (4.80 cm) | RMS: 0.2723 px
+  -> [GULOSO Rodada 18] Avaliando remocao de 1 view dentre 100 views...
+      ...avaliados 20/100 candidatos | Melhor Erro 3D ate agora: 4.75 cm
+      ...avaliados 40/100 candidatos | Melhor Erro 3D ate agora: 4.75 cm
+      ...avaliados 60/100 candidatos | Melhor Erro 3D ate agora: 4.75 cm
+      ...avaliados 80/100 candidatos | Melhor Erro 3D ate agora: 4.75 cm
+      ...avaliados 100/100 candidatos | Melhor Erro 3D ate agora: 4.75 cm
+  -> [GULOSO Rodada 18 CONCLUIDA] Removida view. Views restantes: 99 | Erro 3D: 0.0475 m (4.75 cm) | RMS: 0.2710 px
+  -> [GULOSO Rodada 19] Avaliando remocao de 1 view dentre 99 views...
+      ...avaliados 19/99 candidatos | Melhor Erro 3D ate agora: 4.73 cm
+      ...avaliados 38/99 candidatos | Melhor Erro 3D ate agora: 4.72 cm
+      ...avaliados 57/99 candidatos | Melhor Erro 3D ate agora: 4.72 cm
+      ...avaliados 76/99 candidatos | Melhor Erro 3D ate agora: 4.71 cm
+      ...avaliados 95/99 candidatos | Melhor Erro 3D ate agora: 4.70 cm
+      ...avaliados 99/99 candidatos | Melhor Erro 3D ate agora: 4.70 cm
+  -> [GULOSO Rodada 19 CONCLUIDA] Removida view. Views restantes: 98 | Erro 3D: 0.0470 m (4.70 cm) | RMS: 0.2691 px
+  -> [GULOSO Rodada 20] Avaliando remocao de 1 view dentre 98 views...
+      ...avaliados 19/98 candidatos | Melhor Erro 3D ate agora: 4.67 cm
+      ...avaliados 38/98 candidatos | Melhor Erro 3D ate agora: 4.67 cm
+      ...avaliados 57/98 candidatos | Melhor Erro 3D ate agora: 4.67 cm
+      ...avaliados 76/98 candidatos | Melhor Erro 3D ate agora: 4.67 cm
+      ...avaliados 95/98 candidatos | Melhor Erro 3D ate agora: 4.66 cm
+      ...avaliados 98/98 candidatos | Melhor Erro 3D ate agora: 4.65 cm
+  -> [GULOSO Rodada 20 CONCLUIDA] Removida view. Views restantes: 97 | Erro 3D: 0.0465 m (4.65 cm) | RMS: 0.2695 px
+  -> [GULOSO Rodada 21] Avaliando remocao de 1 view dentre 97 views...
+      ...avaliados 19/97 candidatos | Melhor Erro 3D ate agora: 4.62 cm
+      ...avaliados 38/97 candidatos | Melhor Erro 3D ate agora: 4.62 cm
+      ...avaliados 57/97 candidatos | Melhor Erro 3D ate agora: 4.62 cm
+      ...avaliados 76/97 candidatos | Melhor Erro 3D ate agora: 4.61 cm
+      ...avaliados 95/97 candidatos | Melhor Erro 3D ate agora: 4.61 cm
+      ...avaliados 97/97 candidatos | Melhor Erro 3D ate agora: 4.61 cm
+  -> [GULOSO Rodada 21 CONCLUIDA] Removida view. Views restantes: 96 | Erro 3D: 0.0461 m (4.61 cm) | RMS: 0.2704 px
+  -> [GULOSO Rodada 22] Avaliando remocao de 1 view dentre 96 views...
+      ...avaliados 19/96 candidatos | Melhor Erro 3D ate agora: 4.58 cm
+      ...avaliados 38/96 candidatos | Melhor Erro 3D ate agora: 4.57 cm
+      ...avaliados 57/96 candidatos | Melhor Erro 3D ate agora: 4.57 cm
+      ...avaliados 76/96 candidatos | Melhor Erro 3D ate agora: 4.56 cm
+      ...avaliados 95/96 candidatos | Melhor Erro 3D ate agora: 4.56 cm
+      ...avaliados 96/96 candidatos | Melhor Erro 3D ate agora: 4.56 cm
+  -> [GULOSO Rodada 22 CONCLUIDA] Removida view. Views restantes: 95 | Erro 3D: 0.0456 m (4.56 cm) | RMS: 0.2704 px
+  -> [GULOSO Rodada 23] Avaliando remocao de 1 view dentre 95 views...
+      ...avaliados 19/95 candidatos | Melhor Erro 3D ate agora: 4.51 cm
+      ...avaliados 38/95 candidatos | Melhor Erro 3D ate agora: 4.51 cm
+      ...avaliados 57/95 candidatos | Melhor Erro 3D ate agora: 4.51 cm
+      ...avaliados 76/95 candidatos | Melhor Erro 3D ate agora: 4.51 cm
+      ...avaliados 95/95 candidatos | Melhor Erro 3D ate agora: 4.51 cm
+  -> [GULOSO Rodada 23 CONCLUIDA] Removida view. Views restantes: 94 | Erro 3D: 0.0451 m (4.51 cm) | RMS: 0.2682 px
+  -> [GULOSO Rodada 24] Avaliando remocao de 1 view dentre 94 views...
+      ...avaliados 18/94 candidatos | Melhor Erro 3D ate agora: 4.48 cm
+      ...avaliados 36/94 candidatos | Melhor Erro 3D ate agora: 4.48 cm
+      ...avaliados 54/94 candidatos | Melhor Erro 3D ate agora: 4.48 cm
+      ...avaliados 72/94 candidatos | Melhor Erro 3D ate agora: 4.48 cm
+      ...avaliados 90/94 candidatos | Melhor Erro 3D ate agora: 4.47 cm
+      ...avaliados 94/94 candidatos | Melhor Erro 3D ate agora: 4.47 cm
+  -> [GULOSO Rodada 24 CONCLUIDA] Removida view. Views restantes: 93 | Erro 3D: 0.0447 m (4.47 cm) | RMS: 0.2692 px
+  -> [GULOSO Rodada 25] Avaliando remocao de 1 view dentre 93 views...
+      ...avaliados 18/93 candidatos | Melhor Erro 3D ate agora: 4.44 cm
+      ...avaliados 36/93 candidatos | Melhor Erro 3D ate agora: 4.44 cm
+      ...avaliados 54/93 candidatos | Melhor Erro 3D ate agora: 4.44 cm
+      ...avaliados 72/93 candidatos | Melhor Erro 3D ate agora: 4.44 cm
+      ...avaliados 90/93 candidatos | Melhor Erro 3D ate agora: 4.43 cm
+      ...avaliados 93/93 candidatos | Melhor Erro 3D ate agora: 4.43 cm
+  -> [GULOSO Rodada 25 CONCLUIDA] Removida view. Views restantes: 92 | Erro 3D: 0.0443 m (4.43 cm) | RMS: 0.2700 px
+  -> [GULOSO Rodada 26] Avaliando remocao de 1 view dentre 92 views...
+      ...avaliados 18/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+      ...avaliados 36/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+      ...avaliados 54/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+      ...avaliados 72/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+      ...avaliados 90/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+      ...avaliados 92/92 candidatos | Melhor Erro 3D ate agora: 4.39 cm
+  -> [GULOSO Rodada 26 CONCLUIDA] Removida view. Views restantes: 91 | Erro 3D: 0.0439 m (4.39 cm) | RMS: 0.2710 px
+  -> [GULOSO Rodada 27] Avaliando remocao de 1 view dentre 91 views...
+      ...avaliados 18/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+      ...avaliados 36/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+      ...avaliados 54/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+      ...avaliados 72/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+      ...avaliados 90/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+      ...avaliados 91/91 candidatos | Melhor Erro 3D ate agora: 4.35 cm
+  -> [GULOSO Rodada 27 CONCLUIDA] Removida view. Views restantes: 90 | Erro 3D: 0.0435 m (4.35 cm) | RMS: 0.2696 px
+  -> [GULOSO Rodada 28] Avaliando remocao de 1 view dentre 90 views...
+      ...avaliados 18/90 candidatos | Melhor Erro 3D ate agora: 4.32 cm
+      ...avaliados 36/90 candidatos | Melhor Erro 3D ate agora: 4.32 cm
+      ...avaliados 54/90 candidatos | Melhor Erro 3D ate agora: 4.32 cm
+      ...avaliados 72/90 candidatos | Melhor Erro 3D ate agora: 4.32 cm
+      ...avaliados 90/90 candidatos | Melhor Erro 3D ate agora: 4.32 cm
+  -> [GULOSO Rodada 28 CONCLUIDA] Removida view. Views restantes: 89 | Erro 3D: 0.0432 m (4.32 cm) | RMS: 0.2708 px
+  -> [GULOSO Rodada 29] Avaliando remocao de 1 view dentre 89 views...
+      ...avaliados 17/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+      ...avaliados 34/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+      ...avaliados 51/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+      ...avaliados 68/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+      ...avaliados 85/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+      ...avaliados 89/89 candidatos | Melhor Erro 3D ate agora: 4.28 cm
+  -> [GULOSO Rodada 29 CONCLUIDA] Removida view. Views restantes: 88 | Erro 3D: 0.0428 m (4.28 cm) | RMS: 0.2685 px
+  -> [GULOSO Rodada 30] Avaliando remocao de 1 view dentre 88 views...
+      ...avaliados 17/88 candidatos | Melhor Erro 3D ate agora: 4.26 cm
+      ...avaliados 34/88 candidatos | Melhor Erro 3D ate agora: 4.25 cm
+      ...avaliados 51/88 candidatos | Melhor Erro 3D ate agora: 4.25 cm
+      ...avaliados 68/88 candidatos | Melhor Erro 3D ate agora: 4.25 cm
+      ...avaliados 85/88 candidatos | Melhor Erro 3D ate agora: 4.25 cm
+      ...avaliados 88/88 candidatos | Melhor Erro 3D ate agora: 4.25 cm
+  -> [GULOSO Rodada 30 CONCLUIDA] Removida view. Views restantes: 87 | Erro 3D: 0.0425 m (4.25 cm) | RMS: 0.2682 px
+  -> [GULOSO Rodada 31] Avaliando remocao de 1 view dentre 87 views...
+      ...avaliados 17/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+      ...avaliados 34/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+      ...avaliados 51/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+      ...avaliados 68/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+      ...avaliados 85/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+      ...avaliados 87/87 candidatos | Melhor Erro 3D ate agora: 4.23 cm
+  -> [GULOSO Rodada 31 CONCLUIDA] Removida view. Views restantes: 86 | Erro 3D: 0.0423 m (4.23 cm) | RMS: 0.2665 px
+  -> [GULOSO Rodada 32] Avaliando remocao de 1 view dentre 86 views...
+      ...avaliados 17/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+      ...avaliados 34/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+      ...avaliados 51/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+      ...avaliados 68/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+      ...avaliados 85/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+      ...avaliados 86/86 candidatos | Melhor Erro 3D ate agora: 4.20 cm
+  -> [GULOSO Rodada 32 CONCLUIDA] Removida view. Views restantes: 85 | Erro 3D: 0.0420 m (4.20 cm) | RMS: 0.2675 px
+  -> [GULOSO Rodada 33] Avaliando remocao de 1 view dentre 85 views...
+      ...avaliados 17/85 candidatos | Melhor Erro 3D ate agora: 4.18 cm
+      ...avaliados 34/85 candidatos | Melhor Erro 3D ate agora: 4.17 cm
+      ...avaliados 51/85 candidatos | Melhor Erro 3D ate agora: 4.17 cm
+      ...avaliados 68/85 candidatos | Melhor Erro 3D ate agora: 4.16 cm
+      ...avaliados 85/85 candidatos | Melhor Erro 3D ate agora: 4.16 cm
+  -> [GULOSO Rodada 33 CONCLUIDA] Removida view. Views restantes: 84 | Erro 3D: 0.0416 m (4.16 cm) | RMS: 0.2665 px
+  -> [GULOSO Rodada 34] Avaliando remocao de 1 view dentre 84 views...
+      ...avaliados 16/84 candidatos | Melhor Erro 3D ate agora: 4.15 cm
+      ...avaliados 32/84 candidatos | Melhor Erro 3D ate agora: 4.14 cm
+      ...avaliados 48/84 candidatos | Melhor Erro 3D ate agora: 4.14 cm
+      ...avaliados 64/84 candidatos | Melhor Erro 3D ate agora: 4.14 cm
+      ...avaliados 80/84 candidatos | Melhor Erro 3D ate agora: 4.13 cm
+      ...avaliados 84/84 candidatos | Melhor Erro 3D ate agora: 4.13 cm
+  -> [GULOSO Rodada 34 CONCLUIDA] Removida view. Views restantes: 83 | Erro 3D: 0.0413 m (4.13 cm) | RMS: 0.2668 px
+  -> [GULOSO Rodada 35] Avaliando remocao de 1 view dentre 83 views...
+      ...avaliados 16/83 candidatos | Melhor Erro 3D ate agora: 4.12 cm
+      ...avaliados 32/83 candidatos | Melhor Erro 3D ate agora: 4.12 cm
+      ...avaliados 48/83 candidatos | Melhor Erro 3D ate agora: 4.11 cm
+      ...avaliados 64/83 candidatos | Melhor Erro 3D ate agora: 4.11 cm
+      ...avaliados 80/83 candidatos | Melhor Erro 3D ate agora: 4.11 cm
+      ...avaliados 83/83 candidatos | Melhor Erro 3D ate agora: 4.11 cm
+  -> [GULOSO Rodada 35 CONCLUIDA] Removida view. Views restantes: 82 | Erro 3D: 0.0411 m (4.11 cm) | RMS: 0.2673 px
+  -> [GULOSO Rodada 36] Avaliando remocao de 1 view dentre 82 views...
+      ...avaliados 16/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+      ...avaliados 32/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+      ...avaliados 48/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+      ...avaliados 64/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+      ...avaliados 80/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+      ...avaliados 82/82 candidatos | Melhor Erro 3D ate agora: 4.08 cm
+  -> [GULOSO Rodada 36 CONCLUIDA] Removida view. Views restantes: 81 | Erro 3D: 0.0408 m (4.08 cm) | RMS: 0.2642 px
+  -> [GULOSO Rodada 37] Avaliando remocao de 1 view dentre 81 views...
+      ...avaliados 16/81 candidatos | Melhor Erro 3D ate agora: 4.07 cm
+      ...avaliados 32/81 candidatos | Melhor Erro 3D ate agora: 4.06 cm
+      ...avaliados 48/81 candidatos | Melhor Erro 3D ate agora: 4.06 cm
+      ...avaliados 64/81 candidatos | Melhor Erro 3D ate agora: 4.06 cm
+      ...avaliados 80/81 candidatos | Melhor Erro 3D ate agora: 4.06 cm
+      ...avaliados 81/81 candidatos | Melhor Erro 3D ate agora: 4.06 cm
+  -> [GULOSO Rodada 37 CONCLUIDA] Removida view. Views restantes: 80 | Erro 3D: 0.0406 m (4.06 cm) | RMS: 0.2639 px
+  -> [GULOSO Rodada 38] Avaliando remocao de 1 view dentre 80 views...
+      ...avaliados 16/80 candidatos | Melhor Erro 3D ate agora: 4.05 cm
+      ...avaliados 32/80 candidatos | Melhor Erro 3D ate agora: 4.04 cm
+      ...avaliados 48/80 candidatos | Melhor Erro 3D ate agora: 4.04 cm
+      ...avaliados 64/80 candidatos | Melhor Erro 3D ate agora: 4.04 cm
+      ...avaliados 80/80 candidatos | Melhor Erro 3D ate agora: 4.03 cm
+  -> [GULOSO Rodada 38 CONCLUIDA] Removida view. Views restantes: 79 | Erro 3D: 0.0403 m (4.03 cm) | RMS: 0.2638 px
+  -> [GULOSO Rodada 39] Avaliando remocao de 1 view dentre 79 views...
+      ...avaliados 15/79 candidatos | Melhor Erro 3D ate agora: 4.02 cm
+      ...avaliados 30/79 candidatos | Melhor Erro 3D ate agora: 4.01 cm
+      ...avaliados 45/79 candidatos | Melhor Erro 3D ate agora: 4.01 cm
+      ...avaliados 60/79 candidatos | Melhor Erro 3D ate agora: 4.01 cm
+      ...avaliados 75/79 candidatos | Melhor Erro 3D ate agora: 4.01 cm
+      ...avaliados 79/79 candidatos | Melhor Erro 3D ate agora: 4.01 cm
+  -> [GULOSO Rodada 39 CONCLUIDA] Removida view. Views restantes: 78 | Erro 3D: 0.0401 m (4.01 cm) | RMS: 0.2631 px
+  -> [GULOSO Rodada 40] Avaliando remocao de 1 view dentre 78 views...
+      ...avaliados 15/78 candidatos | Melhor Erro 3D ate agora: 4.00 cm
+      ...avaliados 30/78 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+      ...avaliados 45/78 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+      ...avaliados 60/78 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+      ...avaliados 75/78 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+      ...avaliados 78/78 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+  -> [GULOSO Rodada 40 CONCLUIDA] Removida view. Views restantes: 77 | Erro 3D: 0.0399 m (3.99 cm) | RMS: 0.2644 px
+  -> [GULOSO Rodada 41] Avaliando remocao de 1 view dentre 77 views...
+      ...avaliados 15/77 candidatos | Melhor Erro 3D ate agora: 3.99 cm
+      ...avaliados 30/77 candidatos | Melhor Erro 3D ate agora: 3.98 cm
+      ...avaliados 45/77 candidatos | Melhor Erro 3D ate agora: 3.98 cm
+      ...avaliados 60/77 candidatos | Melhor Erro 3D ate agora: 3.98 cm
+      ...avaliados 75/77 candidatos | Melhor Erro 3D ate agora: 3.98 cm
+      ...avaliados 77/77 candidatos | Melhor Erro 3D ate agora: 3.98 cm
+  -> [GULOSO Rodada 41 CONCLUIDA] Removida view. Views restantes: 76 | Erro 3D: 0.0398 m (3.98 cm) | RMS: 0.2644 px
+  -> [GULOSO Rodada 42] Avaliando remocao de 1 view dentre 76 views...
+      ...avaliados 15/76 candidatos | Melhor Erro 3D ate agora: 3.97 cm
+      ...avaliados 30/76 candidatos | Melhor Erro 3D ate agora: 3.96 cm
+      ...avaliados 45/76 candidatos | Melhor Erro 3D ate agora: 3.96 cm
+      ...avaliados 60/76 candidatos | Melhor Erro 3D ate agora: 3.96 cm
+      ...avaliados 75/76 candidatos | Melhor Erro 3D ate agora: 3.96 cm
+      ...avaliados 76/76 candidatos | Melhor Erro 3D ate agora: 3.96 cm
+  -> [GULOSO Rodada 42 CONCLUIDA] Removida view. Views restantes: 75 | Erro 3D: 0.0396 m (3.96 cm) | RMS: 0.2655 px
+  -> [GULOSO Rodada 43] Avaliando remocao de 1 view dentre 75 views...
+      ...avaliados 15/75 candidatos | Melhor Erro 3D ate agora: 3.95 cm
+      ...avaliados 30/75 candidatos | Melhor Erro 3D ate agora: 3.94 cm
+      ...avaliados 45/75 candidatos | Melhor Erro 3D ate agora: 3.94 cm
+      ...avaliados 60/75 candidatos | Melhor Erro 3D ate agora: 3.94 cm
+      ...avaliados 75/75 candidatos | Melhor Erro 3D ate agora: 3.94 cm
+  -> [GULOSO Rodada 43 CONCLUIDA] Removida view. Views restantes: 74 | Erro 3D: 0.0394 m (3.94 cm) | RMS: 0.2655 px
+  -> [GULOSO Rodada 44] Avaliando remocao de 1 view dentre 74 views...
+      ...avaliados 14/74 candidatos | Melhor Erro 3D ate agora: 3.94 cm
+      ...avaliados 28/74 candidatos | Melhor Erro 3D ate agora: 3.93 cm
+      ...avaliados 42/74 candidatos | Melhor Erro 3D ate agora: 3.93 cm
+      ...avaliados 56/74 candidatos | Melhor Erro 3D ate agora: 3.93 cm
+      ...avaliados 70/74 candidatos | Melhor Erro 3D ate agora: 3.93 cm
+      ...avaliados 74/74 candidatos | Melhor Erro 3D ate agora: 3.93 cm
+  -> [GULOSO Rodada 44 CONCLUIDA] Removida view. Views restantes: 73 | Erro 3D: 0.0393 m (3.93 cm) | RMS: 0.2644 px
+  -> [GULOSO Rodada 45] Avaliando remocao de 1 view dentre 73 views...
+      ...avaliados 14/73 candidatos | Melhor Erro 3D ate agora: 3.92 cm
+      ...avaliados 28/73 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+      ...avaliados 42/73 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+      ...avaliados 56/73 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+      ...avaliados 70/73 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+      ...avaliados 73/73 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+  -> [GULOSO Rodada 45 CONCLUIDA] Removida view. Views restantes: 72 | Erro 3D: 0.0391 m (3.91 cm) | RMS: 0.2647 px
+  -> [GULOSO Rodada 46] Avaliando remocao de 1 view dentre 72 views...
+      ...avaliados 14/72 candidatos | Melhor Erro 3D ate agora: 3.91 cm
+      ...avaliados 28/72 candidatos | Melhor Erro 3D ate agora: 3.90 cm
+      ...avaliados 42/72 candidatos | Melhor Erro 3D ate agora: 3.90 cm
+      ...avaliados 56/72 candidatos | Melhor Erro 3D ate agora: 3.90 cm
+      ...avaliados 70/72 candidatos | Melhor Erro 3D ate agora: 3.90 cm
+      ...avaliados 72/72 candidatos | Melhor Erro 3D ate agora: 3.90 cm
+  -> [GULOSO Rodada 46 CONCLUIDA] Removida view. Views restantes: 71 | Erro 3D: 0.0390 m (3.90 cm) | RMS: 0.2648 px
+  -> [GULOSO Rodada 47] Avaliando remocao de 1 view dentre 71 views...
+      ...avaliados 14/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+      ...avaliados 28/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+      ...avaliados 42/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+      ...avaliados 56/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+      ...avaliados 70/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+      ...avaliados 71/71 candidatos | Melhor Erro 3D ate agora: 3.89 cm
+  -> [GULOSO Rodada 47 CONCLUIDA] Removida view. Views restantes: 70 | Erro 3D: 0.0389 m (3.89 cm) | RMS: 0.2617 px
+  -> [GULOSO Rodada 48] Avaliando remocao de 1 view dentre 70 views...
+      ...avaliados 14/70 candidatos | Melhor Erro 3D ate agora: 3.88 cm
+      ...avaliados 28/70 candidatos | Melhor Erro 3D ate agora: 3.88 cm
+      ...avaliados 42/70 candidatos | Melhor Erro 3D ate agora: 3.88 cm
+      ...avaliados 56/70 candidatos | Melhor Erro 3D ate agora: 3.88 cm
+      ...avaliados 70/70 candidatos | Melhor Erro 3D ate agora: 3.88 cm
+  -> [GULOSO Rodada 48 CONCLUIDA] Removida view. Views restantes: 69 | Erro 3D: 0.0388 m (3.88 cm) | RMS: 0.2594 px
+  -> [GULOSO Rodada 49] Avaliando remocao de 1 view dentre 69 views...
+      ...avaliados 13/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+      ...avaliados 26/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+      ...avaliados 39/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+      ...avaliados 52/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+      ...avaliados 65/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+      ...avaliados 69/69 candidatos | Melhor Erro 3D ate agora: 3.87 cm
+  -> [GULOSO Rodada 49 CONCLUIDA] Removida view. Views restantes: 68 | Erro 3D: 0.0387 m (3.87 cm) | RMS: 0.2598 px
+  -> [GULOSO Rodada 50] Avaliando remocao de 1 view dentre 68 views...
+      ...avaliados 13/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+      ...avaliados 26/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+      ...avaliados 39/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+      ...avaliados 52/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+      ...avaliados 65/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+      ...avaliados 68/68 candidatos | Melhor Erro 3D ate agora: 3.86 cm
+  -> [GULOSO Rodada 50 CONCLUIDA] Removida view. Views restantes: 67 | Erro 3D: 0.0386 m (3.86 cm) | RMS: 0.2589 px
+  -> [GULOSO Rodada 51] Avaliando remocao de 1 view dentre 67 views...
+      ...avaliados 13/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+      ...avaliados 26/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+      ...avaliados 39/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+      ...avaliados 52/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+      ...avaliados 65/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+      ...avaliados 67/67 candidatos | Melhor Erro 3D ate agora: 3.85 cm
+  -> [GULOSO Rodada 51 CONCLUIDA] Removida view. Views restantes: 66 | Erro 3D: 0.0385 m (3.85 cm) | RMS: 0.2606 px
+  -> [GULOSO Rodada 52] Avaliando remocao de 1 view dentre 66 views...
+      ...avaliados 13/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+      ...avaliados 26/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+      ...avaliados 39/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+      ...avaliados 52/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+      ...avaliados 65/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+      ...avaliados 66/66 candidatos | Melhor Erro 3D ate agora: 3.84 cm
+  -> [GULOSO Rodada 52 CONCLUIDA] Removida view. Views restantes: 65 | Erro 3D: 0.0384 m (3.84 cm) | RMS: 0.2610 px
+  -> [GULOSO Rodada 53] Avaliando remocao de 1 view dentre 65 views...
+      ...avaliados 13/65 candidatos | Melhor Erro 3D ate agora: 3.83 cm
+      ...avaliados 26/65 candidatos | Melhor Erro 3D ate agora: 3.83 cm
+      ...avaliados 39/65 candidatos | Melhor Erro 3D ate agora: 3.83 cm
+      ...avaliados 52/65 candidatos | Melhor Erro 3D ate agora: 3.83 cm
+      ...avaliados 65/65 candidatos | Melhor Erro 3D ate agora: 3.83 cm
+  -> [GULOSO Rodada 53 CONCLUIDA] Removida view. Views restantes: 64 | Erro 3D: 0.0383 m (3.83 cm) | RMS: 0.2613 px
+  -> [GULOSO Rodada 54] Avaliando remocao de 1 view dentre 64 views...
+      ...avaliados 12/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+      ...avaliados 24/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+      ...avaliados 36/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+      ...avaliados 48/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+      ...avaliados 60/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+      ...avaliados 64/64 candidatos | Melhor Erro 3D ate agora: 3.82 cm
+  -> [GULOSO Rodada 54 CONCLUIDA] Removida view. Views restantes: 63 | Erro 3D: 0.0382 m (3.82 cm) | RMS: 0.2605 px
+  -> [GULOSO Rodada 55] Avaliando remocao de 1 view dentre 63 views...
+      ...avaliados 12/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+      ...avaliados 24/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+      ...avaliados 36/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+      ...avaliados 48/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+      ...avaliados 60/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+      ...avaliados 63/63 candidatos | Melhor Erro 3D ate agora: 3.81 cm
+  -> [GULOSO Rodada 55 CONCLUIDA] Removida view. Views restantes: 62 | Erro 3D: 0.0381 m (3.81 cm) | RMS: 0.2608 px
+  -> [GULOSO Rodada 56] Avaliando remocao de 1 view dentre 62 views...
+      ...avaliados 12/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+      ...avaliados 24/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+      ...avaliados 36/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+      ...avaliados 48/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+      ...avaliados 60/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+      ...avaliados 62/62 candidatos | Melhor Erro 3D ate agora: 3.80 cm
+  -> [GULOSO Rodada 56 CONCLUIDA] Removida view. Views restantes: 61 | Erro 3D: 0.0380 m (3.80 cm) | RMS: 0.2601 px
+  -> [GULOSO Rodada 57] Avaliando remocao de 1 view dentre 61 views...
+      ...avaliados 12/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+      ...avaliados 24/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+      ...avaliados 36/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+      ...avaliados 48/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+      ...avaliados 60/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+      ...avaliados 61/61 candidatos | Melhor Erro 3D ate agora: 3.79 cm
+  -> [GULOSO Rodada 57 CONCLUIDA] Removida view. Views restantes: 60 | Erro 3D: 0.0379 m (3.79 cm) | RMS: 0.2616 px
+  -> [GULOSO Rodada 58] Avaliando remocao de 1 view dentre 60 views...
+      ...avaliados 12/60 candidatos | Melhor Erro 3D ate agora: 3.78 cm
+      ...avaliados 24/60 candidatos | Melhor Erro 3D ate agora: 3.78 cm
+      ...avaliados 36/60 candidatos | Melhor Erro 3D ate agora: 3.78 cm
+      ...avaliados 48/60 candidatos | Melhor Erro 3D ate agora: 3.78 cm
+      ...avaliados 60/60 candidatos | Melhor Erro 3D ate agora: 3.78 cm
+  -> [GULOSO Rodada 58 CONCLUIDA] Removida view. Views restantes: 59 | Erro 3D: 0.0378 m (3.78 cm) | RMS: 0.2630 px
+  -> [GULOSO Rodada 59] Avaliando remocao de 1 view dentre 59 views...
+      ...avaliados 11/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+      ...avaliados 22/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+      ...avaliados 33/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+      ...avaliados 44/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+      ...avaliados 55/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+      ...avaliados 59/59 candidatos | Melhor Erro 3D ate agora: 3.77 cm
+  -> [GULOSO Rodada 59 CONCLUIDA] Removida view. Views restantes: 58 | Erro 3D: 0.0377 m (3.77 cm) | RMS: 0.2633 px
+  -> [GULOSO Rodada 60] Avaliando remocao de 1 view dentre 58 views...
+      ...avaliados 11/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+      ...avaliados 22/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+      ...avaliados 33/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+      ...avaliados 44/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+      ...avaliados 55/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+      ...avaliados 58/58 candidatos | Melhor Erro 3D ate agora: 3.76 cm
+  -> [GULOSO Rodada 60 CONCLUIDA] Removida view. Views restantes: 57 | Erro 3D: 0.0376 m (3.76 cm) | RMS: 0.2609 px
+  -> [GULOSO Rodada 61] Avaliando remocao de 1 view dentre 57 views...
+      ...avaliados 11/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 22/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 33/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 44/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 55/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 57/57 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+  -> [GULOSO Rodada 61 CONCLUIDA] Removida view. Views restantes: 56 | Erro 3D: 0.0375 m (3.75 cm) | RMS: 0.2569 px
+  -> [GULOSO Rodada 62] Avaliando remocao de 1 view dentre 56 views...
+      ...avaliados 11/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 22/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 33/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 44/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 55/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+      ...avaliados 56/56 candidatos | Melhor Erro 3D ate agora: 3.75 cm
+  -> [GULOSO Rodada 62 CONCLUIDA] Removida view. Views restantes: 55 | Erro 3D: 0.0375 m (3.75 cm) | RMS: 0.2576 px
+  -> [GULOSO Rodada 63] Avaliando remocao de 1 view dentre 55 views...
+      ...avaliados 11/55 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 22/55 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 33/55 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 44/55 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 55/55 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+  -> [GULOSO Rodada 63 CONCLUIDA] Removida view. Views restantes: 54 | Erro 3D: 0.0374 m (3.74 cm) | RMS: 0.2582 px
+  -> [GULOSO Rodada 64] Avaliando remocao de 1 view dentre 54 views...
+      ...avaliados 10/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 20/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 30/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 40/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 50/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 54/54 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+  -> [GULOSO Rodada 64 CONCLUIDA] Removida view. Views restantes: 53 | Erro 3D: 0.0374 m (3.74 cm) | RMS: 0.2588 px
+  -> [GULOSO Rodada 65] Avaliando remocao de 1 view dentre 53 views...
+      ...avaliados 10/53 candidatos | Melhor Erro 3D ate agora: 3.74 cm
+      ...avaliados 20/53 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 30/53 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 40/53 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 50/53 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 53/53 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+  -> [GULOSO Rodada 65 CONCLUIDA] Removida view. Views restantes: 52 | Erro 3D: 0.0373 m (3.73 cm) | RMS: 0.2604 px
+  -> [GULOSO Rodada 66] Avaliando remocao de 1 view dentre 52 views...
+      ...avaliados 10/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 20/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 30/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 40/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 50/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 52/52 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+  -> [GULOSO Rodada 66 CONCLUIDA] Removida view. Views restantes: 51 | Erro 3D: 0.0373 m (3.73 cm) | RMS: 0.2611 px
+  -> [GULOSO Rodada 67] Avaliando remocao de 1 view dentre 51 views...
+      ...avaliados 10/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 20/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 30/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 40/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 50/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+      ...avaliados 51/51 candidatos | Melhor Erro 3D ate agora: 3.73 cm
+  -> [GULOSO Rodada 67 CONCLUIDA] Removida view. Views restantes: 50 | Erro 3D: 0.0373 m (3.73 cm) | RMS: 0.2601 px
+  -> [GULOSO Rodada 68] Avaliando remocao de 1 view dentre 50 views...
+      ...avaliados 10/50 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 20/50 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 30/50 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/50 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 50/50 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 68 CONCLUIDA] Removida view. Views restantes: 49 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2616 px
+  -> [GULOSO Rodada 69] Avaliando remocao de 1 view dentre 49 views...
+      ...avaliados 9/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 18/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 27/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 36/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 45/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 49/49 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 69 CONCLUIDA] Removida view. Views restantes: 48 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2622 px
+  -> [GULOSO Rodada 70] Avaliando remocao de 1 view dentre 48 views...
+      ...avaliados 9/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 18/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 27/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 36/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 45/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 48/48 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 70 CONCLUIDA] Removida view. Views restantes: 47 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2629 px
+  -> [GULOSO Rodada 71] Avaliando remocao de 1 view dentre 47 views...
+      ...avaliados 9/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 18/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 27/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 36/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 45/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 47/47 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 71 CONCLUIDA] Removida view. Views restantes: 46 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2627 px
+  -> [GULOSO Rodada 72] Avaliando remocao de 1 view dentre 46 views...
+      ...avaliados 9/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 18/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 27/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 36/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 45/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 46/46 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 72 CONCLUIDA] Removida view. Views restantes: 45 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2638 px
+  -> [GULOSO Rodada 73] Avaliando remocao de 1 view dentre 45 views...
+      ...avaliados 9/45 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 18/45 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 27/45 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 36/45 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 45/45 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 73 CONCLUIDA] Removida view. Views restantes: 44 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2646 px
+  -> [GULOSO Rodada 74] Avaliando remocao de 1 view dentre 44 views...
+      ...avaliados 8/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 16/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 24/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 32/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 44/44 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 74 CONCLUIDA] Removida view. Views restantes: 43 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2652 px
+  -> [GULOSO Rodada 75] Avaliando remocao de 1 view dentre 43 views...
+      ...avaliados 8/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 16/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 24/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 32/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 43/43 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 75 CONCLUIDA] Removida view. Views restantes: 42 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2661 px
+  -> [GULOSO Rodada 76] Avaliando remocao de 1 view dentre 42 views...
+      ...avaliados 8/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 16/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 24/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 32/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 42/42 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 76 CONCLUIDA] Removida view. Views restantes: 41 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2655 px
+  -> [GULOSO Rodada 77] Avaliando remocao de 1 view dentre 41 views...
+      ...avaliados 8/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 16/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 24/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 32/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 41/41 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 77 CONCLUIDA] Removida view. Views restantes: 40 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2671 px
+  -> [GULOSO Rodada 78] Avaliando remocao de 1 view dentre 40 views...
+      ...avaliados 8/40 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 16/40 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 24/40 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 32/40 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 40/40 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO Rodada 78 CONCLUIDA] Removida view. Views restantes: 39 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2682 px
+  -> [GULOSO Rodada 79] Avaliando remocao de 1 view dentre 39 views...
+      ...avaliados 7/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 14/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 21/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 28/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 35/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+      ...avaliados 39/39 candidatos | Melhor Erro 3D ate agora: 3.72 cm
+  -> [GULOSO] Nenhuma remocao isolada reduziu o Erro 3D. Encerrando Passo 1.
+[Passo 1/2 Concluido] Subconjunto guloso ajustado para 39 views (Menor Erro 3D: 3.72 cm)
+
+[Passo 2/2] Iniciando Busca Estocastica / Monte Carlo (3000 iteracoes)...
+  -> [PROGRESSO 300/3000 (10%)] Melhor Erro 3D ate agora: 3.72 cm (39 views | RMS: 0.2682 px)
+  -> [NOVO MELHOR 346/3000] Subconjunto de 37 views | Novo Erro 3D: 0.0370 m (3.70 cm) | RMS: 0.2629 px
+  -> [NOVO MELHOR 356/3000] Subconjunto de 36 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2629 px
+  -> [NOVO MELHOR 417/3000] Subconjunto de 35 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2626 px
+  -> [NOVO MELHOR 424/3000] Subconjunto de 34 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2645 px
+  -> [NOVO MELHOR 447/3000] Subconjunto de 33 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2661 px
+  -> [NOVO MELHOR 561/3000] Subconjunto de 32 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2668 px
+  -> [NOVO MELHOR 563/3000] Subconjunto de 29 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2713 px
+  -> [PROGRESSO 600/3000 (20%)] Melhor Erro 3D ate agora: 3.69 cm (29 views | RMS: 0.2713 px)
+  -> [NOVO MELHOR 625/3000] Subconjunto de 28 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2688 px
+  -> [NOVO MELHOR 679/3000] Subconjunto de 27 views | Novo Erro 3D: 0.0369 m (3.69 cm) | RMS: 0.2707 px
+  -> [NOVO MELHOR 699/3000] Subconjunto de 26 views | Novo Erro 3D: 0.0368 m (3.68 cm) | RMS: 0.2730 px
+  -> [NOVO MELHOR 737/3000] Subconjunto de 23 views | Novo Erro 3D: 0.0368 m (3.68 cm) | RMS: 0.2781 px
+  -> [NOVO MELHOR 784/3000] Subconjunto de 22 views | Novo Erro 3D: 0.0368 m (3.68 cm) | RMS: 0.2796 px
+  -> [PROGRESSO 900/3000 (30%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 1200/3000 (40%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 1500/3000 (50%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 1800/3000 (60%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 2100/3000 (70%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 2400/3000 (80%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 2700/3000 (90%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+  -> [PROGRESSO 3000/3000 (100%)] Melhor Erro 3D ate agora: 3.68 cm (22 views | RMS: 0.2796 px)
+
+Busca concluida em 3974.44 segundos (3000 combinacoes testadas).
+
+========================================================================
+RESUMO COMPARATIVO DE CALIBRAÇÃO
+========================================================================
+Baseline (padrao)   : Erro 3D = 0.0810 m (8.10 cm) | RMS = 0.2887 px | 40 views
+Otimizado (PnP 3D)  : Erro 3D = 0.0368 m (3.68 cm) | RMS = 0.2796 px | 22 views
+>> REDUÇÃO NO ERRO MÉDIO 3D: 54.55%
+
+Detalhamento dos Erros por Eixo (Otimizado):
+  -> Erro Medio em X (horizontal) : 0.0211 m (2.11 cm)
+  -> Erro Medio em Y (vertical)   : 0.0095 m (0.95 cm)
+  -> Erro Medio em Z (profundid.) : 0.0223 m (2.23 cm)
+
+Matriz K Otimizada:
+  fx = 863.1490,  fy = 870.9725
+  cx = 653.3234,  cy = 364.4780
+Distorcao [k1, k2, p1, p2, k3]: [0.15533, -0.41315, 0.00366, -0.00156, 0.33372]
+
+Arquivos salvos:
+  - JSON: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt\camera_calib_opt.json
+  - Imagem Undistort: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt\undistort_check_opt.png
+  - Matriz MATLAB (.m): c:\Users\migue\Documents\AmbienteMestrado\S2C\matrizesCalibracao\calibracao_20260720_201450_opt.m
+========================================================================

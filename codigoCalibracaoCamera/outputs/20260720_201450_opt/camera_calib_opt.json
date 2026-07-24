@@ -1,0 +1,73 @@
+{
+  "video_source": "20260720_201450.mp4",
+  "image_size": [
+    1280,
+    720
+  ],
+  "fx": 863.1490398731264,
+  "fy": 870.9724529485969,
+  "cx": 653.3233740587217,
+  "cy": 364.47796564293435,
+  "camera_matrix": [
+    [
+      863.1490398731264,
+      0.0,
+      653.3233740587217
+    ],
+    [
+      0.0,
+      870.9724529485969,
+      364.47796564293435
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "dist_coeffs": [
+    0.15532658618672934,
+    -0.41315497977174215,
+    0.0036605449634046607,
+    -0.0015564181766970866,
+    0.3337229894087573
+  ],
+  "dist_coeffs_labels": [
+    "k1",
+    "k2",
+    "p1",
+    "p2",
+    "k3"
+  ],
+  "rms_reprojection_error": 0.27956724932842175,
+  "pnp_mean_3d_error_m": 0.03682951103879571,
+  "pnp_mean_3d_error_cm": 3.6829511038795713,
+  "num_views_used": 22,
+  "optimized_subset_indices": [
+    7,
+    10,
+    12,
+    14,
+    15,
+    17,
+    40,
+    44,
+    45,
+    47,
+    59,
+    61,
+    65,
+    68,
+    69,
+    70,
+    74,
+    76,
+    85,
+    92,
+    103,
+    112
+  ],
+  "calibration_method": "Optimization by PnP 3D Error Minization",
+  "opencv_version": "5.0.0",
+  "roi_csv_used": "c:\\Users\\migue\\Documents\\AmbienteMestrado\\S2C\\resultadosROI/resultados_ROI_otsu05_2007.csv"
+}
