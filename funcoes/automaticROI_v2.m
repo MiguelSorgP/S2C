@@ -1,4 +1,4 @@
-function roiPosition = automaticROI_v2(recordedVideo, showFigure)
+function roiPosition = automaticROI_v2(recordedVideo, showFigure, otsuScaleFactor)
 % AUTOMATICROI_V2 - Detecta automaticamente uma ROI quadrilátera encontrando os 4 cantos extremos.
 % Esta função analisa a variância temporal das intensidades de pixels e detecta os
 % quatro cantos extremos da tela do transmissor, mesmo que ela esteja inclinada
@@ -6,15 +6,20 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
 % somas e diferenças de coordenadas (x + y e x - y).
 %
 % Entradas:
-%   recordedVideo - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
-%   showFigure    - Flag booleano para exibir graficamente cada etapa do método e a ROI detectada (padrão: false)
+%   recordedVideo   - Matriz 4D com os frames do vídeo (altura x largura x canal x frames)
+%   showFigure      - Flag booleano para exibir graficamente cada etapa do método e a ROI detectada (padrão: false)
+%   otsuScaleFactor - Fator de escala multiplicativo aplicado ao limiar ótimo de Otsu (padrão: 1)
 %
 % Saídas:
 %   roiPosition   - Matriz [4 x 2] contendo as coordenadas [x, y] dos 4 vértices
 %                   na ordem: [Top-Left; Top-Right; Bottom-Right; Bottom-Left].
 
-    if nargin < 2
+    if nargin < 2 || isempty(showFigure)
         showFigure = false;
+    end
+
+    if nargin < 3 || isempty(otsuScaleFactor)
+        otsuScaleFactor = 1;
     end
 
     % Obtém as dimensões do vídeo 4D
@@ -43,7 +48,7 @@ function roiPosition = automaticROI_v2(recordedVideo, showFigure)
         level = 0;
     else
         varianceNorm = varianceImage / maxVar;
-        level = graythresh(varianceNorm);
+        level = graythresh(varianceNorm) * otsuScaleFactor;
         threshold = level * maxVar;
     end
     

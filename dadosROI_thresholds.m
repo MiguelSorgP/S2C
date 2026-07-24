@@ -15,7 +15,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos (mesma pasta do dadosROI.m)
-videoDir = '../gravacoes_20_07';
+videoDir = '../gravacoes_antigas';
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
 numVideos = numel(videoFiles);

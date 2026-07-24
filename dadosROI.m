@@ -16,7 +16,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos
-videoDir = '../gravacoes_20_07_errados';
+videoDir = '../gravacoes_20_07';
 
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
@@ -180,10 +180,10 @@ for i = 1:numVideos
         % 2) Detecção da ROI
         if roiDetectionMode == 1
             fprintf('Running automatic ROI detection...\n');
-            roiPosition = automaticROI_v3(recordedVideo, false);
+            roiPosition = automaticROI_v2(recordedVideo, false, 0.5);
         elseif roiDetectionMode == 2
             fprintf('Running automatic ROI detection for pre-filling...\n');
-            autoRoiPosition = automaticROI_v3(recordedVideo, false);
+            autoRoiPosition = automaticROI_v2(recordedVideo, false, 0.5);
 
             fprintf('Opening manual ROI selection with 4-point precision...\n');
             roiPosition = manualQuadROI(recordedVideo, autoRoiPosition);

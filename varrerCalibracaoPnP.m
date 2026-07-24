@@ -36,13 +36,13 @@ max_fun_evals = 30000;
 %               (ex: 1e-6 m = 0.001 mm), o MATLAB considera que o erro estabilizou e encerra a busca.
 %               Valores menores (ex: 1e-8) exigem maior precisão numérica e mais tempo.
 %               Valores maiores (ex: 1e-4) encerram a otimização mais cedo.
-tol_fun = 1e-6;
+tol_fun = 1e-9;
 
 % 4. TOLERÂNCIA NAS VARIÁVEIS / PARÂMETROS (TolX)
 %    Descrição: Critério de parada baseado no tamanho do ajuste dos parâmetros [fx, fy, cx, cy, k1..k3].
 %    Efeito:    Se a variação nos valores dos próprios parâmetros de calibração em uma iteração
 %               for menor que TolX, o algoritmo conclui que os parâmetros já convergiram.
-tol_x = 1e-6;
+tol_x = 1e-9;
 
 % 5. ITERAÇÕES DE CORREÇÃO DE DISTORÇÃO DE LENTE (MaxUndistortIter)
 %    Descrição: Número de iterações do algoritmo de ponto fixo usado para remover a distorção
