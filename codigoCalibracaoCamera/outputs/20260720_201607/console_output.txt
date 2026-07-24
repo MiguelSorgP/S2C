@@ -1,0 +1,43 @@
+
+########################################################################
+PROCESSANDO VÍDEO: 20260720_201607.mp4
+########################################################################
+Caminho do vídeo: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\videos\20260720_201607.mp4
+Pasta de saída: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201607
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+AVISO: charuco_config.json indica _measured_after_print=false.
+Voce esta usando os tamanhos NOMINAIS, nao os MEDIDOS pos-impressao.
+A escala do K (fx, fy) sai proporcional ao erro do tamanho do quadrado.
+Meca o quadrado impresso e atualize square_length_m/marker_length_m.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Tabuleiro: DICT_4X4_50 (id=0), 7x10, square=0.0250 m, marker=0.0180 m
+Video: 1280x720, ~1566 frames
+Frames amostrados: 105 | views aceitas (>= 12 cantos): 27
+
+========================================================================
+RESUMO DA CALIBRACAO  (metodo: matchImagePoints + calibrateCamera)
+========================================================================
+OpenCV: 5.0.0
+image_size: 1280x720
+fx=863.07  fy=867.83  cx=599.13  cy=373.12
+dist (k1,k2,p1,p2,k3): [0.11286, -0.25908, 0.00358, -0.00982, 0.16774]
+
+[PASS] num_views_used = 27   (PASS se >= 15)
+[PASS] rms_reprojection_error = 0.2682 px   (PASS<0.6, ACEITAVEL<1.0)
+[PASS] ponto principal: cx desvio=6.4%, cy desvio=3.6%  (tol +-15%)
+[PASS] fx vs fy: diferenca=0.55%  (tol 3%)
+[WARN] cobertura espacial 3x3: 7/9 celulas com cantos
+        grade (linhas=topo->base):
+           34     43    254
+           32     50    348
+            0      0    113
+[PASS] diversidade de orientacao: inclinacao max=61.2 deg, concentracao das normais=0.90 (PASS: max>=15 e conc<=0.95)
+
+Salvo em outputs: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201607\camera_calib.json
+Salvo em outputs: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201607\undistort_check.png
+Salvo em matrizesCalibracao (.m): c:\Users\migue\Documents\AmbienteMestrado\S2C\matrizesCalibracao\calibracao_20260720_201607.m
+
+========================================================================
+REVISAR ANTES DE SAIR: bordas/cantos sem cobertura (celulas vazias: (2, 0), (2, 1))
+========================================================================

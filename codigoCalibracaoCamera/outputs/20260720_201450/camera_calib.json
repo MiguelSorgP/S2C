@@ -1,0 +1,81 @@
+{
+  "video_source": "20260720_201450.mp4",
+  "image_size": [
+    1280,
+    720
+  ],
+  "fx": 873.4625319616082,
+  "fy": 877.5804670862842,
+  "cx": 611.6766536437351,
+  "cy": 359.2338526381383,
+  "camera_matrix": [
+    [
+      873.4625319616082,
+      0.0,
+      611.6766536437351
+    ],
+    [
+      0.0,
+      877.5804670862842,
+      359.2338526381383
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "dist_coeffs": [
+    0.10183741387473369,
+    -0.2209281153679572,
+    0.0014120545707865723,
+    -0.012314880186632774,
+    0.1541333547346503
+  ],
+  "dist_coeffs_labels": [
+    "k1",
+    "k2",
+    "p1",
+    "p2",
+    "k3"
+  ],
+  "rms_reprojection_error": 0.27024081587112303,
+  "num_views_used": 40,
+  "calibration_method": "matchImagePoints + calibrateCamera",
+  "opencv_version": "5.0.0",
+  "coverage_grid_3x3": [
+    [
+      17,
+      142,
+      316
+    ],
+    [
+      15,
+      305,
+      336
+    ],
+    [
+      3,
+      26,
+      87
+    ]
+  ],
+  "tilt_max_deg": 64.11903353185097,
+  "normal_concentration": 0.8877452329407202,
+  "_capture_note": "K valido apenas para 1280x720, mesmo zoom/foco/estabilizacao do video. Galaxy A54, modo video pro, foco 0.6, zoom 1x, estabilizacao OFF.",
+  "config_used": {
+    "_comment": "Definicao do tabuleiro ChArUco gerada por generate_charuco.py. IMPORTANTE: apos imprimir a 100%, MECA com regua/paquimetro o lado real de um quadrado e atualize 'square_length_m' e 'marker_length_m' com os valores MEDIDOS antes de calibrar. A precisao da calibracao depende disso.",
+    "dictionary_name": "DICT_4X4_50",
+    "dictionary_id": 0,
+    "squaresX": 7,
+    "squaresY": 10,
+    "square_length_m": 0.025,
+    "marker_length_m": 0.018,
+    "_nominal_square_length_mm": 25.0,
+    "_nominal_marker_length_mm": 18.0,
+    "_adjusted_to_fit_A4": false,
+    "_dpi": 300,
+    "_opencv_version": "4.13.0",
+    "_measured_after_print": false
+  }
+}

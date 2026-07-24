@@ -1,0 +1,15 @@
+{
+  "_comment": "Definicao do tabuleiro ChArUco gerada por generate_charuco.py. IMPORTANTE: apos imprimir a 100%, MECA com regua/paquimetro o lado real de um quadrado e atualize 'square_length_m' e 'marker_length_m' com os valores MEDIDOS antes de calibrar. A precisao da calibracao depende disso.",
+  "dictionary_name": "DICT_4X4_50",
+  "dictionary_id": 0,
+  "squaresX": 7,
+  "squaresY": 10,
+  "square_length_m": 0.025,
+  "marker_length_m": 0.018,
+  "_nominal_square_length_mm": 25.0,
+  "_nominal_marker_length_mm": 18.0,
+  "_adjusted_to_fit_A4": false,
+  "_dpi": 300,
+  "_opencv_version": "4.13.0",
+  "_measured_after_print": false
+}
