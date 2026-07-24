@@ -15,7 +15,7 @@ end
 addpath(fullfile(scriptDir, 'funcoes'));
 
 % Diretório contendo os vídeos (mesma pasta do dadosROI.m)
-videoDir = '../gravacoes_antigas';
+videoDir = '../gravacoes_20_07';
 
 videoFiles = dir(fullfile(videoDir, '*.mp4'));
 numVideos = numel(videoFiles);
@@ -130,7 +130,7 @@ for i = 1:numVideos
 
         % 3) Detecção da ROI testando todos os limiares
         fprintf('Running multi-threshold automatic ROI detection...\n');
-        [~, resultsStruct] = automaticROI_thresholds(recordedVideo, false, imagesRoiDir, videoBaseName);
+        [~, resultsStruct] = automaticROI_otsu05(recordedVideo, false, imagesRoiDir, videoBaseName);
 
         % 4) Para cada método, salva o resultado em seu respectivo arquivo CSV resultados_ROI_<sufixo>.csv
         methodFields = fieldnames(resultsStruct);
