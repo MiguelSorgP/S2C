@@ -13,6 +13,8 @@ scriptDir = fileparts(mfilename('fullpath'));
 if isempty(scriptDir)
     scriptDir = pwd;
 end
+addpath(fullfile(scriptDir, 'funcoes'));
+
 defaultDir = fullfile(scriptDir, 'dadosBER');
 if ~exist(defaultDir, 'dir')
     defaultDir = scriptDir;
