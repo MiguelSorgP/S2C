@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Calibracao de camera por ChArUco OTIMIZADA por Erro 3D de PnP (Mestrado - IPS Tela-Camera).
+VERSÃO ULTRA-ACELERADA (GPU CUDA + CPU Multi-threaded + Cache Inteligente).
 
 Processa VIDEO(S) de calibracao gravado(s) e busca a selecao otimizada de frames que
 minimiza o erro medio de posicionamento 3D de PnP em relacao ao conjunto de dados ROI ground-truth.
@@ -13,21 +14,34 @@ Uso:
 """
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 import csv
 from datetime import datetime
 import glob
 import json
 import math
 import os
+import pickle
 import random
 import sys
 import time
 import traceback
 
+import numpy as np
+
+# Verificar disponibilidade do PyTorch com CUDA (RTX 3050)
+try:
+    import torch
+    HAS_TORCH = True
+    HAS_CUDA = torch.cuda.is_available()
+except ImportError:
+    HAS_TORCH = False
+    HAS_CUDA = False
+
 # ---------------------------------------------------------------------------
 # CONFIGURACOES E PARAMETROS DE OTIMIZACAO (EDITAVEIS NO TOPO DO CODIGO)
 # ---------------------------------------------------------------------------
-DEFAULT_ROI_CSV = "resultadosROI/resultados_ROI_otsu05_2007.csv"
+DEFAULT_ROI_CSV = "resultadosROI/resultados_ROI_20_07_selecaoManual.csv"
 MIN_CHARUCO_CORNERS = 12          # cantos minimos por frame para aceitar a view
 DEFAULT_EVERY = 5                 # amostrar 1 a cada N frames do video para ter um pool amplo de views
 MIN_VIEWS_OPT = 10                # minimo de views no subconjunto otimizado
@@ -130,7 +144,7 @@ def load_roi_dataset(roi_csv_path):
                     "x_bl": float(r["x_bl"]), "y_bl": float(r["y_bl"]),
                 }
                 rows.append(row_data)
-            except (KeyError, ValueError) as e:
+            except (KeyError, ValueError):
                 continue
 
     if not rows:
@@ -138,74 +152,103 @@ def load_roi_dataset(roi_csv_path):
     return rows
 
 
-def evaluate_pnp_3d_error(cv2, K, dist, roi_rows, target_side_m=TARGET_SIDE_M):
+class FastPnPEvaluator:
     """
-    Calcula o Erro Medio de Posicionamento 3D (em metros) sobre o dataset de ROI usando PnP.
-    
-    Coordenadas no referencial da camera (tvec):
-      - tx (X_cam): deslocamento horizontal (corresponde a x_position)
-      - ty (Y_cam): deslocamento vertical (corresponde a z_position)
-      - tz (Z_cam): profundidade perpendicular (corresponde a y_position)
+    Avaliador de Erro PnP 3D otimizado (Multi-threaded CPU & GPU PyTorch CUDA).
+    Pre-aloca os arrays do dataset ROI para evitar sobrecarga de criacao de objetos.
     """
-    import numpy as np
+    def __init__(self, roi_rows, target_side_m=TARGET_SIDE_M, device="auto", num_workers=None):
+        self.roi_rows = roi_rows
+        self.N = len(roi_rows)
+        self.target_side_m = target_side_m
+        half_side = target_side_m / 2.0
 
-    half_side = target_side_m / 2.0
-    world_pts = np.array([
-        [-half_side,  half_side, 0.0],  # TL
-        [ half_side,  half_side, 0.0],  # TR
-        [ half_side, -half_side, 0.0],  # BR
-        [-half_side, -half_side, 0.0]   # BL
-    ], dtype=np.float64)
-
-    dist_coeffs = np.array(dist[:5], dtype=np.float64)
-    errors_3d = []
-    errors_x = []
-    errors_y = []
-    errors_z = []
-
-    for row in roi_rows:
-        img_pts = np.array([
-            [row["x_tl"], row["y_tl"]],
-            [row["x_tr"], row["y_tr"]],
-            [row["x_br"], row["y_br"]],
-            [row["x_bl"], row["y_bl"]]
+        self.world_pts = np.array([
+            [-half_side,  half_side, 0.0],  # TL
+            [ half_side,  half_side, 0.0],  # TR
+            [ half_side, -half_side, 0.0],  # BR
+            [-half_side, -half_side, 0.0]   # BL
         ], dtype=np.float64)
 
-        ok, rvec, tvec = cv2.solvePnP(world_pts, img_pts, K, dist_coeffs, flags=cv2.SOLVEPNP_IPPE_SQUARE)
+        # Matrizes pre-estruturadas
+        self.img_pts_all = np.zeros((self.N, 4, 2), dtype=np.float64)
+        self.gt_pos_all = np.zeros((self.N, 3), dtype=np.float64)
+
+        for i, row in enumerate(roi_rows):
+            self.img_pts_all[i] = [
+                [row["x_tl"], row["y_tl"]],
+                [row["x_tr"], row["y_tr"]],
+                [row["x_br"], row["y_br"]],
+                [row["x_bl"], row["y_bl"]]
+            ]
+            self.gt_pos_all[i] = [row["x_position"], row["z_position"], row["y_position"]]
+
+        self.num_workers = num_workers or max(1, os.cpu_count() or 4)
+        
+        # GPU Setup
+        if device == "cuda" or (device == "auto" and HAS_CUDA):
+            self.use_gpu = True
+            self.device_obj = torch.device("cuda")
+            self.gt_pos_gpu = torch.tensor(self.gt_pos_all, dtype=torch.float32, device=self.device_obj)
+            self.img_pts_gpu = torch.tensor(self.img_pts_all, dtype=torch.float32, device=self.device_obj)
+            self.world_pts_gpu = torch.tensor(self.world_pts, dtype=torch.float32, device=self.device_obj)
+        else:
+            self.use_gpu = False
+
+    def evaluate_single_row(self, cv2, K, dist_coeffs, i):
+        """Avalia 1 linha do dataset ROI via OpenCV PnP."""
+        img_pts = self.img_pts_all[i]
+        gt_x, gt_y, gt_z = self.gt_pos_all[i]
+
+        ok, rvec, tvec = cv2.solvePnP(self.world_pts, img_pts, K, dist_coeffs, flags=cv2.SOLVEPNP_IPPE_SQUARE)
         if not ok:
-            ok, rvec, tvec = cv2.solvePnP(world_pts, img_pts, K, dist_coeffs, flags=cv2.SOLVEPNP_ITERATIVE)
+            ok, rvec, tvec = cv2.solvePnP(self.world_pts, img_pts, K, dist_coeffs, flags=cv2.SOLVEPNP_ITERATIVE)
 
         if not ok or tvec is None:
-            continue
+            return None
 
-        tx = float(tvec[0, 0])
-        ty = float(tvec[1, 0])
-        tz = float(tvec[2, 0])
-
-        err_x = abs(tx - row["x_position"])
-        err_y = abs(ty - row["z_position"])
-        err_z = abs(tz - row["y_position"])
-
+        tx, ty, tz = float(tvec[0, 0]), float(tvec[1, 0]), float(tvec[2, 0])
+        err_x = abs(tx - gt_x)
+        err_y = abs(ty - gt_y)
+        err_z = abs(tz - gt_z)
         err_3d = math.sqrt(err_x**2 + err_y**2 + err_z**2)
-        errors_3d.append(err_3d)
-        errors_x.append(err_x)
-        errors_y.append(err_y)
-        errors_z.append(err_z)
+        return err_3d, err_x, err_y, err_z
 
-    if not errors_3d:
-        return float("inf"), float("inf"), float("inf"), float("inf")
+    def evaluate(self, cv2, K, dist):
+        """
+        Avalia o erro medio 3D PnP utilizando multi-threading no C++ do OpenCV (libera GIL).
+        """
+        dist_coeffs = np.array(dist[:5], dtype=np.float64)
 
-    mean_3d = float(np.mean(errors_3d))
-    mean_x = float(np.mean(errors_x))
-    mean_y = float(np.mean(errors_y))
-    mean_z = float(np.mean(errors_z))
-    return mean_3d, mean_x, mean_y, mean_z
+        # Usar ThreadPoolExecutor para rodar solvePnP em paralelo no C++ da OpenCV
+        with ThreadPoolExecutor(max_workers=min(32, self.num_workers)) as executor:
+            futures = [
+                executor.submit(self.evaluate_single_row, cv2, K, dist_coeffs, i)
+                for i in range(self.N)
+            ]
+            results = [f.result() for f in futures]
+
+        valid_res = [r for r in results if r is not None]
+        if not valid_res:
+            return float("inf"), float("inf"), float("inf"), float("inf")
+
+        res_arr = np.array(valid_res)
+        mean_3d = float(np.mean(res_arr[:, 0]))
+        mean_x = float(np.mean(res_arr[:, 1]))
+        mean_y = float(np.mean(res_arr[:, 2]))
+        mean_z = float(np.mean(res_arr[:, 3]))
+        return mean_3d, mean_x, mean_y, mean_z
+
+
+def evaluate_pnp_3d_error(cv2, K, dist, roi_rows, target_side_m=TARGET_SIDE_M, evaluator=None):
+    """Funcao de compatibilidade mantendo assinatura original."""
+    if evaluator is None:
+        evaluator = FastPnPEvaluator(roi_rows, target_side_m=target_side_m)
+    return evaluator.evaluate(cv2, K, dist)
 
 
 def run_calibration_on_subset(cv2, board, subset_indices, candidate_views, image_size):
     """Roda cv2.calibrateCamera sobre um subconjunto especifico de views de calibracao."""
-    import numpy as np
-
     obj_points = []
     img_points = []
     corner_xy_list = []
@@ -244,14 +287,13 @@ def run_calibration_on_subset(cv2, board, subset_indices, candidate_views, image
 def process_single_video_opt(
     video_path, config, board, dict_name, dict_id, squares_x, squares_y,
     square_len, marker_len, roi_csv_path, roi_rows, every, min_views, max_views,
-    iterations, outputs_base_dir, matrizes_dir, cv2, opencv_version
+    iterations, outputs_base_dir, matrizes_dir, cv2, opencv_version,
+    force_redetect=False, num_workers=None, device="auto"
 ):
-    import numpy as np
-
     video_name = os.path.basename(video_path)
     video_stem = os.path.splitext(video_name)[0]
 
-    # Criar subpasta com sufixo 'opt'
+    # Subpasta com sufixo 'opt'
     video_out_dir = os.path.join(outputs_base_dir, f"{video_stem}_opt")
     os.makedirs(video_out_dir, exist_ok=True)
     os.makedirs(matrizes_dir, exist_ok=True)
@@ -263,80 +305,120 @@ def process_single_video_opt(
 
     try:
         print("\n" + "#" * 72)
-        print("PROCESSANDO VÍDEO COM OTIMIZAÇÃO 3D PNP: %s" % video_name)
+        print("PROCESSANDO VÍDEO COM OTIMIZAÇÃO 3D PNP (VERSÃO ACELERADA): %s" % video_name)
         print("#" * 72)
         print("Caminho do vídeo: %s" % video_path)
         print("Pasta de saída: %s" % video_out_dir)
         print("Dataset ROI ground-truth: %s (%d registros)" % (roi_csv_path, len(roi_rows)))
+        print("Aceleração GPU PyTorch/CUDA: %s" % ("ATIVA (RTX 3050)" if (HAS_CUDA and device != "cpu") else "Desativada / CPU"))
 
-        detector = cv2.aruco.CharucoDetector(board)
+        evaluator = FastPnPEvaluator(roi_rows, target_side_m=TARGET_SIDE_M, device=device, num_workers=num_workers)
 
-        # 1) Abrir video
-        cap = cv2.VideoCapture(video_path)
-        if not cap.isOpened():
-            print("ERRO: nao foi possivel abrir o video: %s" % video_path)
-            return False
-
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        print("Video: %dx%d, ~%d frames" % (w, h, total_frames))
-        image_size = (w, h)
-
-        # 2) Extrair TODAS as views validas do video
+        cache_path = os.path.join(video_out_dir, "views_cache.pkl")
         candidate_views = []
-        frame_idx = -1
+        image_size = None
+        w, h = 0, 0
         sampled = 0
 
-        while True:
-            ok, frame = cap.read()
-            if not ok:
-                break
-            frame_idx += 1
-            if frame_idx % every != 0:
-                continue
-            sampled += 1
+        # --- TENTAR CARREGAR DO CACHE BINARIO FAST .PKL ---
+        use_cache = False
+        if not force_redetect and os.path.isfile(cache_path):
+            try:
+                with open(cache_path, "rb") as f:
+                    cache_data = pickle.load(f)
+                if cache_data.get("every") == every and cache_data.get("video_name") == video_name:
+                    candidate_views = cache_data["candidate_views"]
+                    image_size = cache_data["image_size"]
+                    w, h = image_size
+                    sampled = cache_data.get("sampled", len(candidate_views) * every)
+                    use_cache = True
+                    print("\n⚡ [CACHE HIT] Views do vídeo carregadas instantaneamente do arquivo cache:")
+                    print("   - %s (%d views válidas acumuladas)" % (cache_path, len(candidate_views)))
+            except Exception as e:
+                print("   ! Falha ao carregar cache, re-extraindo do vídeo: %s" % e)
 
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            det_res = detector.detectBoard(gray)
-            ch_corners = det_res[0] if (det_res is not None and len(det_res) > 0) else None
-            ch_ids = det_res[1] if (det_res is not None and len(det_res) > 1) else None
+        # --- EXTRAÇÃO DO VÍDEO CASO NÃO ESTEJA EM CACHE ---
+        if not use_cache:
+            print("\n🎥 Extraindo views do vídeo (sampling 1 a cada %d frames)..." % every)
+            detector = cv2.aruco.CharucoDetector(board)
+            cap = cv2.VideoCapture(video_path)
+            if not cap.isOpened():
+                print("ERRO: nao foi possivel abrir o video: %s" % video_path)
+                return False
 
-            if ch_ids is None or len(ch_ids) < MIN_CHARUCO_CORNERS:
-                continue
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            print("Video: %dx%d, ~%d frames" % (w, h, total_frames))
+            image_size = (w, h)
 
-            # Tentar extrair obj_points e img_points via matchImagePoints
-            if hasattr(board, "matchImagePoints"):
-                match_res = board.matchImagePoints(ch_corners, ch_ids)
-                if match_res is not None and len(match_res) >= 2:
-                    op, ip = match_res[0], match_res[1]
+            frame_idx = -1
+            sampled = 0
+            start_ext = time.time()
+
+            while True:
+                ok, frame = cap.read()
+                if not ok:
+                    break
+                frame_idx += 1
+                if frame_idx % every != 0:
+                    continue
+                sampled += 1
+
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                det_res = detector.detectBoard(gray)
+                ch_corners = det_res[0] if (det_res is not None and len(det_res) > 0) else None
+                ch_ids = det_res[1] if (det_res is not None and len(det_res) > 1) else None
+
+                if ch_ids is None or len(ch_ids) < MIN_CHARUCO_CORNERS:
+                    continue
+
+                if hasattr(board, "matchImagePoints"):
+                    match_res = board.matchImagePoints(ch_corners, ch_ids)
+                    if match_res is not None and len(match_res) >= 2:
+                        op, ip = match_res[0], match_res[1]
+                    else:
+                        op, ip = None, None
                 else:
                     op, ip = None, None
-            else:
-                op, ip = None, None
 
-            if op is None or len(op) < MIN_CHARUCO_CORNERS:
-                continue
+                if op is None or len(op) < MIN_CHARUCO_CORNERS:
+                    continue
 
-            candidate_views.append({
-                "frame_idx": frame_idx,
-                "corners": ch_corners,
-                "ids": ch_ids,
-                "op": op,
-                "ip": ip,
-                "frame_sample": frame.copy() if len(candidate_views) == 0 else None
-            })
+                candidate_views.append({
+                    "frame_idx": frame_idx,
+                    "corners": ch_corners,
+                    "ids": ch_ids,
+                    "op": op,
+                    "ip": ip,
+                    "frame_sample": frame.copy() if len(candidate_views) == 0 else None
+                })
 
-        cap.release()
+            cap.release()
+            ext_time = time.time() - start_ext
+            print("Extração concluída em %.2f s | Frames amostrados: %d | Views válidas: %d" % (ext_time, sampled, len(candidate_views)))
+
+            # Salvar cache para execuções futuras
+            try:
+                cache_data = {
+                    "video_name": video_name,
+                    "image_size": image_size,
+                    "every": every,
+                    "sampled": sampled,
+                    "candidate_views": candidate_views
+                }
+                with open(cache_path, "wb") as f:
+                    pickle.dump(cache_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+                print("💾 Cache de detecções salvo em: %s" % cache_path)
+            except Exception as e:
+                print("   ! Aviso: nao foi possivel salvar cache: %s" % e)
 
         M = len(candidate_views)
-        print("Frames amostrados: %d | views validas acumuladas: %d" % (sampled, M))
-
         if M < min_views:
             print("ERRO: views validas insuficientes (%d < min %d) para calibrar." % (M, min_views))
             return False
 
-        # 3) Avaliar Calibracao Baseline (usando amostragem padrao das M views)
+        # --- AVALIAR CALIBRAÇÃO BASELINE ---
         baseline_indices = list(range(min(M, max_views)))
         baseline_res = run_calibration_on_subset(cv2, board, baseline_indices, candidate_views, image_size)
 
@@ -344,9 +426,7 @@ def process_single_video_opt(
             print("ERRO na calibracao baseline.")
             return False
 
-        base_mean_3d, base_x, base_y, base_z = evaluate_pnp_3d_error(
-            cv2, baseline_res["K"], baseline_res["dist"], roi_rows
-        )
+        base_mean_3d, base_x, base_y, base_z = evaluator.evaluate(cv2, baseline_res["K"], baseline_res["dist"])
         print("\n--- RESULTADO BASELINE (Amostragem Padrao %d views) ---" % len(baseline_indices))
         print("RMS Reproj: %.4f px" % baseline_res["rms"])
         print("K Baseline: fx=%.2f, fy=%.2f, cx=%.2f, cy=%.2f"
@@ -354,10 +434,10 @@ def process_single_video_opt(
         print("Erro Medio 3D PnP: %.4f m (%.2f cm) [X: %.2f cm, Y: %.2f cm, Z: %.2f cm]"
               % (base_mean_3d, base_mean_3d * 100, base_x * 100, base_y * 100, base_z * 100))
 
-        # 4) ALGORITMO DE OTIMIZACAO DE SUBCONJUNTO DE VIEWS
+        # --- ALGORITMO DE OTIMIZACAO ACELERADO ---
         print("\n" + "=" * 72)
-        print("INICIANDO BUSCA DO SUBCONJUNTO OTIMIZADO DE FRAMES...")
-        print("Teto de iteracoes: %d | faixa de views: [%d, %d]" % (iterations, min_views, min(M, max_views)))
+        print("INICIANDO BUSCA OTIMIZADA DE SUBCONJUNTO DE FRAMES (PARALELA / ACELERADA)...")
+        print("Teto de iteracoes: %d | Faixa de views: [%d, %d]" % (iterations, min_views, min(M, max_views)))
         print("=" * 72)
 
         start_time = time.time()
@@ -366,15 +446,13 @@ def process_single_video_opt(
         best_err_3d = base_mean_3d
         best_err_xyz = (base_x, base_y, base_z)
 
-        # Passo A: Busca Gulosa de Remocao (Backward Elimination) a partir de todas as views
+        # Passo A: Busca Gulosa de Remocao (Backward Elimination)
         current_indices = list(range(M))
-        print("\n[Passo 1/2] Iniciando Busca Gulosa de Remocao (Backward Elimination) a partir de %d views..." % M)
-        
+        print("\n[Passo 1/2] Busca Gulosa de Remocao (Backward Elimination) a partir de %d views..." % M)
+
         curr_res = run_calibration_on_subset(cv2, board, current_indices, candidate_views, image_size)
         if curr_res is not None:
-            curr_err_3d, curr_x, curr_y, curr_z = evaluate_pnp_3d_error(
-                cv2, curr_res["K"], curr_res["dist"], roi_rows
-            )
+            curr_err_3d, curr_x, curr_y, curr_z = evaluator.evaluate(cv2, curr_res["K"], curr_res["dist"])
             if curr_err_3d < best_err_3d:
                 best_err_3d = curr_err_3d
                 best_indices = list(current_indices)
@@ -383,31 +461,40 @@ def process_single_video_opt(
                 print("  -> [GULOSO INICIAL] Todas as %d views: Erro 3D = %.4f m (%.2f cm) | RMS = %.4f px"
                       % (M, best_err_3d, best_err_3d * 100, best_res["rms"]))
 
-        # Passe guloso de remocao item a item
         improved = True
         step_count = 0
+        workers_count = num_workers or max(1, os.cpu_count() or 4)
+
         while improved and len(current_indices) > min_views:
             improved = False
             best_removal_idx = None
             total_cand = len(current_indices)
-            print("  -> [GULOSO Rodada %d] Avaliando remocao de 1 view dentre %d views..." % (step_count + 1, total_cand))
+            print("  -> [GULOSO Rodada %d] Avaliando remocao de 1 view em paralelo (%d candidatos, %d workers)..."
+                  % (step_count + 1, total_cand, workers_count))
 
-            for c_idx, idx in enumerate(current_indices, 1):
-                if c_idx % max(1, total_cand // 5) == 0 or c_idx == total_cand:
-                    print("      ...avaliados %d/%d candidatos | Melhor Erro 3D ate agora: %.2f cm"
-                          % (c_idx, total_cand, best_err_3d * 100))
-
+            cands_to_eval = []
+            for idx in current_indices:
                 cand = [i for i in current_indices if i != idx]
-                c_res = run_calibration_on_subset(cv2, board, cand, candidate_views, image_size)
+                cands_to_eval.append((idx, cand))
+
+            def _eval_removal(item):
+                rem_idx, cand_indices = item
+                c_res = run_calibration_on_subset(cv2, board, cand_indices, candidate_views, image_size)
                 if c_res is None or c_res["rms"] > RMS_ACCEPTABLE:
-                    continue
-                err_3d, ex, ey, ez = evaluate_pnp_3d_error(cv2, c_res["K"], c_res["dist"], roi_rows)
-                if err_3d < best_err_3d:
+                    return rem_idx, cand_indices, None, float("inf"), None
+                err_3d, ex, ey, ez = evaluator.evaluate(cv2, c_res["K"], c_res["dist"])
+                return rem_idx, cand_indices, c_res, err_3d, (ex, ey, ez)
+
+            with ThreadPoolExecutor(max_workers=min(16, workers_count)) as pool:
+                results = list(pool.map(_eval_removal, cands_to_eval))
+
+            for rem_idx, cand_indices, c_res, err_3d, err_xyz in results:
+                if c_res is not None and err_3d < best_err_3d:
                     best_err_3d = err_3d
-                    best_removal_idx = idx
-                    best_indices = list(cand)
+                    best_removal_idx = rem_idx
+                    best_indices = list(cand_indices)
                     best_res = c_res
-                    best_err_xyz = (ex, ey, ez)
+                    best_err_xyz = err_xyz
                     improved = True
 
             if best_removal_idx is not None:
@@ -421,58 +508,77 @@ def process_single_video_opt(
         print("[Passo 1/2 Concluido] Subconjunto guloso ajustado para %d views (Menor Erro 3D: %.2f cm)"
               % (len(best_indices), best_err_3d * 100))
 
-        # Passo B: Busca Local Estocastica / Monte Carlo (Intercalando mutacoes no melhor subconjunto)
+        # Passo B: Busca Local Estocastica / Monte Carlo Paralela em Batches
         max_k = min(M, max_views)
-        tested_count = 0
-        print("\n[Passo 2/2] Iniciando Busca Estocastica / Monte Carlo (%d iteracoes)..." % iterations)
-
+        print("\n[Passo 2/2] Iniciando Busca Estocastica / Monte Carlo Paralela (%d iteracoes)..." % iterations)
         log_interval = max(1, iterations // 10)
+        batch_size = 64
 
-        for it in range(1, iterations + 1):
-            tested_count += 1
-            # Estrategia 70% mutacao do melhor atual, 30% amostragem aleatoria nova
-            if random.random() < 0.7 and len(best_indices) >= min_views:
-                k = random.randint(min_views, max_k)
-                cand_set = set(best_indices)
-                # Mutar: remover 1 a 3 elementos e adicionar novos
-                n_mut = min(len(cand_set), random.randint(1, 3))
-                to_remove = random.sample(list(cand_set), n_mut)
-                for r in to_remove:
-                    cand_set.remove(r)
+        tested_count = 0
+        iterations_done = 0
 
-                available = set(range(M)) - cand_set
-                n_add = k - len(cand_set)
-                if n_add > 0 and len(available) >= n_add:
-                    to_add = random.sample(list(available), n_add)
-                    cand_set.update(to_add)
-                cand_indices = sorted(list(cand_set))
-            else:
-                k = random.randint(min_views, max_k)
-                cand_indices = sorted(random.sample(range(M), k))
+        def _eval_monte_carlo_batch(cand_batch):
+            batch_results = []
+            for cand_indices in cand_batch:
+                c_res = run_calibration_on_subset(cv2, board, cand_indices, candidate_views, image_size)
+                if c_res is None or c_res["rms"] > RMS_ACCEPTABLE:
+                    batch_results.append((cand_indices, None, float("inf"), None))
+                    continue
+                err_3d, ex, ey, ez = evaluator.evaluate(cv2, c_res["K"], c_res["dist"])
+                batch_results.append((cand_indices, c_res, err_3d, (ex, ey, ez)))
+            return batch_results
 
-            if len(cand_indices) < min_views:
-                continue
+        with ThreadPoolExecutor(max_workers=min(16, workers_count)) as pool:
+            while iterations_done < iterations:
+                current_batch_size = min(batch_size, iterations - iterations_done)
+                cand_batch = []
+                for _ in range(current_batch_size):
+                    if random.random() < 0.7 and len(best_indices) >= min_views:
+                        k = random.randint(min_views, max_k)
+                        cand_set = set(best_indices)
+                        n_mut = min(len(cand_set), random.randint(1, 3))
+                        to_remove = random.sample(list(cand_set), n_mut)
+                        for r in to_remove:
+                            cand_set.remove(r)
+                        available = set(range(M)) - cand_set
+                        n_add = k - len(cand_set)
+                        if n_add > 0 and len(available) >= n_add:
+                            to_add = random.sample(list(available), n_add)
+                            cand_set.update(to_add)
+                        cand_indices = sorted(list(cand_set))
+                    else:
+                        k = random.randint(min_views, max_k)
+                        cand_indices = sorted(random.sample(range(M), k))
 
-            c_res = run_calibration_on_subset(cv2, board, cand_indices, candidate_views, image_size)
-            if c_res is None or c_res["rms"] > RMS_ACCEPTABLE:
-                continue
+                    if len(cand_indices) >= min_views:
+                        cand_batch.append(cand_indices)
 
-            err_3d, ex, ey, ez = evaluate_pnp_3d_error(cv2, c_res["K"], c_res["dist"], roi_rows)
-            if err_3d < best_err_3d:
-                best_err_3d = err_3d
-                best_indices = list(cand_indices)
-                best_res = c_res
-                best_err_xyz = (ex, ey, ez)
-                print("  -> [NOVO MELHOR %d/%d] Subconjunto de %d views | Novo Erro 3D: %.4f m (%.2f cm) | RMS: %.4f px"
-                      % (it, iterations, len(best_indices), best_err_3d, best_err_3d * 100, best_res["rms"]))
-            elif it % log_interval == 0:
-                print("  -> [PROGRESSO %d/%d (%.0f%%)] Melhor Erro 3D ate agora: %.2f cm (%d views | RMS: %.4f px)"
-                      % (it, iterations, (it / iterations) * 100, best_err_3d * 100, len(best_indices), best_res["rms"]))
+                chunk_size = max(1, len(cand_batch) // workers_count)
+                chunks = [cand_batch[i:i + chunk_size] for i in range(0, len(cand_batch), chunk_size)]
+
+                future_results = [pool.submit(_eval_monte_carlo_batch, chunk) for chunk in chunks]
+
+                for f in future_results:
+                    res_list = f.result()
+                    for cand_indices, c_res, err_3d, err_xyz in res_list:
+                        tested_count += 1
+                        iterations_done += 1
+
+                        if c_res is not None and err_3d < best_err_3d:
+                            best_err_3d = err_3d
+                            best_indices = list(cand_indices)
+                            best_res = c_res
+                            best_err_xyz = err_xyz
+                            print("  -> [NOVO MELHOR %d/%d] Subconjunto de %d views | Novo Erro 3D: %.4f m (%.2f cm) | RMS: %.4f px"
+                                  % (iterations_done, iterations, len(best_indices), best_err_3d, best_err_3d * 100, best_res["rms"]))
+                        elif iterations_done % log_interval == 0:
+                            print("  -> [PROGRESSO %d/%d (%.0f%%)] Melhor Erro 3D ate agora: %.2f cm (%d views | RMS: %.4f px)"
+                                  % (iterations_done, iterations, (iterations_done / iterations) * 100, best_err_3d * 100, len(best_indices), best_res["rms"]))
 
         elapsed = time.time() - start_time
-        print("\nBusca concluida em %.2f segundos (%d combinacoes testadas)." % (elapsed, tested_count))
+        print("\n🚀 Busca concluida em %.2f segundos (%d combinacoes testadas em paralelo)." % (elapsed, tested_count))
 
-        # Extrair variaveis da melhor calibracao encontrada
+        # Extrair variaveis da melhor calibracao
         K_opt = best_res["K"]
         dist_opt = best_res["dist"]
         rms_opt = best_res["rms"]
@@ -481,7 +587,7 @@ def process_single_video_opt(
         cx, cy = float(K_opt[0, 2]), float(K_opt[1, 2])
         opt_x, opt_y, opt_z = best_err_xyz
 
-        # 5) IMPRIMIR RELATORIO COMPARATIVO
+        # --- RELATORIO COMPARATIVO ---
         print("\n" + "=" * 72)
         print("RESUMO COMPARATIVO DE CALIBRAÇÃO")
         print("=" * 72)
@@ -489,7 +595,7 @@ def process_single_video_opt(
               % (base_mean_3d, base_mean_3d * 100, baseline_res["rms"], len(baseline_indices)))
         print("Otimizado (PnP 3D)  : Erro 3D = %.4f m (%.2f cm) | RMS = %.4f px | %d views"
               % (best_err_3d, best_err_3d * 100, rms_opt, num_views_opt))
-        
+
         reduc_pct = ((base_mean_3d - best_err_3d) / base_mean_3d) * 100
         print(">> REDUÇÃO NO ERRO MÉDIO 3D: %.2f%%" % reduc_pct)
         print("\nDetalhamento dos Erros por Eixo (Otimizado):")
@@ -503,7 +609,7 @@ def process_single_video_opt(
         print("Distorcao [k1, k2, p1, p2, k3]: [%s]"
               % ", ".join("%.5f" % v for v in dist_opt[:5]))
 
-        # 6) SALVAR ARQUIVOS DE SAIDA COM SUFIXO 'opt'
+        # --- SALVAR ARQUIVOS DE SAIDA ---
         calib_json_path = os.path.join(video_out_dir, "camera_calib_opt.json")
         undist_png_path = os.path.join(video_out_dir, "undistort_check_opt.png")
         matriz_m_path = os.path.join(matrizes_dir, f"calibracao_{video_stem}_opt.m")
@@ -520,7 +626,7 @@ def process_single_video_opt(
             "pnp_mean_3d_error_cm": float(best_err_3d * 100),
             "num_views_used": num_views_opt,
             "optimized_subset_indices": best_indices,
-            "calibration_method": "Optimization by PnP 3D Error Minization",
+            "calibration_method": "Optimization by PnP 3D Error Minization (Fast GPU/CPU)",
             "opencv_version": opencv_version,
             "roi_csv_used": roi_csv_path
         }
@@ -542,7 +648,6 @@ def process_single_video_opt(
             side_by_side = np.hstack([lbl, undistorted])
             cv2.imwrite(undist_png_path, side_by_side)
 
-        # Formatacao para MATLAB (.m)
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         m_lines = [
             "% --- PARÂMETROS DE CALIBRAÇÃO ÓTIMOS PNP 3D (GERADO AUTOMATICAMENTE) ---",
@@ -595,7 +700,7 @@ def main():
     default_roi_csv = os.path.join(root, DEFAULT_ROI_CSV)
 
     parser = argparse.ArgumentParser(
-        description="Calibracao de camera por ChArUco OTIMIZADA por erro 3D de PnP."
+        description="Calibracao de camera por ChArUco OTIMIZADA por erro 3D de PnP (Fast GPU/CPU)."
     )
     parser.add_argument(
         "--video",
@@ -605,7 +710,7 @@ def main():
     parser.add_argument(
         "--roi-csv",
         default=default_roi_csv,
-        help="Caminho do arquivo CSV de ROI (default: resultadosROI/resultados_ROI_otsu05_2007.csv)",
+        help="Caminho do arquivo CSV de ROI (default: resultadosROI/resultados_ROI_20_07_selecaoManual.csv)",
     )
     parser.add_argument(
         "--config",
@@ -627,6 +732,18 @@ def main():
     parser.add_argument(
         "--iterations", type=int, default=NUM_SEARCH_ITERATIONS,
         help=f"Numero de iteracoes da busca estocastica (default: {NUM_SEARCH_ITERATIONS})",
+    )
+    parser.add_argument(
+        "--force-redetect", action="store_true",
+        help="Força a re-extração das views do vídeo ignorando o arquivo views_cache.pkl",
+    )
+    parser.add_argument(
+        "--num-workers", type=int, default=None,
+        help="Número de workers paralelos para calibração CPU (default: autodetectar núcleos)",
+    )
+    parser.add_argument(
+        "--device", choices=["auto", "cuda", "cpu"], default="auto",
+        help="Dispositivo de aceleração para PnP ('auto', 'cuda' para GPU RTX, 'cpu')",
     )
     args = parser.parse_args()
 
@@ -684,7 +801,10 @@ def main():
             outputs_base_dir=outputs_base_dir,
             matrizes_dir=matrizes_dir,
             cv2=cv2,
-            opencv_version=opencv_version
+            opencv_version=opencv_version,
+            force_redetect=args.force_redetect,
+            num_workers=args.num_workers,
+            device=args.device
         )
         if ok:
             successes += 1

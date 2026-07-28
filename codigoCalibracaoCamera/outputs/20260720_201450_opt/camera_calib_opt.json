@@ -4,20 +4,20 @@
     1280,
     720
   ],
-  "fx": 863.1490398731264,
-  "fy": 870.9724529485969,
-  "cx": 653.3233740587217,
-  "cy": 364.47796564293435,
+  "fx": 889.4800754433011,
+  "fy": 893.6767014410358,
+  "cx": 653.4243815343773,
+  "cy": 365.9825934875294,
   "camera_matrix": [
     [
-      863.1490398731264,
+      889.4800754433011,
       0.0,
-      653.3233740587217
+      653.4243815343773
     ],
     [
       0.0,
-      870.9724529485969,
-      364.47796564293435
+      893.6767014410358,
+      365.9825934875294
     ],
     [
       0.0,
@@ -26,11 +26,11 @@
     ]
   ],
   "dist_coeffs": [
-    0.15532658618672934,
-    -0.41315497977174215,
-    0.0036605449634046607,
-    -0.0015564181766970866,
-    0.3337229894087573
+    0.11175943207347072,
+    -0.3136463370563074,
+    0.0034524579911162914,
+    -0.0003256529606195073,
+    0.25993904219516695
   ],
   "dist_coeffs_labels": [
     "k1",
@@ -39,35 +39,44 @@
     "p2",
     "k3"
   ],
-  "rms_reprojection_error": 0.27956724932842175,
-  "pnp_mean_3d_error_m": 0.03682951103879571,
-  "pnp_mean_3d_error_cm": 3.6829511038795713,
-  "num_views_used": 22,
+  "rms_reprojection_error": 0.28514931926399734,
+  "pnp_mean_3d_error_m": 0.02821801239283379,
+  "pnp_mean_3d_error_cm": 2.821801239283379,
+  "num_views_used": 31,
   "optimized_subset_indices": [
     7,
-    10,
     12,
     14,
     15,
+    16,
     17,
+    18,
+    29,
+    30,
+    32,
+    33,
+    34,
+    35,
+    38,
     40,
     44,
-    45,
-    47,
-    59,
-    61,
-    65,
-    68,
-    69,
-    70,
-    74,
-    76,
+    49,
+    55,
+    56,
+    71,
+    72,
+    73,
     85,
-    92,
+    86,
+    87,
+    88,
+    93,
     103,
-    112
+    104,
+    113,
+    114
   ],
-  "calibration_method": "Optimization by PnP 3D Error Minization",
+  "calibration_method": "Optimization by PnP 3D Error Minization (Fast GPU/CPU)",
   "opencv_version": "5.0.0",
-  "roi_csv_used": "c:\\Users\\migue\\Documents\\AmbienteMestrado\\S2C\\resultadosROI/resultados_ROI_otsu05_2007.csv"
+  "roi_csv_used": "c:\\Users\\migue\\Documents\\AmbienteMestrado\\S2C\\resultadosROI/resultados_ROI_20_07_selecaoManual.csv"
 }

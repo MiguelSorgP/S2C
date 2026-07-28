@@ -4,20 +4,20 @@
     1280,
     720
   ],
-  "fx": 857.3261487440049,
-  "fy": 868.841105581132,
-  "cx": 651.6067389269298,
-  "cy": 364.8047147275599,
+  "fx": 882.6645332949396,
+  "fy": 888.6237890466656,
+  "cx": 649.4084750146217,
+  "cy": 365.617554083956,
   "camera_matrix": [
     [
-      857.3261487440049,
+      882.6645332949396,
       0.0,
-      651.6067389269298
+      649.4084750146217
     ],
     [
       0.0,
-      868.841105581132,
-      364.8047147275599
+      888.6237890466656,
+      365.617554083956
     ],
     [
       0.0,
@@ -26,11 +26,11 @@
     ]
   ],
   "dist_coeffs": [
-    0.265570253568484,
-    -0.7278001247572349,
-    0.006304854656193667,
-    0.0010374265224972767,
-    0.609729734421863
+    0.25848691864584683,
+    -0.7287019248600125,
+    0.0035543092162683833,
+    -0.00012424540283212376,
+    0.6375522542198951
   ],
   "dist_coeffs_labels": [
     "k1",
@@ -39,12 +39,13 @@
     "p2",
     "k3"
   ],
-  "rms_reprojection_error": 0.3002057923724292,
-  "pnp_mean_3d_error_m": 0.035972640555394904,
-  "pnp_mean_3d_error_cm": 3.5972640555394904,
-  "num_views_used": 21,
+  "rms_reprojection_error": 0.29186022891492996,
+  "pnp_mean_3d_error_m": 0.02888966741685883,
+  "pnp_mean_3d_error_cm": 2.888966741685883,
+  "num_views_used": 22,
   "optimized_subset_indices": [
     2,
+    3,
     5,
     6,
     7,
@@ -58,15 +59,15 @@
     21,
     22,
     23,
-    24,
     25,
-    35,
-    47,
-    48,
-    71,
+    29,
+    36,
+    41,
+    42,
+    59,
     84
   ],
-  "calibration_method": "Optimization by PnP 3D Error Minization",
+  "calibration_method": "Optimization by PnP 3D Error Minization (Fast GPU/CPU)",
   "opencv_version": "5.0.0",
-  "roi_csv_used": "c:\\Users\\migue\\Documents\\AmbienteMestrado\\S2C\\resultadosROI/resultados_ROI_otsu05_2007.csv"
+  "roi_csv_used": "c:\\Users\\migue\\Documents\\AmbienteMestrado\\S2C\\resultadosROI/resultados_ROI_20_07_selecaoManual.csv"
 }
