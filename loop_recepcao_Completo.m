@@ -60,7 +60,7 @@ noiseFlag = 1; % Modifique aqui para 1 para rodar com ruído e Monte Carlo
 
 % Parâmetros para o modo avançado (utilizados se noiseFlag == 1):
 OnePnDB = -50:2:50;  % Vetor de 1/Pn (dB)
-MC = 10000;           % Número de repetições Monte Carlo (pode ser diminuído para teste)
+MC = 1000;           % Número de repetições Monte Carlo (pode ser diminuído para teste)
 
 % 8) Flag para normalização e remoção de fundo (v3_norm)
 %    0 = Sem normalização / remoção de fundo
@@ -74,7 +74,7 @@ numBackgroundMultiplier = 15;
 % 9) Flag para salvar as imagens da ROI detectada (pasta imagesROI)
 %    true  = Cria a pasta e salva as imagens de ROI (.jpg) para verificação visual
 %    false = Desativa o salvamento das imagens de ROI
-salvarImagensROI = false;
+salvarImagensROI = true;
 
 % 10) Flag para correção de perspectiva:
 %    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)

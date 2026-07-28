@@ -41,7 +41,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # CONFIGURACOES E PARAMETROS DE OTIMIZACAO (EDITAVEIS NO TOPO DO CODIGO)
 # ---------------------------------------------------------------------------
-DEFAULT_ROI_CSV = "resultadosROI/resultados_ROI_20_07_selecaoManual.csv"
+DEFAULT_ROI_CSV = "resultadosROI/resultados_ROI_otsu05_2007_clean.csv"
 MIN_CHARUCO_CORNERS = 12          # cantos minimos por frame para aceitar a view
 DEFAULT_EVERY = 5                 # amostrar 1 a cada N frames do video para ter um pool amplo de views
 MIN_VIEWS_OPT = 10                # minimo de views no subconjunto otimizado

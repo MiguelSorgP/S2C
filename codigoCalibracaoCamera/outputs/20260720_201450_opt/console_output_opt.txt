@@ -4,18 +4,16 @@ PROCESSANDO VÍDEO COM OTIMIZAÇÃO 3D PNP (VERSÃO ACELERADA): 20260720_201450.
 ########################################################################
 Caminho do vídeo: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\videos\20260720_201450.mp4
 Pasta de saída: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt
-Dataset ROI ground-truth: c:\Users\migue\Documents\AmbienteMestrado\S2C\resultadosROI/resultados_ROI_20_07_selecaoManual.csv (62 registros)
+Dataset ROI ground-truth: c:\Users\migue\Documents\AmbienteMestrado\S2C\resultadosROI/resultados_ROI_otsu05_2007_clean.csv (40 registros)
 Aceleração GPU PyTorch/CUDA: ATIVA (RTX 3050)
 
-🎥 Extraindo views do vídeo (sampling 1 a cada 5 frames)...
-Video: 1280x720, ~1970 frames
-Extração concluída em 7.26 s | Frames amostrados: 394 | Views válidas: 117
-💾 Cache de detecções salvo em: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt\views_cache.pkl
+⚡ [CACHE HIT] Views do vídeo carregadas instantaneamente do arquivo cache:
+   - c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt\views_cache.pkl (117 views válidas acumuladas)
 
 --- RESULTADO BASELINE (Amostragem Padrao 40 views) ---
 RMS Reproj: 0.2887 px
 K Baseline: fx=881.07, fy=886.53, cx=611.44, cy=366.04
-Erro Medio 3D PnP: 0.0719 m (7.19 cm) [X: 6.71 cm, Y: 0.88 cm, Z: 1.41 cm]
+Erro Medio 3D PnP: 0.0895 m (8.95 cm) [X: 8.03 cm, Y: 0.41 cm, Z: 3.25 cm]
 
 ========================================================================
 INICIANDO BUSCA OTIMIZADA DE SUBCONJUNTO DE FRAMES (PARALELA / ACELERADA)...
@@ -23,207 +21,190 @@ Teto de iteracoes: 3000 | Faixa de views: [10, 40]
 ========================================================================
 
 [Passo 1/2] Busca Gulosa de Remocao (Backward Elimination) a partir de 117 views...
-  -> [GULOSO INICIAL] Todas as 117 views: Erro 3D = 0.0711 m (7.11 cm) | RMS = 0.2818 px
+  -> [GULOSO INICIAL] Todas as 117 views: Erro 3D = 0.0837 m (8.37 cm) | RMS = 0.2818 px
   -> [GULOSO Rodada 1] Avaliando remocao de 1 view em paralelo (117 candidatos, 8 workers)...
-  -> [GULOSO Rodada 1 CONCLUIDA] Removida view. Views restantes: 116 | Erro 3D: 0.0692 m (6.92 cm) | RMS: 0.2803 px
+  -> [GULOSO Rodada 1 CONCLUIDA] Removida view. Views restantes: 116 | Erro 3D: 0.0779 m (7.79 cm) | RMS: 0.2803 px
   -> [GULOSO Rodada 2] Avaliando remocao de 1 view em paralelo (116 candidatos, 8 workers)...
-  -> [GULOSO Rodada 2 CONCLUIDA] Removida view. Views restantes: 115 | Erro 3D: 0.0675 m (6.75 cm) | RMS: 0.2791 px
+  -> [GULOSO Rodada 2 CONCLUIDA] Removida view. Views restantes: 115 | Erro 3D: 0.0742 m (7.42 cm) | RMS: 0.2791 px
   -> [GULOSO Rodada 3] Avaliando remocao de 1 view em paralelo (115 candidatos, 8 workers)...
-  -> [GULOSO Rodada 3 CONCLUIDA] Removida view. Views restantes: 114 | Erro 3D: 0.0657 m (6.57 cm) | RMS: 0.2791 px
+  -> [GULOSO Rodada 3 CONCLUIDA] Removida view. Views restantes: 114 | Erro 3D: 0.0702 m (7.02 cm) | RMS: 0.2778 px
   -> [GULOSO Rodada 4] Avaliando remocao de 1 view em paralelo (114 candidatos, 8 workers)...
-  -> [GULOSO Rodada 4 CONCLUIDA] Removida view. Views restantes: 113 | Erro 3D: 0.0638 m (6.38 cm) | RMS: 0.2791 px
+  -> [GULOSO Rodada 4 CONCLUIDA] Removida view. Views restantes: 113 | Erro 3D: 0.0669 m (6.69 cm) | RMS: 0.2766 px
   -> [GULOSO Rodada 5] Avaliando remocao de 1 view em paralelo (113 candidatos, 8 workers)...
-  -> [GULOSO Rodada 5 CONCLUIDA] Removida view. Views restantes: 112 | Erro 3D: 0.0619 m (6.19 cm) | RMS: 0.2781 px
+  -> [GULOSO Rodada 5 CONCLUIDA] Removida view. Views restantes: 112 | Erro 3D: 0.0644 m (6.44 cm) | RMS: 0.2761 px
   -> [GULOSO Rodada 6] Avaliando remocao de 1 view em paralelo (112 candidatos, 8 workers)...
-  -> [GULOSO Rodada 6 CONCLUIDA] Removida view. Views restantes: 111 | Erro 3D: 0.0602 m (6.02 cm) | RMS: 0.2772 px
+  -> [GULOSO Rodada 6 CONCLUIDA] Removida view. Views restantes: 111 | Erro 3D: 0.0619 m (6.19 cm) | RMS: 0.2750 px
   -> [GULOSO Rodada 7] Avaliando remocao de 1 view em paralelo (111 candidatos, 8 workers)...
-  -> [GULOSO Rodada 7 CONCLUIDA] Removida view. Views restantes: 110 | Erro 3D: 0.0585 m (5.85 cm) | RMS: 0.2756 px
+  -> [GULOSO Rodada 7 CONCLUIDA] Removida view. Views restantes: 110 | Erro 3D: 0.0593 m (5.93 cm) | RMS: 0.2741 px
   -> [GULOSO Rodada 8] Avaliando remocao de 1 view em paralelo (110 candidatos, 8 workers)...
-  -> [GULOSO Rodada 8 CONCLUIDA] Removida view. Views restantes: 109 | Erro 3D: 0.0566 m (5.66 cm) | RMS: 0.2755 px
+  -> [GULOSO Rodada 8 CONCLUIDA] Removida view. Views restantes: 109 | Erro 3D: 0.0575 m (5.75 cm) | RMS: 0.2740 px
   -> [GULOSO Rodada 9] Avaliando remocao de 1 view em paralelo (109 candidatos, 8 workers)...
-  -> [GULOSO Rodada 9 CONCLUIDA] Removida view. Views restantes: 108 | Erro 3D: 0.0556 m (5.56 cm) | RMS: 0.2755 px
+  -> [GULOSO Rodada 9 CONCLUIDA] Removida view. Views restantes: 108 | Erro 3D: 0.0560 m (5.60 cm) | RMS: 0.2733 px
   -> [GULOSO Rodada 10] Avaliando remocao de 1 view em paralelo (108 candidatos, 8 workers)...
-  -> [GULOSO Rodada 10 CONCLUIDA] Removida view. Views restantes: 107 | Erro 3D: 0.0547 m (5.47 cm) | RMS: 0.2763 px
+  -> [GULOSO Rodada 10 CONCLUIDA] Removida view. Views restantes: 107 | Erro 3D: 0.0548 m (5.48 cm) | RMS: 0.2729 px
   -> [GULOSO Rodada 11] Avaliando remocao de 1 view em paralelo (107 candidatos, 8 workers)...
-  -> [GULOSO Rodada 11 CONCLUIDA] Removida view. Views restantes: 106 | Erro 3D: 0.0537 m (5.37 cm) | RMS: 0.2772 px
+  -> [GULOSO Rodada 11 CONCLUIDA] Removida view. Views restantes: 106 | Erro 3D: 0.0536 m (5.36 cm) | RMS: 0.2735 px
   -> [GULOSO Rodada 12] Avaliando remocao de 1 view em paralelo (106 candidatos, 8 workers)...
-  -> [GULOSO Rodada 12 CONCLUIDA] Removida view. Views restantes: 105 | Erro 3D: 0.0528 m (5.28 cm) | RMS: 0.2772 px
+  -> [GULOSO Rodada 12 CONCLUIDA] Removida view. Views restantes: 105 | Erro 3D: 0.0526 m (5.26 cm) | RMS: 0.2741 px
   -> [GULOSO Rodada 13] Avaliando remocao de 1 view em paralelo (105 candidatos, 8 workers)...
-  -> [GULOSO Rodada 13 CONCLUIDA] Removida view. Views restantes: 104 | Erro 3D: 0.0519 m (5.19 cm) | RMS: 0.2767 px
+  -> [GULOSO Rodada 13 CONCLUIDA] Removida view. Views restantes: 104 | Erro 3D: 0.0516 m (5.16 cm) | RMS: 0.2742 px
   -> [GULOSO Rodada 14] Avaliando remocao de 1 view em paralelo (104 candidatos, 8 workers)...
-  -> [GULOSO Rodada 14 CONCLUIDA] Removida view. Views restantes: 103 | Erro 3D: 0.0510 m (5.10 cm) | RMS: 0.2763 px
+  -> [GULOSO Rodada 14 CONCLUIDA] Removida view. Views restantes: 103 | Erro 3D: 0.0507 m (5.07 cm) | RMS: 0.2743 px
   -> [GULOSO Rodada 15] Avaliando remocao de 1 view em paralelo (103 candidatos, 8 workers)...
-  -> [GULOSO Rodada 15 CONCLUIDA] Removida view. Views restantes: 102 | Erro 3D: 0.0501 m (5.01 cm) | RMS: 0.2766 px
+  -> [GULOSO Rodada 15 CONCLUIDA] Removida view. Views restantes: 102 | Erro 3D: 0.0495 m (4.95 cm) | RMS: 0.2740 px
   -> [GULOSO Rodada 16] Avaliando remocao de 1 view em paralelo (102 candidatos, 8 workers)...
-  -> [GULOSO Rodada 16 CONCLUIDA] Removida view. Views restantes: 101 | Erro 3D: 0.0492 m (4.92 cm) | RMS: 0.2775 px
+  -> [GULOSO Rodada 16 CONCLUIDA] Removida view. Views restantes: 101 | Erro 3D: 0.0486 m (4.86 cm) | RMS: 0.2742 px
   -> [GULOSO Rodada 17] Avaliando remocao de 1 view em paralelo (101 candidatos, 8 workers)...
-  -> [GULOSO Rodada 17 CONCLUIDA] Removida view. Views restantes: 100 | Erro 3D: 0.0484 m (4.84 cm) | RMS: 0.2785 px
+  -> [GULOSO Rodada 17 CONCLUIDA] Removida view. Views restantes: 100 | Erro 3D: 0.0478 m (4.78 cm) | RMS: 0.2723 px
   -> [GULOSO Rodada 18] Avaliando remocao de 1 view em paralelo (100 candidatos, 8 workers)...
-  -> [GULOSO Rodada 18 CONCLUIDA] Removida view. Views restantes: 99 | Erro 3D: 0.0477 m (4.77 cm) | RMS: 0.2785 px
+  -> [GULOSO Rodada 18 CONCLUIDA] Removida view. Views restantes: 99 | Erro 3D: 0.0471 m (4.71 cm) | RMS: 0.2710 px
   -> [GULOSO Rodada 19] Avaliando remocao de 1 view em paralelo (99 candidatos, 8 workers)...
-  -> [GULOSO Rodada 19 CONCLUIDA] Removida view. Views restantes: 98 | Erro 3D: 0.0470 m (4.70 cm) | RMS: 0.2783 px
+  -> [GULOSO Rodada 19 CONCLUIDA] Removida view. Views restantes: 98 | Erro 3D: 0.0465 m (4.65 cm) | RMS: 0.2714 px
   -> [GULOSO Rodada 20] Avaliando remocao de 1 view em paralelo (98 candidatos, 8 workers)...
-  -> [GULOSO Rodada 20 CONCLUIDA] Removida view. Views restantes: 97 | Erro 3D: 0.0463 m (4.63 cm) | RMS: 0.2781 px
+  -> [GULOSO Rodada 20 CONCLUIDA] Removida view. Views restantes: 97 | Erro 3D: 0.0459 m (4.59 cm) | RMS: 0.2695 px
   -> [GULOSO Rodada 21] Avaliando remocao de 1 view em paralelo (97 candidatos, 8 workers)...
-  -> [GULOSO Rodada 21 CONCLUIDA] Removida view. Views restantes: 96 | Erro 3D: 0.0457 m (4.57 cm) | RMS: 0.2762 px
+  -> [GULOSO Rodada 21 CONCLUIDA] Removida view. Views restantes: 96 | Erro 3D: 0.0452 m (4.52 cm) | RMS: 0.2704 px
   -> [GULOSO Rodada 22] Avaliando remocao de 1 view em paralelo (96 candidatos, 8 workers)...
-  -> [GULOSO Rodada 22 CONCLUIDA] Removida view. Views restantes: 95 | Erro 3D: 0.0450 m (4.50 cm) | RMS: 0.2766 px
+  -> [GULOSO Rodada 22 CONCLUIDA] Removida view. Views restantes: 95 | Erro 3D: 0.0446 m (4.46 cm) | RMS: 0.2714 px
   -> [GULOSO Rodada 23] Avaliando remocao de 1 view em paralelo (95 candidatos, 8 workers)...
-  -> [GULOSO Rodada 23 CONCLUIDA] Removida view. Views restantes: 94 | Erro 3D: 0.0444 m (4.44 cm) | RMS: 0.2771 px
+  -> [GULOSO Rodada 23 CONCLUIDA] Removida view. Views restantes: 94 | Erro 3D: 0.0440 m (4.40 cm) | RMS: 0.2724 px
   -> [GULOSO Rodada 24] Avaliando remocao de 1 view em paralelo (94 candidatos, 8 workers)...
-  -> [GULOSO Rodada 24 CONCLUIDA] Removida view. Views restantes: 93 | Erro 3D: 0.0437 m (4.37 cm) | RMS: 0.2782 px
+  -> [GULOSO Rodada 24 CONCLUIDA] Removida view. Views restantes: 93 | Erro 3D: 0.0435 m (4.35 cm) | RMS: 0.2702 px
   -> [GULOSO Rodada 25] Avaliando remocao de 1 view em paralelo (93 candidatos, 8 workers)...
-  -> [GULOSO Rodada 25 CONCLUIDA] Removida view. Views restantes: 92 | Erro 3D: 0.0431 m (4.31 cm) | RMS: 0.2785 px
+  -> [GULOSO Rodada 25 CONCLUIDA] Removida view. Views restantes: 92 | Erro 3D: 0.0427 m (4.27 cm) | RMS: 0.2703 px
   -> [GULOSO Rodada 26] Avaliando remocao de 1 view em paralelo (92 candidatos, 8 workers)...
-  -> [GULOSO Rodada 26 CONCLUIDA] Removida view. Views restantes: 91 | Erro 3D: 0.0425 m (4.25 cm) | RMS: 0.2773 px
+  -> [GULOSO Rodada 26 CONCLUIDA] Removida view. Views restantes: 91 | Erro 3D: 0.0421 m (4.21 cm) | RMS: 0.2681 px
   -> [GULOSO Rodada 27] Avaliando remocao de 1 view em paralelo (91 candidatos, 8 workers)...
-  -> [GULOSO Rodada 27 CONCLUIDA] Removida view. Views restantes: 90 | Erro 3D: 0.0419 m (4.19 cm) | RMS: 0.2750 px
+  -> [GULOSO Rodada 27 CONCLUIDA] Removida view. Views restantes: 90 | Erro 3D: 0.0416 m (4.16 cm) | RMS: 0.2689 px
   -> [GULOSO Rodada 28] Avaliando remocao de 1 view em paralelo (90 candidatos, 8 workers)...
-  -> [GULOSO Rodada 28 CONCLUIDA] Removida view. Views restantes: 89 | Erro 3D: 0.0413 m (4.13 cm) | RMS: 0.2738 px
+  -> [GULOSO Rodada 28 CONCLUIDA] Removida view. Views restantes: 89 | Erro 3D: 0.0410 m (4.10 cm) | RMS: 0.2698 px
   -> [GULOSO Rodada 29] Avaliando remocao de 1 view em paralelo (89 candidatos, 8 workers)...
-  -> [GULOSO Rodada 29 CONCLUIDA] Removida view. Views restantes: 88 | Erro 3D: 0.0408 m (4.08 cm) | RMS: 0.2738 px
+  -> [GULOSO Rodada 29 CONCLUIDA] Removida view. Views restantes: 88 | Erro 3D: 0.0405 m (4.05 cm) | RMS: 0.2683 px
   -> [GULOSO Rodada 30] Avaliando remocao de 1 view em paralelo (88 candidatos, 8 workers)...
-  -> [GULOSO Rodada 30 CONCLUIDA] Removida view. Views restantes: 87 | Erro 3D: 0.0403 m (4.03 cm) | RMS: 0.2748 px
+  -> [GULOSO Rodada 30 CONCLUIDA] Removida view. Views restantes: 87 | Erro 3D: 0.0401 m (4.01 cm) | RMS: 0.2667 px
   -> [GULOSO Rodada 31] Avaliando remocao de 1 view em paralelo (87 candidatos, 8 workers)...
-  -> [GULOSO Rodada 31 CONCLUIDA] Removida view. Views restantes: 86 | Erro 3D: 0.0398 m (3.98 cm) | RMS: 0.2756 px
+  -> [GULOSO Rodada 31 CONCLUIDA] Removida view. Views restantes: 86 | Erro 3D: 0.0396 m (3.96 cm) | RMS: 0.2679 px
   -> [GULOSO Rodada 32] Avaliando remocao de 1 view em paralelo (86 candidatos, 8 workers)...
-  -> [GULOSO Rodada 32 CONCLUIDA] Removida view. Views restantes: 85 | Erro 3D: 0.0392 m (3.92 cm) | RMS: 0.2766 px
+  -> [GULOSO Rodada 32 CONCLUIDA] Removida view. Views restantes: 85 | Erro 3D: 0.0391 m (3.91 cm) | RMS: 0.2669 px
   -> [GULOSO Rodada 33] Avaliando remocao de 1 view em paralelo (85 candidatos, 8 workers)...
-  -> [GULOSO Rodada 33 CONCLUIDA] Removida view. Views restantes: 84 | Erro 3D: 0.0387 m (3.87 cm) | RMS: 0.2777 px
+  -> [GULOSO Rodada 33 CONCLUIDA] Removida view. Views restantes: 84 | Erro 3D: 0.0387 m (3.87 cm) | RMS: 0.2668 px
   -> [GULOSO Rodada 34] Avaliando remocao de 1 view em paralelo (84 candidatos, 8 workers)...
-  -> [GULOSO Rodada 34 CONCLUIDA] Removida view. Views restantes: 83 | Erro 3D: 0.0382 m (3.82 cm) | RMS: 0.2756 px
+  -> [GULOSO Rodada 34 CONCLUIDA] Removida view. Views restantes: 83 | Erro 3D: 0.0383 m (3.83 cm) | RMS: 0.2672 px
   -> [GULOSO Rodada 35] Avaliando remocao de 1 view em paralelo (83 candidatos, 8 workers)...
-  -> [GULOSO Rodada 35 CONCLUIDA] Removida view. Views restantes: 82 | Erro 3D: 0.0377 m (3.77 cm) | RMS: 0.2761 px
+  -> [GULOSO Rodada 35 CONCLUIDA] Removida view. Views restantes: 82 | Erro 3D: 0.0379 m (3.79 cm) | RMS: 0.2676 px
   -> [GULOSO Rodada 36] Avaliando remocao de 1 view em paralelo (82 candidatos, 8 workers)...
-  -> [GULOSO Rodada 36 CONCLUIDA] Removida view. Views restantes: 81 | Erro 3D: 0.0372 m (3.72 cm) | RMS: 0.2765 px
+  -> [GULOSO Rodada 36 CONCLUIDA] Removida view. Views restantes: 81 | Erro 3D: 0.0375 m (3.75 cm) | RMS: 0.2645 px
   -> [GULOSO Rodada 37] Avaliando remocao de 1 view em paralelo (81 candidatos, 8 workers)...
-  -> [GULOSO Rodada 37 CONCLUIDA] Removida view. Views restantes: 80 | Erro 3D: 0.0368 m (3.68 cm) | RMS: 0.2740 px
+  -> [GULOSO Rodada 37 CONCLUIDA] Removida view. Views restantes: 80 | Erro 3D: 0.0371 m (3.71 cm) | RMS: 0.2642 px
   -> [GULOSO Rodada 38] Avaliando remocao de 1 view em paralelo (80 candidatos, 8 workers)...
-  -> [GULOSO Rodada 38 CONCLUIDA] Removida view. Views restantes: 79 | Erro 3D: 0.0364 m (3.64 cm) | RMS: 0.2742 px
+  -> [GULOSO Rodada 38 CONCLUIDA] Removida view. Views restantes: 79 | Erro 3D: 0.0367 m (3.67 cm) | RMS: 0.2631 px
   -> [GULOSO Rodada 39] Avaliando remocao de 1 view em paralelo (79 candidatos, 8 workers)...
-  -> [GULOSO Rodada 39 CONCLUIDA] Removida view. Views restantes: 78 | Erro 3D: 0.0359 m (3.59 cm) | RMS: 0.2719 px
+  -> [GULOSO Rodada 39 CONCLUIDA] Removida view. Views restantes: 78 | Erro 3D: 0.0363 m (3.63 cm) | RMS: 0.2632 px
   -> [GULOSO Rodada 40] Avaliando remocao de 1 view em paralelo (78 candidatos, 8 workers)...
-  -> [GULOSO Rodada 40 CONCLUIDA] Removida view. Views restantes: 77 | Erro 3D: 0.0355 m (3.55 cm) | RMS: 0.2722 px
+  -> [GULOSO Rodada 40 CONCLUIDA] Removida view. Views restantes: 77 | Erro 3D: 0.0359 m (3.59 cm) | RMS: 0.2614 px
   -> [GULOSO Rodada 41] Avaliando remocao de 1 view em paralelo (77 candidatos, 8 workers)...
-  -> [GULOSO Rodada 41 CONCLUIDA] Removida view. Views restantes: 76 | Erro 3D: 0.0352 m (3.52 cm) | RMS: 0.2728 px
+  -> [GULOSO Rodada 41 CONCLUIDA] Removida view. Views restantes: 76 | Erro 3D: 0.0354 m (3.54 cm) | RMS: 0.2613 px
   -> [GULOSO Rodada 42] Avaliando remocao de 1 view em paralelo (76 candidatos, 8 workers)...
-  -> [GULOSO Rodada 42 CONCLUIDA] Removida view. Views restantes: 75 | Erro 3D: 0.0349 m (3.49 cm) | RMS: 0.2729 px
+  -> [GULOSO Rodada 42 CONCLUIDA] Removida view. Views restantes: 75 | Erro 3D: 0.0349 m (3.49 cm) | RMS: 0.2611 px
   -> [GULOSO Rodada 43] Avaliando remocao de 1 view em paralelo (75 candidatos, 8 workers)...
-  -> [GULOSO Rodada 43 CONCLUIDA] Removida view. Views restantes: 74 | Erro 3D: 0.0345 m (3.45 cm) | RMS: 0.2733 px
+  -> [GULOSO Rodada 43 CONCLUIDA] Removida view. Views restantes: 74 | Erro 3D: 0.0346 m (3.46 cm) | RMS: 0.2624 px
   -> [GULOSO Rodada 44] Avaliando remocao de 1 view em paralelo (74 candidatos, 8 workers)...
-  -> [GULOSO Rodada 44 CONCLUIDA] Removida view. Views restantes: 73 | Erro 3D: 0.0341 m (3.41 cm) | RMS: 0.2748 px
+  -> [GULOSO Rodada 44 CONCLUIDA] Removida view. Views restantes: 73 | Erro 3D: 0.0344 m (3.44 cm) | RMS: 0.2604 px
   -> [GULOSO Rodada 45] Avaliando remocao de 1 view em paralelo (73 candidatos, 8 workers)...
-  -> [GULOSO Rodada 45 CONCLUIDA] Removida view. Views restantes: 72 | Erro 3D: 0.0338 m (3.38 cm) | RMS: 0.2765 px
+  -> [GULOSO Rodada 45 CONCLUIDA] Removida view. Views restantes: 72 | Erro 3D: 0.0341 m (3.41 cm) | RMS: 0.2572 px
   -> [GULOSO Rodada 46] Avaliando remocao de 1 view em paralelo (72 candidatos, 8 workers)...
-  -> [GULOSO Rodada 46 CONCLUIDA] Removida view. Views restantes: 71 | Erro 3D: 0.0335 m (3.35 cm) | RMS: 0.2747 px
+  -> [GULOSO Rodada 46 CONCLUIDA] Removida view. Views restantes: 71 | Erro 3D: 0.0339 m (3.39 cm) | RMS: 0.2574 px
   -> [GULOSO Rodada 47] Avaliando remocao de 1 view em paralelo (71 candidatos, 8 workers)...
-  -> [GULOSO Rodada 47 CONCLUIDA] Removida view. Views restantes: 70 | Erro 3D: 0.0333 m (3.33 cm) | RMS: 0.2718 px
+  -> [GULOSO Rodada 47 CONCLUIDA] Removida view. Views restantes: 70 | Erro 3D: 0.0337 m (3.37 cm) | RMS: 0.2586 px
   -> [GULOSO Rodada 48] Avaliando remocao de 1 view em paralelo (70 candidatos, 8 workers)...
-  -> [GULOSO Rodada 48 CONCLUIDA] Removida view. Views restantes: 69 | Erro 3D: 0.0330 m (3.30 cm) | RMS: 0.2712 px
+  -> [GULOSO Rodada 48 CONCLUIDA] Removida view. Views restantes: 69 | Erro 3D: 0.0335 m (3.35 cm) | RMS: 0.2591 px
   -> [GULOSO Rodada 49] Avaliando remocao de 1 view em paralelo (69 candidatos, 8 workers)...
-  -> [GULOSO Rodada 49 CONCLUIDA] Removida view. Views restantes: 68 | Erro 3D: 0.0328 m (3.28 cm) | RMS: 0.2716 px
+  -> [GULOSO Rodada 49 CONCLUIDA] Removida view. Views restantes: 68 | Erro 3D: 0.0333 m (3.33 cm) | RMS: 0.2588 px
   -> [GULOSO Rodada 50] Avaliando remocao de 1 view em paralelo (68 candidatos, 8 workers)...
-  -> [GULOSO Rodada 50 CONCLUIDA] Removida view. Views restantes: 67 | Erro 3D: 0.0326 m (3.26 cm) | RMS: 0.2729 px
+  -> [GULOSO Rodada 50 CONCLUIDA] Removida view. Views restantes: 67 | Erro 3D: 0.0332 m (3.32 cm) | RMS: 0.2591 px
   -> [GULOSO Rodada 51] Avaliando remocao de 1 view em paralelo (67 candidatos, 8 workers)...
-  -> [GULOSO Rodada 51 CONCLUIDA] Removida view. Views restantes: 66 | Erro 3D: 0.0324 m (3.24 cm) | RMS: 0.2715 px
+  -> [GULOSO Rodada 51 CONCLUIDA] Removida view. Views restantes: 66 | Erro 3D: 0.0330 m (3.30 cm) | RMS: 0.2598 px
   -> [GULOSO Rodada 52] Avaliando remocao de 1 view em paralelo (66 candidatos, 8 workers)...
-  -> [GULOSO Rodada 52 CONCLUIDA] Removida view. Views restantes: 65 | Erro 3D: 0.0321 m (3.21 cm) | RMS: 0.2729 px
+  -> [GULOSO Rodada 52 CONCLUIDA] Removida view. Views restantes: 65 | Erro 3D: 0.0327 m (3.27 cm) | RMS: 0.2615 px
   -> [GULOSO Rodada 53] Avaliando remocao de 1 view em paralelo (65 candidatos, 8 workers)...
-  -> [GULOSO Rodada 53 CONCLUIDA] Removida view. Views restantes: 64 | Erro 3D: 0.0319 m (3.19 cm) | RMS: 0.2733 px
+  -> [GULOSO Rodada 53 CONCLUIDA] Removida view. Views restantes: 64 | Erro 3D: 0.0326 m (3.26 cm) | RMS: 0.2580 px
   -> [GULOSO Rodada 54] Avaliando remocao de 1 view em paralelo (64 candidatos, 8 workers)...
-  -> [GULOSO Rodada 54 CONCLUIDA] Removida view. Views restantes: 63 | Erro 3D: 0.0317 m (3.17 cm) | RMS: 0.2736 px
+  -> [GULOSO Rodada 54 CONCLUIDA] Removida view. Views restantes: 63 | Erro 3D: 0.0324 m (3.24 cm) | RMS: 0.2597 px
   -> [GULOSO Rodada 55] Avaliando remocao de 1 view em paralelo (63 candidatos, 8 workers)...
-  -> [GULOSO Rodada 55 CONCLUIDA] Removida view. Views restantes: 62 | Erro 3D: 0.0316 m (3.16 cm) | RMS: 0.2741 px
+  -> [GULOSO Rodada 55 CONCLUIDA] Removida view. Views restantes: 62 | Erro 3D: 0.0323 m (3.23 cm) | RMS: 0.2600 px
   -> [GULOSO Rodada 56] Avaliando remocao de 1 view em paralelo (62 candidatos, 8 workers)...
-  -> [GULOSO Rodada 56 CONCLUIDA] Removida view. Views restantes: 61 | Erro 3D: 0.0314 m (3.14 cm) | RMS: 0.2731 px
+  -> [GULOSO Rodada 56 CONCLUIDA] Removida view. Views restantes: 61 | Erro 3D: 0.0322 m (3.22 cm) | RMS: 0.2606 px
   -> [GULOSO Rodada 57] Avaliando remocao de 1 view em paralelo (61 candidatos, 8 workers)...
-  -> [GULOSO Rodada 57 CONCLUIDA] Removida view. Views restantes: 60 | Erro 3D: 0.0310 m (3.10 cm) | RMS: 0.2733 px
+  -> [GULOSO Rodada 57 CONCLUIDA] Removida view. Views restantes: 60 | Erro 3D: 0.0321 m (3.21 cm) | RMS: 0.2596 px
   -> [GULOSO Rodada 58] Avaliando remocao de 1 view em paralelo (60 candidatos, 8 workers)...
-  -> [GULOSO Rodada 58 CONCLUIDA] Removida view. Views restantes: 59 | Erro 3D: 0.0306 m (3.06 cm) | RMS: 0.2747 px
+  -> [GULOSO Rodada 58 CONCLUIDA] Removida view. Views restantes: 59 | Erro 3D: 0.0320 m (3.20 cm) | RMS: 0.2600 px
   -> [GULOSO Rodada 59] Avaliando remocao de 1 view em paralelo (59 candidatos, 8 workers)...
-  -> [GULOSO Rodada 59 CONCLUIDA] Removida view. Views restantes: 58 | Erro 3D: 0.0304 m (3.04 cm) | RMS: 0.2724 px
+  -> [GULOSO Rodada 59 CONCLUIDA] Removida view. Views restantes: 58 | Erro 3D: 0.0319 m (3.19 cm) | RMS: 0.2586 px
   -> [GULOSO Rodada 60] Avaliando remocao de 1 view em paralelo (58 candidatos, 8 workers)...
-  -> [GULOSO Rodada 60 CONCLUIDA] Removida view. Views restantes: 57 | Erro 3D: 0.0301 m (3.01 cm) | RMS: 0.2728 px
+  -> [GULOSO Rodada 60 CONCLUIDA] Removida view. Views restantes: 57 | Erro 3D: 0.0318 m (3.18 cm) | RMS: 0.2591 px
   -> [GULOSO Rodada 61] Avaliando remocao de 1 view em paralelo (57 candidatos, 8 workers)...
-  -> [GULOSO Rodada 61 CONCLUIDA] Removida view. Views restantes: 56 | Erro 3D: 0.0299 m (2.99 cm) | RMS: 0.2735 px
+  -> [GULOSO Rodada 61 CONCLUIDA] Removida view. Views restantes: 56 | Erro 3D: 0.0317 m (3.17 cm) | RMS: 0.2584 px
   -> [GULOSO Rodada 62] Avaliando remocao de 1 view em paralelo (56 candidatos, 8 workers)...
-  -> [GULOSO Rodada 62 CONCLUIDA] Removida view. Views restantes: 55 | Erro 3D: 0.0298 m (2.98 cm) | RMS: 0.2701 px
+  -> [GULOSO Rodada 62 CONCLUIDA] Removida view. Views restantes: 55 | Erro 3D: 0.0316 m (3.16 cm) | RMS: 0.2593 px
   -> [GULOSO Rodada 63] Avaliando remocao de 1 view em paralelo (55 candidatos, 8 workers)...
-  -> [GULOSO Rodada 63 CONCLUIDA] Removida view. Views restantes: 54 | Erro 3D: 0.0296 m (2.96 cm) | RMS: 0.2695 px
+  -> [GULOSO Rodada 63 CONCLUIDA] Removida view. Views restantes: 54 | Erro 3D: 0.0315 m (3.15 cm) | RMS: 0.2595 px
   -> [GULOSO Rodada 64] Avaliando remocao de 1 view em paralelo (54 candidatos, 8 workers)...
-  -> [GULOSO Rodada 64 CONCLUIDA] Removida view. Views restantes: 53 | Erro 3D: 0.0295 m (2.95 cm) | RMS: 0.2706 px
+  -> [GULOSO Rodada 64 CONCLUIDA] Removida view. Views restantes: 53 | Erro 3D: 0.0315 m (3.15 cm) | RMS: 0.2607 px
   -> [GULOSO Rodada 65] Avaliando remocao de 1 view em paralelo (53 candidatos, 8 workers)...
-  -> [GULOSO Rodada 65 CONCLUIDA] Removida view. Views restantes: 52 | Erro 3D: 0.0293 m (2.93 cm) | RMS: 0.2714 px
+  -> [GULOSO Rodada 65 CONCLUIDA] Removida view. Views restantes: 52 | Erro 3D: 0.0314 m (3.14 cm) | RMS: 0.2606 px
   -> [GULOSO Rodada 66] Avaliando remocao de 1 view em paralelo (52 candidatos, 8 workers)...
-  -> [GULOSO Rodada 66 CONCLUIDA] Removida view. Views restantes: 51 | Erro 3D: 0.0292 m (2.92 cm) | RMS: 0.2722 px
+  -> [GULOSO Rodada 66 CONCLUIDA] Removida view. Views restantes: 51 | Erro 3D: 0.0314 m (3.14 cm) | RMS: 0.2613 px
   -> [GULOSO Rodada 67] Avaliando remocao de 1 view em paralelo (51 candidatos, 8 workers)...
-  -> [GULOSO Rodada 67 CONCLUIDA] Removida view. Views restantes: 50 | Erro 3D: 0.0291 m (2.91 cm) | RMS: 0.2734 px
+  -> [GULOSO Rodada 67 CONCLUIDA] Removida view. Views restantes: 50 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2618 px
   -> [GULOSO Rodada 68] Avaliando remocao de 1 view em paralelo (50 candidatos, 8 workers)...
-  -> [GULOSO Rodada 68 CONCLUIDA] Removida view. Views restantes: 49 | Erro 3D: 0.0290 m (2.90 cm) | RMS: 0.2731 px
+  -> [GULOSO Rodada 68 CONCLUIDA] Removida view. Views restantes: 49 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2627 px
   -> [GULOSO Rodada 69] Avaliando remocao de 1 view em paralelo (49 candidatos, 8 workers)...
-  -> [GULOSO Rodada 69 CONCLUIDA] Removida view. Views restantes: 48 | Erro 3D: 0.0289 m (2.89 cm) | RMS: 0.2741 px
+  -> [GULOSO Rodada 69 CONCLUIDA] Removida view. Views restantes: 48 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2633 px
   -> [GULOSO Rodada 70] Avaliando remocao de 1 view em paralelo (48 candidatos, 8 workers)...
-  -> [GULOSO Rodada 70 CONCLUIDA] Removida view. Views restantes: 47 | Erro 3D: 0.0288 m (2.88 cm) | RMS: 0.2747 px
+  -> [GULOSO Rodada 70 CONCLUIDA] Removida view. Views restantes: 47 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2638 px
   -> [GULOSO Rodada 71] Avaliando remocao de 1 view em paralelo (47 candidatos, 8 workers)...
-  -> [GULOSO Rodada 71 CONCLUIDA] Removida view. Views restantes: 46 | Erro 3D: 0.0287 m (2.87 cm) | RMS: 0.2734 px
+  -> [GULOSO Rodada 71 CONCLUIDA] Removida view. Views restantes: 46 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2652 px
   -> [GULOSO Rodada 72] Avaliando remocao de 1 view em paralelo (46 candidatos, 8 workers)...
-  -> [GULOSO Rodada 72 CONCLUIDA] Removida view. Views restantes: 45 | Erro 3D: 0.0287 m (2.87 cm) | RMS: 0.2735 px
+  -> [GULOSO Rodada 72 CONCLUIDA] Removida view. Views restantes: 45 | Erro 3D: 0.0313 m (3.13 cm) | RMS: 0.2650 px
   -> [GULOSO Rodada 73] Avaliando remocao de 1 view em paralelo (45 candidatos, 8 workers)...
-  -> [GULOSO Rodada 73 CONCLUIDA] Removida view. Views restantes: 44 | Erro 3D: 0.0286 m (2.86 cm) | RMS: 0.2737 px
-  -> [GULOSO Rodada 74] Avaliando remocao de 1 view em paralelo (44 candidatos, 8 workers)...
-  -> [GULOSO Rodada 74 CONCLUIDA] Removida view. Views restantes: 43 | Erro 3D: 0.0285 m (2.85 cm) | RMS: 0.2751 px
-  -> [GULOSO Rodada 75] Avaliando remocao de 1 view em paralelo (43 candidatos, 8 workers)...
-  -> [GULOSO Rodada 75 CONCLUIDA] Removida view. Views restantes: 42 | Erro 3D: 0.0285 m (2.85 cm) | RMS: 0.2768 px
-  -> [GULOSO Rodada 76] Avaliando remocao de 1 view em paralelo (42 candidatos, 8 workers)...
-  -> [GULOSO Rodada 76 CONCLUIDA] Removida view. Views restantes: 41 | Erro 3D: 0.0284 m (2.84 cm) | RMS: 0.2771 px
-  -> [GULOSO Rodada 77] Avaliando remocao de 1 view em paralelo (41 candidatos, 8 workers)...
-  -> [GULOSO Rodada 77 CONCLUIDA] Removida view. Views restantes: 40 | Erro 3D: 0.0284 m (2.84 cm) | RMS: 0.2768 px
-  -> [GULOSO Rodada 78] Avaliando remocao de 1 view em paralelo (40 candidatos, 8 workers)...
-  -> [GULOSO Rodada 78 CONCLUIDA] Removida view. Views restantes: 39 | Erro 3D: 0.0284 m (2.84 cm) | RMS: 0.2772 px
-  -> [GULOSO Rodada 79] Avaliando remocao de 1 view em paralelo (39 candidatos, 8 workers)...
-  -> [GULOSO Rodada 79 CONCLUIDA] Removida view. Views restantes: 38 | Erro 3D: 0.0283 m (2.83 cm) | RMS: 0.2802 px
-  -> [GULOSO Rodada 80] Avaliando remocao de 1 view em paralelo (38 candidatos, 8 workers)...
-  -> [GULOSO Rodada 80 CONCLUIDA] Removida view. Views restantes: 37 | Erro 3D: 0.0283 m (2.83 cm) | RMS: 0.2811 px
-  -> [GULOSO Rodada 81] Avaliando remocao de 1 view em paralelo (37 candidatos, 8 workers)...
-  -> [GULOSO Rodada 81 CONCLUIDA] Removida view. Views restantes: 36 | Erro 3D: 0.0283 m (2.83 cm) | RMS: 0.2822 px
-  -> [GULOSO Rodada 82] Avaliando remocao de 1 view em paralelo (36 candidatos, 8 workers)...
-  -> [GULOSO Rodada 82 CONCLUIDA] Removida view. Views restantes: 35 | Erro 3D: 0.0283 m (2.83 cm) | RMS: 0.2831 px
-  -> [GULOSO Rodada 83] Avaliando remocao de 1 view em paralelo (35 candidatos, 8 workers)...
   -> [GULOSO] Nenhuma remocao isolada reduziu o Erro 3D. Encerrando Passo 1.
-[Passo 1/2 Concluido] Subconjunto guloso ajustado para 35 views (Menor Erro 3D: 2.83 cm)
+[Passo 1/2 Concluido] Subconjunto guloso ajustado para 45 views (Menor Erro 3D: 3.13 cm)
 
 [Passo 2/2] Iniciando Busca Estocastica / Monte Carlo Paralela (3000 iteracoes)...
-  -> [NOVO MELHOR 239/3000] Subconjunto de 32 views | Novo Erro 3D: 0.0282 m (2.82 cm) | RMS: 0.2840 px
-  -> [NOVO MELHOR 268/3000] Subconjunto de 31 views | Novo Erro 3D: 0.0282 m (2.82 cm) | RMS: 0.2851 px
-  -> [PROGRESSO 300/3000 (10%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 600/3000 (20%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 900/3000 (30%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 1200/3000 (40%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 1500/3000 (50%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 1800/3000 (60%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 2100/3000 (70%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 2400/3000 (80%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 2700/3000 (90%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
-  -> [PROGRESSO 3000/3000 (100%)] Melhor Erro 3D ate agora: 2.82 cm (31 views | RMS: 0.2851 px)
+  -> [NOVO MELHOR 181/3000] Subconjunto de 42 views | Novo Erro 3D: 0.0312 m (3.12 cm) | RMS: 0.2623 px
+  -> [NOVO MELHOR 193/3000] Subconjunto de 39 views | Novo Erro 3D: 0.0311 m (3.11 cm) | RMS: 0.2653 px
+  -> [NOVO MELHOR 276/3000] Subconjunto de 38 views | Novo Erro 3D: 0.0311 m (3.11 cm) | RMS: 0.2669 px
+  -> [PROGRESSO 300/3000 (10%)] Melhor Erro 3D ate agora: 3.11 cm (38 views | RMS: 0.2669 px)
+  -> [NOVO MELHOR 311/3000] Subconjunto de 38 views | Novo Erro 3D: 0.0311 m (3.11 cm) | RMS: 0.2664 px
+  -> [NOVO MELHOR 366/3000] Subconjunto de 37 views | Novo Erro 3D: 0.0311 m (3.11 cm) | RMS: 0.2671 px
+  -> [PROGRESSO 600/3000 (20%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 900/3000 (30%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 1200/3000 (40%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 1500/3000 (50%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 1800/3000 (60%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 2100/3000 (70%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 2400/3000 (80%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 2700/3000 (90%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
+  -> [PROGRESSO 3000/3000 (100%)] Melhor Erro 3D ate agora: 3.11 cm (37 views | RMS: 0.2671 px)
 
-🚀 Busca concluida em 559.48 segundos (3000 combinacoes testadas em paralelo).
+🚀 Busca concluida em 1617.43 segundos (3000 combinacoes testadas em paralelo).
 
 ========================================================================
 RESUMO COMPARATIVO DE CALIBRAÇÃO
 ========================================================================
-Baseline (padrao)   : Erro 3D = 0.0719 m (7.19 cm) | RMS = 0.2887 px | 40 views
-Otimizado (PnP 3D)  : Erro 3D = 0.0282 m (2.82 cm) | RMS = 0.2851 px | 31 views
->> REDUÇÃO NO ERRO MÉDIO 3D: 60.75%
+Baseline (padrao)   : Erro 3D = 0.0895 m (8.95 cm) | RMS = 0.2887 px | 40 views
+Otimizado (PnP 3D)  : Erro 3D = 0.0311 m (3.11 cm) | RMS = 0.2671 px | 37 views
+>> REDUÇÃO NO ERRO MÉDIO 3D: 65.25%
 
 Detalhamento dos Erros por Eixo (Otimizado):
-  -> Erro Medio em X (horizontal) : 0.0172 m (1.72 cm)
-  -> Erro Medio em Y (vertical)   : 0.0088 m (0.88 cm)
-  -> Erro Medio em Z (profundid.) : 0.0136 m (1.36 cm)
+  -> Erro Medio em X (horizontal) : 0.0191 m (1.91 cm)
+  -> Erro Medio em Y (vertical)   : 0.0038 m (0.38 cm)
+  -> Erro Medio em Z (profundid.) : 0.0200 m (2.00 cm)
 
 Matriz K Otimizada:
-  fx = 889.4801,  fy = 893.6767
-  cx = 653.4244,  cy = 365.9826
-Distorcao [k1, k2, p1, p2, k3]: [0.11176, -0.31365, 0.00345, -0.00033, 0.25994]
+  fx = 864.6198,  fy = 871.6066
+  cx = 655.4588,  cy = 365.2793
+Distorcao [k1, k2, p1, p2, k3]: [0.12487, -0.35522, 0.00360, 0.00049, 0.28793]
 
 Arquivos salvos:
   - JSON: c:\Users\migue\Documents\AmbienteMestrado\S2C\codigoCalibracaoCamera\outputs\20260720_201450_opt\camera_calib_opt.json
