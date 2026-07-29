@@ -2,7 +2,7 @@ function plotar_Figuras(initialDir)
 % PLOTAR_FIGURAS - Graphical user interface to visualize and compare OCC simulation metrics.
 % This script implements a GUI to compare Bit Error Rate (BER), Symbol Error Rate (SER),
 % and Mean Squared Error (MSE) metrics across different Screen-to-Camera (S2C) communication
-% algorithms (OCC-KRF and OCC-ALS). It also provides noise analysis tools such as 
+% algorithms (OCC-KRF and OCC-ALS). It also provides noise analysis tools such as
 % histogram plotting of background noise and pixel value standard deviation.
 %
 % Input:
@@ -409,7 +409,7 @@ updateSelectedFiles();
                 selectedDists{end+1} = uniqueDists{d_idx}; %#ok<AGROW>
             end
         end
-        
+
         % Gather checked positions
         selectedPos = {};
         for p_idx = 1:length(posCheckBoxes)
@@ -425,7 +425,7 @@ updateSelectedFiles();
                 selectedZ{end+1} = uniqueZ{z_idx}; %#ok<AGROW>
             end
         end
-        
+
         % Gather checked frequencies
         selectedFreqs = {};
         for f_idx = 1:length(freqCheckBoxes)
@@ -433,19 +433,19 @@ updateSelectedFiles();
                 selectedFreqs{end+1} = uniqueFreqs{f_idx}; %#ok<AGROW>
             end
         end
-        
+
         % Filter files
         matchedFiles = {};
         for idx_file = 1:length(fileNames)
             fName = fileNames{idx_file};
             info = parseVideoName(fName);
-            
+
             % Check lighting condition of the file
             lightingMatch = (info.is_dark && chkDark.Value) || (~info.is_dark && chkLight.Value);
             if ~lightingMatch
                 continue;
             end
-            
+
             if any(strcmp(info.y_key_str, selectedDists)) && ...
                     any(strcmp(info.x_key_str, selectedPos)) && ...
                     any(strcmp(info.z_key_str, selectedZ)) && ...
@@ -453,11 +453,11 @@ updateSelectedFiles();
                 matchedFiles{end+1} = fName; %#ok<AGROW>
             end
         end
-        
+
         % Clear previous curve checkboxes
         delete(pnlMatchedCurves.Children);
         curveCheckBoxes = {};
-        
+
         if isempty(matchedFiles)
             glNoFiles = uigridlayout(pnlMatchedCurves, [1, 1]);
             glNoFiles.Padding = [10 10 10 10];
@@ -496,7 +496,7 @@ updateSelectedFiles();
                 selected{end+1} = curveCheckBoxes{k}.Tag; %#ok<AGROW>
             end
         end
-        
+
         if isempty(selected)
             uialert(fig, ...
                 'Please select (check) at least one curve to plot.', ...
@@ -504,18 +504,18 @@ updateSelectedFiles();
                 'Icon', 'warning');
             return;
         end
-        
+
         selectedMetric = ddMetric.Value;
         metricIdx = strcmp(ddMetric.ItemsData, selectedMetric);
         metricName = ddMetric.Items{metricIdx};
-        
+
         % Open a new default MATLAB figure (independent window)
         figPlot = figure('Name', sprintf('%s Comparison', metricName), ...
             'NumberTitle', 'off', ...
             'Color', [1 1 1]);
         hold on;
         grid on;
-        
+
         % Premium color palette
         colors = [
             0.0000 0.4470 0.7410;  % Blue
@@ -531,17 +531,17 @@ updateSelectedFiles();
             0.0000 0.7500 0.7500;  % Cyan
             0.6000 0.2000 0.0000   % Brown
             ];
-        
+
         numCurves = length(selected);
         plotHandles = [];
         legendLabels = {};
-        
+
         if strcmp(selectedMetric, 'Histogram')
             % --- PLOTTING BACKGROUND NOISE HISTOGRAMS ---
             for k = 1:numCurves
                 fName = selected{k};
                 filePath = fullfile(dadosBerDir, fName);
-                
+
                 try
                     matData = load(filePath);
                 catch ME
@@ -550,7 +550,7 @@ updateSelectedFiles();
                         'Read Error', 'Icon', 'error');
                     return;
                 end
-                
+
                 % Validate presence of backgroundNoise
                 if ~isfield(matData, 'backgroundNoise')
                     close(figPlot);
@@ -558,14 +558,14 @@ updateSelectedFiles();
                         'Missing Variable', 'Icon', 'error');
                     return;
                 end
-                
+
                 noiseData = double(matData.backgroundNoise(:));
                 muVal = mean(noiseData);
                 sigmaVal = std(noiseData);
-                
+
                 colorIdx = mod(k-1, size(colors, 1)) + 1;
                 curveColor = colors(colorIdx, :);
-                
+
                 % Legend formatting using parseVideoName
                 info = parseVideoName(fName);
                 if chkLegendClean.Value && info.is_valid
@@ -574,7 +574,7 @@ updateSelectedFiles();
                     rateStr = upper(info.frames_str);
                     zStr = info.z_key_str;
                     suffixStr = info.suffix;
-                    
+
                     posCodeNum = regexprep(posCode, '[^\d\.]', '');
                     switch posCodeNum
                         case '1'
@@ -590,35 +590,35 @@ updateSelectedFiles();
                         otherwise
                             posName = ['Pos ' posCode];
                     end
-                    
+
                     if info.is_dark
                         lightStr = 'Dark';
                     else
                         lightStr = 'Light';
                     end
-                    
+
                     if ~isempty(suffixStr)
                         suffixLabel = [' [' suffixStr ']'];
                     else
                         suffixLabel = '';
                     end
-                    
+
                     legendLabel = sprintf('%s - %s - %s - %s (%s)%s (\\mu=%.2f, \\sigma=%.2f)', ...
                         distStr, posName, zStr, rateStr, lightStr, suffixLabel, muVal, sigmaVal);
                 else
                     legendLabel = sprintf('%s (\\mu=%.2f, \\sigma=%.2f)', strrep(fName, '_', '\_'), muVal, sigmaVal);
                 end
-                
+
                 % Draw histogram
                 hHist = histogram(noiseData, 'Normalization', 'pdf', ...
                     'FaceColor', curveColor, ...
                     'EdgeColor', curveColor, ...
                     'FaceAlpha', 0.20, ...
                     'EdgeAlpha', 0.50);
-                
+
                 plotHandles(end+1) = hHist; %#ok<AGROW>
                 legendLabels{end+1} = legendLabel; %#ok<AGROW>
-                
+
                 % Draw manual Gaussian fit
                 x_fit = linspace(min(noiseData), max(noiseData), 300);
                 y_fit = (1 / (sigmaVal * sqrt(2 * pi))) * exp(-0.5 * ((x_fit - muVal) / sigmaVal).^2);
@@ -627,20 +627,20 @@ updateSelectedFiles();
                     'LineWidth', 2.0, ...
                     'HandleVisibility', 'off');
             end
-            
+
             xlabel('Noise Amplitude (Gray Level)', 'FontSize', 12, 'FontWeight', 'bold');
             ylabel('Probability Density Function (PDF)', 'FontSize', 12, 'FontWeight', 'bold');
             title('Comparison of Background Noise PDF & Gaussian Fit', 'FontSize', 14, 'FontWeight', 'bold');
-            
+
         else
             % --- PLOTTING KPI CURVES VS 1/Pn (dB) ---
             markers = {'o', 's', 'd', '^', 'v', 'p', 'h', 'x', '+', '*', '<', '>'};
             lineStyles = {'-', '--', '-.', ':'};
-            
+
             for k = 1:numCurves
                 fName = selected{k};
                 filePath = fullfile(dadosBerDir, fName);
-                
+
                 try
                     matData = load(filePath);
                 catch ME
@@ -649,7 +649,7 @@ updateSelectedFiles();
                         'Read Error', 'Icon', 'error');
                     return;
                 end
-                
+
                 % Validate presence of OnePnDB and the selected KPI
                 if ~isfield(matData, 'OnePnDB') || ~isfield(matData, selectedMetric)
                     close(figPlot);
@@ -657,13 +657,13 @@ updateSelectedFiles();
                         'Missing Variables', 'Icon', 'error');
                     return;
                 end
-                
+
                 xData = matData.OnePnDB;
                 yData = matData.(selectedMetric);
                 if strcmp(selectedMetric, 'IoUvals')
                     yData = mean(yData, 2);
                 end
-                
+
                 % Handle early termination in Monte Carlo (if BER reached 0)
                 if isfield(matData, 'BERvals')
                     firstZeroIdx = find(matData.BERvals == 0, 1);
@@ -675,22 +675,22 @@ updateSelectedFiles();
                     xData = xData(1:min(validLen, length(xData)));
                     yData = yData(1:min(validLen, length(yData)));
                 end
-                
+
                 if length(xData) ~= length(yData)
                     close(figPlot);
                     uialert(fig, sprintf('Incompatible dimensions of OnePnDB and %s in file %s.', selectedMetric, fName), ...
                         'Data Error', 'Icon', 'error');
                     return;
                 end
-                
+
                 colorIdx = mod(k-1, size(colors, 1)) + 1;
                 markerIdx = mod(k-1, length(markers)) + 1;
                 lineStyleIdx = mod(k-1, length(lineStyles)) + 1;
-                
+
                 curveColor = colors(colorIdx, :);
                 curveMarker = markers{markerIdx};
                 curveStyle = lineStyles{lineStyleIdx};
-                
+
                 % Plot in semilogarithmic Y scale or linear scale
                 if strcmp(selectedMetric, 'IoUvals')
                     h = plot(xData, yData, ...
@@ -709,9 +709,9 @@ updateSelectedFiles();
                         'MarkerSize', 7, ...
                         'MarkerFaceColor', curveColor);
                 end
-                
+
                 plotHandles(end+1) = h; %#ok<AGROW>
-                
+
                 % Legend formatting using parseVideoName
                 info = parseVideoName(fName);
                 if chkLegendClean.Value && info.is_valid
@@ -720,7 +720,7 @@ updateSelectedFiles();
                     rateStr = upper(info.frames_str);
                     zStr = info.z_key_str;
                     suffixStr = info.suffix;
-                    
+
                     posCodeNum = regexprep(posCode, '[^\d\.]', '');
                     switch posCodeNum
                         case '1'
@@ -736,30 +736,30 @@ updateSelectedFiles();
                         otherwise
                             posName = ['Pos ' posCode];
                     end
-                    
+
                     if info.is_dark
                         lightStr = 'Dark';
                     else
                         lightStr = 'Light';
                     end
-                    
+
                     if ~isempty(suffixStr)
                         suffixLabel = [' [' suffixStr ']'];
                     else
                         suffixLabel = '';
                     end
-                    
+
                     legendLabels{end+1} = sprintf('%s - %s - %s - %s (%s)%s', ...
                         distStr, posName, zStr, rateStr, lightStr, suffixLabel); %#ok<AGROW>
                 else
                     legendLabels{end+1} = strrep(fName, '_', '\_'); %#ok<AGROW>
                 end
             end
-            
+
             xlabel('1/P_n (dB)', 'FontSize', 12, 'FontWeight', 'bold');
             ylabel(metricName, 'FontSize', 12, 'FontWeight', 'bold');
             title(sprintf('%s Performance vs. 1/P_n (dB)', metricName), 'FontSize', 14, 'FontWeight', 'bold');
-            
+
             ax = gca;
             if strcmp(selectedMetric, 'IoUvals')
                 ax.YScale = 'linear';
@@ -767,7 +767,7 @@ updateSelectedFiles();
                 ax.YScale = 'log';
             end
         end
-        
+
         ax = gca;
         % Enable minor grid if requested
         if chkGridOn.Value
@@ -776,15 +776,15 @@ updateSelectedFiles();
             ax.MinorGridColor = [0.3 0.3 0.3];
             ax.MinorGridAlpha = 0.08;
         end
-        
+
         ax.GridColor = [0.2 0.2 0.2];
         ax.GridAlpha = 0.15;
         ax.FontSize = 10;
-        
+
         if ~isempty(legendLabels) && ~isempty(plotHandles)
             legend(plotHandles, legendLabels, 'Location', 'best', 'FontSize', 10);
         end
-        
+
         hold off;
     end
 end
