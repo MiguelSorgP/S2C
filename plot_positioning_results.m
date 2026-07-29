@@ -9,6 +9,7 @@
 %  6. 3D Error vs Real Distance - Mean 3D Error vs. Real Distance (m).
 %  7. 3D Error vs Signed Lateral Angle - Mean 3D Error vs. Real Signed Lateral Angle (deg).
 %  8. 3D Error vs Absolute Lateral Angle - Mean 3D Error vs. Real Absolute Lateral Angle Magnitude (deg).
+%  9. 2D Spatial Error Heatmap - 2D heatmap/contour plot of 3D MAE on ground-truth X-Y plane.
 %
 % All titles, labels, and legends are formatted in English.
 
@@ -16,7 +17,7 @@ clear; clc; close all;
 
 %% 1. Set File Paths and Import Data
 scriptDir = fileparts(mfilename('fullpath'));
-csvPath   = 'resultadosPnP\resultados_PnP_Kvideo1.csv';
+csvPath   = 'resultadosPnP\resultados_PnP_1.csv';
 
 if ~exist(csvPath, 'file')
     error('CSV file not found at: %s', csvPath);
@@ -363,6 +364,62 @@ ylim([0, maxVal8 * 1.15]);
 xlim([min(unique_abs_angle) - 1, max(unique_abs_angle) + 1]);
 set(gca, 'FontSize', 9.5);
 
+%% =========================================================================
+%% Figure 9: 2D Spatial Positioning Error Heatmap (Contour Plot)
+%% =========================================================================
+% Grid 2D of ground-truth plane: Real Lateral X (horizontal) vs Real Depth Y (vertical).
+% Color represents Mean 3D Positioning Error (MAE 3D) in cm.
+% Visualizes spatial distribution of error, asymmetry at FOV edges, and distance degradation.
+
+[gridX, gridY] = meshgrid(unique_X_m, unique_Y_m);
+gridError_3D   = zeros(length(unique_Y_m), length(unique_X_m));
+
+for i = 1:length(unique_Y_m)
+    for j = 1:length(unique_X_m)
+        idx = (abs(data.y_position - unique_Y_m(i)) < 1e-4) & ...
+            (abs(data.x_position - unique_X_m(j)) < 1e-4);
+        if any(idx)
+            gridError_3D(i, j) = mean(err_3D(idx));
+        else
+            gridError_3D(i, j) = NaN;
+        end
+    end
+end
+
+% Interpolate onto a fine 2D mesh for smooth contour visualization
+[X_fine, Y_fine] = meshgrid(linspace(min(unique_X_m), max(unique_X_m), 200), ...
+    linspace(min(unique_Y_m), max(unique_Y_m), 200));
+Z_fine = interp2(gridX, gridY, gridError_3D, X_fine, Y_fine, 'cubic');
+
+hFig9 = figure('Name', '2D Spatial Error Heatmap', 'Units', 'pixels', 'Position', [450, 240, 750, 550]);
+
+% Smooth filled contour map (Heatmap)
+[~, hC] = contourf(X_fine, Y_fine, Z_fine, 25, 'LineStyle', 'none');
+hold on;
+
+% Overlay subtle contour lines for precise level reading
+contour(X_fine, Y_fine, Z_fine, 10, 'LineColor', [0.25, 0.25, 0.25], 'LineWidth', 0.5);
+
+% Overlay the actual ground-truth grid sample points
+hPts = plot(gridX(:), gridY(:), 'ko', 'MarkerFaceColor', [0.95, 0.95, 0.95], ...
+    'MarkerEdgeColor', 'k', 'MarkerSize', 5.5, 'DisplayName', 'Sampling Locations');
+
+xlabel('Real Lateral Position X (m)', 'FontSize', 11);
+ylabel('Real Depth Distance Y (m)', 'FontSize', 11);
+
+% Apply colormap and colorbar
+c = colorbar;
+c.Label.String = 'Mean 3D Positioning Error (cm)';
+c.Label.FontSize = 10.5;
+colormap(turbo); % Rich, high-contrast, perceptually continuous colormap
+
+grid on; box on;
+xlim([min(unique_X_m) - 0.03, max(unique_X_m) + 0.03]);
+ylim([min(unique_Y_m) - 0.05, max(unique_Y_m) + 0.05]);
+legend(hPts, {'Sampling Locations'}, 'Location', 'northeast', 'FontSize', 9.5);
+set(gca, 'FontSize', 9.5);
+
 fprintf('Done! All figures generated and opened.\n');
+
 
 

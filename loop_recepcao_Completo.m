@@ -27,7 +27,7 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-videoDir = '../gravacoes_20_07';
+videoDir = '../gravacoes_20_07_uteis';
 
 % 2) Arquivos .mat com os dados do vídeo original
 matFileF5 = 'videosGerados\dados_video_Mmax8_Nmax8_M4_N4_F5.mat';
@@ -74,7 +74,7 @@ numBackgroundMultiplier = 15;
 % 9) Flag para salvar as imagens da ROI detectada (pasta imagesROI)
 %    true  = Cria a pasta e salva as imagens de ROI (.jpg) para verificação visual
 %    false = Desativa o salvamento das imagens de ROI
-salvarImagensROI = true;
+salvarImagensROI = false;
 
 % 10) Flag para correção de perspectiva:
 %    true  = Ativa (se a ROI não for um retângulo perfeito, aplica a correção de perspectiva)
