@@ -24,7 +24,7 @@ addpath(fullfile(scriptDir, 'funcoes'));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 1) Diretório dos vídeos
-videoDir = '../gravacoes_20_07_uteis';
+videoDir = '../28_07';
 
 % 2) Arquivos .mat com os dados do vídeo original
 matFileF5 = 'videosGerados\dados_video_Mmax8_Nmax8_M4_N4_F5.mat';

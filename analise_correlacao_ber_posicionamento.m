@@ -10,8 +10,9 @@
 %   - Data matching by clean video identifier and spatial coordinates.
 %   - Computation of Pearson (r), Spearman (rho), and Kendall (tau) correlations.
 %   - Calculation of p-values and linear regression R^2 metrics.
-%   - Generation of 4 publication-ready figures including scatter plots,
-%     spatial comparison maps, depth-segregated scatters, and a correlation matrix heatmap.
+%   - Generation of 5 publication-ready figures including scatter plots,
+%     spatial comparison maps, depth-segregated scatters, a correlation matrix heatmap,
+%     and standalone log10(BER) vs 3D error scatter plot.
 
 clear; clc; close all;
 
@@ -484,6 +485,28 @@ for row = 1:numVars
             'Color', textColor, 'FontWeight', 'bold', 'FontSize', 9);
     end
 end
+
+%% =========================================================================
+%% FIGURE 5: Standalone Scatter Plot - log10(BER) vs 3D Positioning Error (Fig 1b)
+%% =========================================================================
+hFig5 = figure('Name', 'Fig5_Scatter_logBER_vs_3D_Positioning_Error', ...
+    'Units', 'pixels', 'Position', [300, 150, 680, 520], 'Color', [1 1 1]);
+
+scatter(matched_logBER, matched_err3D, 65, [0.4 0.2 0.7], 'filled', 'MarkerEdgeColor', 'k');
+hold on;
+pFit5 = polyfit(matched_logBER, matched_err3D, 1);
+xFit5 = linspace(min(matched_logBER), max(matched_logBER), 100);
+plot(xFit5, polyval(pFit5, xFit5), 'm--', 'LineWidth', 2.0);
+xlabel('log_{10}(BER)', 'FontSize', 11);
+ylabel('3D Positioning Error (cm)', 'FontSize', 11);
+title('log_{10}(BER) vs. 3D Positioning Error', 'FontSize', 12, 'FontWeight', 'bold');
+grid on; box on;
+
+txt5 = sprintf('Pearson r = %.3f (p=%.3f)\nSpearman \\rho = %.3f (p=%.3f)\nR^2 = %.3f', ...
+    c_logBER_3D.pearson_r, c_logBER_3D.pearson_p, ...
+    c_logBER_3D.spearman_rho, c_logBER_3D.spearman_p, c_logBER_3D.r_squared);
+annotation('textbox', [0.18 0.73 0.25 0.14], 'String', txt5, 'FitBoxToText', 'on', ...
+    'BackgroundColor', [1 1 1 0.85], 'EdgeColor', [0.7 0.7 0.7], 'FontSize', 9.5);
 
 %% =========================================================================
 %% Helper Output Functions

@@ -7,6 +7,7 @@
 % Figure 3: Error Analysis vs. Lateral Position X (Boxplot of 3D Error + Grouped MAE Bar Chart)
 % Figure 4: Symmetrized Error Analysis vs. Absolute Lateral Offset |X| (Boxplot + Grouped MAE)
 % Figure 5: Symmetrized Error Analysis vs. |X| per Depth Level (Subplots per Depth, Grouped MAE)
+% Figure 5 (Copy): Symmetrized 3D Error Analysis vs. |X| in cm per Depth Level (3D Error Only)
 % Figure 6: Symmetrized 3D Error Boxplots vs. |X| per Depth Level (Subplots per Depth, Boxplot)
 % Figure 7: 3D Error vs. Absolute Lateral Offset |X| Line Plot Grouped by Depth Y Curves
 % Figure 8: Cumulative Error Distribution Function (CDF for X, Y, Z, and 3D Errors)
@@ -293,6 +294,39 @@ for k = 1:numDepths
     if k == 1
         legend({'X-axis', 'Y-axis', 'Z-axis', '3D Error'}, ...
             'Location', 'northeast', 'FontSize', 7.5);
+    end
+end
+
+%% =========================================================================
+%% FIGURE 5 (COPY): Symmetrized 3D Error Analysis vs. |X| (cm) per Depth Level
+%% =========================================================================
+hFig5_3D_cm = figure('Name', 'Fig5_3D_Error_vs_Abs_Lateral_X_cm_per_Depth', 'Units', 'pixels', 'Position', [230, 50, 980, 880]);
+
+unique_abs_X_cm = unique_abs_X_m * 100;
+
+maxMAE_3D_global = 0;
+for k = 1:numDepths
+    maxMAE_3D_global = max(maxMAE_3D_global, max(mae_by_depth{k}(:, 4)));
+end
+
+for k = 1:numDepths
+    subplot(nRows, nCols, k);
+    bk = bar(unique_abs_X_cm, mae_by_depth{k}(:, 4), 'FaceColor', color3D);
+
+    title(sprintf('Depth Y = %.2f m', unique_Y_m(k)), 'FontSize', 10, 'FontWeight', 'bold');
+    grid on; box on;
+    set(gca, 'XTick', unique_abs_X_cm, 'FontSize', 8.5);
+    ylim([0, maxMAE_3D_global * 1.15]);
+
+    if mod(k, nCols) == 1
+        ylabel('3D MAE (cm)', 'FontSize', 9);
+    end
+    if k > (nRows - 1) * nCols
+        xlabel('Absolute Offset |X| (cm)', 'FontSize', 9);
+    end
+
+    if k == 1
+        legend({'3D Error'}, 'Location', 'northeast', 'FontSize', 7.5);
     end
 end
 

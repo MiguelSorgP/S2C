@@ -332,8 +332,8 @@ hFig2 = figure('Name', sprintf('Fig2_BER_vs_Depth_%.1fdB', selectedOnePnDB), ...
 
 % --- Subplot (a): Boxplot of BER per Depth ---
 subplot(2, 1, 1);
-boxplot(BER_plot, Y_real_cm/100, 'Widths', 0.35, 'Symbol', 'r+');
-xlabel('Real Depth Distance Y (m)', 'FontSize', 10.5);
+boxplot(BER_plot, Y_real_cm, 'Widths', 0.35, 'Symbol', 'r+');
+xlabel('Real Depth Distance Y (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title(sprintf('(a) BER Dispersion across Depths Y (1/P_n = %.1f dB)', selectedOnePnDB), 'FontSize', 11, 'FontWeight', 'bold');
 grid on; box on;
@@ -361,16 +361,16 @@ for i = 1:numDepths
     end
 end
 
-b2 = bar(unique_Y_cm/100, [mean_BER_depth, max_BER_depth], 'grouped');
+b2 = bar(unique_Y_cm, [mean_BER_depth, max_BER_depth], 'grouped');
 b2(1).FaceColor = colorY;
 b2(2).FaceColor = colorBER;
 
-xlabel('Real Depth Distance Y (m)', 'FontSize', 10.5);
+xlabel('Real Depth Distance Y (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title('(b) Mean and Peak BER vs. Depth Distance Y', 'FontSize', 11, 'FontWeight', 'bold');
 legend({'Mean BER', 'Peak BER'}, 'Location', 'northeastoutside', 'FontSize', 9.5);
 grid on; box on;
-set(gca, 'XTick', unique_Y_cm/100, 'FontSize', 9.5);
+set(gca, 'XTick', unique_Y_cm, 'FontSize', 9.5);
 if useLogScale
     set(gca, 'YScale', 'log');
     ylim([getLogYMin([mean_BER_depth; max_BER_depth]), max([mean_BER_depth; max_BER_depth]) * 2.5]);
@@ -386,8 +386,8 @@ hFig3 = figure('Name', sprintf('Fig3_BER_vs_Lateral_X_%.1fdB', selectedOnePnDB),
 
 % --- Subplot (a): Boxplot of BER per Lateral Position X ---
 subplot(2, 1, 1);
-boxplot(BER_plot, X_real_cm/100, 'Widths', 0.35, 'Symbol', 'r+');
-xlabel('Real Lateral Position X (m)', 'FontSize', 10.5);
+boxplot(BER_plot, X_real_cm, 'Widths', 0.35, 'Symbol', 'r+');
+xlabel('Real Lateral Position X (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title(sprintf('(a) BER Dispersion across Lateral Positions X (1/P_n = %.1f dB)', selectedOnePnDB), 'FontSize', 11, 'FontWeight', 'bold');
 grid on; box on;
@@ -415,16 +415,16 @@ for i = 1:numXPos
     end
 end
 
-b3 = bar(unique_X_cm/100, [mean_BER_Xpos, max_BER_Xpos], 'grouped');
+b3 = bar(unique_X_cm, [mean_BER_Xpos, max_BER_Xpos], 'grouped');
 b3(1).FaceColor = colorX;
 b3(2).FaceColor = colorBER;
 
-xlabel('Real Lateral Position X (m)', 'FontSize', 10.5);
+xlabel('Real Lateral Position X (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title('(b) Mean and Peak BER vs. Lateral Position X', 'FontSize', 11, 'FontWeight', 'bold');
 legend({'Mean BER', 'Peak BER'}, 'Location', 'northeastoutside', 'FontSize', 9.5);
 grid on; box on;
-set(gca, 'XTick', unique_X_cm/100, 'FontSize', 9.5);
+set(gca, 'XTick', unique_X_cm, 'FontSize', 9.5);
 if useLogScale
     set(gca, 'YScale', 'log');
     ylim([getLogYMin([mean_BER_Xpos; max_BER_Xpos]), max([mean_BER_Xpos; max_BER_Xpos]) * 2.5]);
@@ -440,8 +440,8 @@ hFig4 = figure('Name', sprintf('Fig4_BER_vs_Abs_Lateral_X_%.1fdB', selectedOnePn
 
 % --- Subplot (a): Boxplot of BER per Absolute Lateral Offset |X| ---
 subplot(2, 1, 1);
-boxplot(BER_plot, abs_X_cm/100, 'Widths', 0.35, 'Symbol', 'r+');
-xlabel('Real Absolute Lateral Offset |X| (m)', 'FontSize', 10.5);
+boxplot(BER_plot, abs_X_cm, 'Widths', 0.35, 'Symbol', 'r+');
+xlabel('Real Absolute Lateral Offset |X| (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title(sprintf('(a) BER Dispersion across Symmetrized Offsets |X| (1/P_n = %.1f dB)', selectedOnePnDB), 'FontSize', 11, 'FontWeight', 'bold');
 grid on; box on;
@@ -469,16 +469,16 @@ for i = 1:numAbsXPos
     end
 end
 
-b4 = bar(unique_abs_X_cm/100, [mean_BER_absX, max_BER_absX], 'grouped');
+b4 = bar(unique_abs_X_cm, [mean_BER_absX, max_BER_absX], 'grouped');
 b4(1).FaceColor = colorX;
 b4(2).FaceColor = colorBER;
 
-xlabel('Real Absolute Lateral Offset |X| (m)', 'FontSize', 10.5);
+xlabel('Real Absolute Lateral Offset |X| (cm)', 'FontSize', 10.5);
 ylabel('Bit Error Rate (BER)', 'FontSize', 10.5);
 title('(b) Symmetrized Mean and Peak BER vs. Absolute Lateral Offset |X|', 'FontSize', 11, 'FontWeight', 'bold');
 legend({'Mean BER', 'Peak BER'}, 'Location', 'northeastoutside', 'FontSize', 9.5);
 grid on; box on;
-set(gca, 'XTick', unique_abs_X_cm/100, 'FontSize', 9.5);
+set(gca, 'XTick', unique_abs_X_cm, 'FontSize', 9.5);
 if useLogScale
     set(gca, 'YScale', 'log');
     ylim([getLogYMin([mean_BER_absX; max_BER_absX]), max([mean_BER_absX; max_BER_absX]) * 2.5]);
@@ -516,11 +516,11 @@ for k = 1:numDepths
     end
 
     subplot(nRows, nCols, k);
-    bk = bar(unique_abs_X_cm/100, berK, 'FaceColor', colorBER);
+    bk = bar(unique_abs_X_cm, berK, 'FaceColor', colorBER);
 
-    title(sprintf('Depth Y = %.2f m', unique_Y_cm(k)/100), 'FontSize', 10, 'FontWeight', 'bold');
+    title(sprintf('Depth Y = %g cm', unique_Y_cm(k)), 'FontSize', 10, 'FontWeight', 'bold');
     grid on; box on;
-    set(gca, 'XTick', unique_abs_X_cm/100, 'FontSize', 8.5);
+    set(gca, 'XTick', unique_abs_X_cm, 'FontSize', 8.5);
     if useLogScale
         set(gca, 'YScale', 'log');
         ylim([getLogYMin(BER_plot), maxBER_global * 2.5]);
@@ -532,9 +532,51 @@ for k = 1:numDepths
         ylabel('Mean BER', 'FontSize', 9);
     end
     if k > (nRows - 1) * nCols
-        xlabel('Absolute Offset |X| (m)', 'FontSize', 9);
+        xlabel('Absolute Offset |X| (cm)', 'FontSize', 9);
     end
 end
+
+%% =========================================================================
+%% FIGURE 5B: Symmetrized BER Analysis vs. |X| per Depth (Two-Column Paper Layout 2x4)
+%% =========================================================================
+hFig5B = figure('Name', sprintf('Fig5B_TwoColumn_BER_vs_AbsX_per_Depth_%.1fdB', selectedOnePnDB), ...
+    'Units', 'pixels', 'Position', [200, 100, 1100, 460], 'Color', [1 1 1]);
+
+t5 = tiledlayout(2, 4, 'Padding', 'compact', 'TileSpacing', 'compact');
+
+for k = 1:numDepths
+    idxK = (abs(Y_real_cm - unique_Y_cm(k)) < 1e-4);
+    berK = zeros(numAbsXPos, 1);
+    for i = 1:numAbsXPos
+        idxKI = idxK & (abs(abs_X_cm - unique_abs_X_cm(i)) < 1e-4);
+        if any(idxKI)
+            if useLogScale
+                berK(i) = max(effectiveFloor, mean(BER_eval(idxKI)));
+            else
+                berK(i) = mean(BER_eval(idxKI));
+            end
+        end
+    end
+
+    nexttile(t5);
+    bk = bar(unique_abs_X_cm, berK, 'FaceColor', colorBER);
+
+    subLabel = char('a' + k - 1);
+    title(sprintf('(%c) Y = %g cm', subLabel, unique_Y_cm(k)), 'FontSize', 9.5, 'FontWeight', 'bold');
+    grid on; box on;
+    set(gca, 'XTick', unique_abs_X_cm, 'FontSize', 8.5);
+    if useLogScale
+        set(gca, 'YScale', 'log');
+        ylim([getLogYMin(BER_plot), maxBER_global * 2.5]);
+    else
+        ylim([0, maxBER_global * 1.15 + 1e-5]);
+    end
+end
+
+xlabel(t5, 'Real Absolute Lateral Offset |X| (cm)', 'FontSize', 10.5, 'FontWeight', 'bold');
+ylabel(t5, 'Mean Bit Error Rate (BER)', 'FontSize', 10.5, 'FontWeight', 'bold');
+title(t5, sprintf('Spatial BER vs. Absolute Lateral Offset |X| across Depths Y (1/P_n = %.1f dB)', selectedOnePnDB), ...
+    'FontSize', 11.5, 'FontWeight', 'bold');
 
 %% =========================================================================
 %% FIGURE 6: Line Plot of BER vs. Absolute Offset |X| Grouped by Depth Curves
@@ -563,29 +605,29 @@ depthLabels = cell(numDepths, 1);
 
 hold on;
 for k = 1:numDepths
-    depthLabels{k} = sprintf('Depth Y = %.2f m', unique_Y_cm(k)/100);
+    depthLabels{k} = sprintf('Depth Y = %g cm', unique_Y_cm(k));
     mStyle = markersList{mod(k-1, length(markersList)) + 1};
     if useLogScale
-        semilogy(unique_abs_X_cm/100, ber_curves(:, k), mStyle, ...
+        semilogy(unique_abs_X_cm, ber_curves(:, k), mStyle, ...
             'Color', depthColors(k, :), 'LineWidth', 1.8, ...
             'MarkerSize', 6.5, 'MarkerFaceColor', depthColors(k, :));
     else
-        plot(unique_abs_X_cm/100, ber_curves(:, k), mStyle, ...
+        plot(unique_abs_X_cm, ber_curves(:, k), mStyle, ...
             'Color', depthColors(k, :), 'LineWidth', 1.8, ...
             'MarkerSize', 6.5, 'MarkerFaceColor', depthColors(k, :));
     end
 end
 hold off;
 
-xlabel('Real Absolute Lateral Offset |X| (m)', 'FontSize', 11);
+xlabel('Real Absolute Lateral Offset |X| (cm)', 'FontSize', 11);
 ylabel('Bit Error Rate (BER)', 'FontSize', 11);
 title(sprintf('BER vs. Absolute Lateral Offset |X| Grouped by Depth Y (1/P_n = %.1f dB)', selectedOnePnDB), ...
     'FontSize', 12, 'FontWeight', 'bold');
 legend(depthLabels, 'Location', 'northeastoutside', 'FontSize', 9.5);
 grid on; box on;
-set(gca, 'XTick', unique_abs_X_cm/100, 'FontSize', 9.5);
-unique_abs_X_m_val = unique_abs_X_cm/100;
-xlim([min(unique_abs_X_m_val) - 0.02, max(unique_abs_X_m_val) + 0.02]);
+set(gca, 'XTick', unique_abs_X_cm, 'FontSize', 9.5);
+unique_abs_X_cm_val = unique_abs_X_cm;
+xlim([min(unique_abs_X_cm_val) - 2, max(unique_abs_X_cm_val) + 2]);
 if useLogScale
     set(gca, 'YScale', 'log');
     ylim([getLogYMin(ber_curves), max(ber_curves(:)) * 2.5]);
@@ -659,15 +701,15 @@ fprintf('--- Breakdown by Depth Y ---\n');
 for i = 1:numDepths
     idx = (abs(Y_real_cm - unique_Y_cm(i)) < 1e-4);
     subBER = BER_eval(idx);
-    fprintf('Depth Y = %5.2f m      | %10.6f | %10.6f | %10.6f | %10.6f\n', ...
-        unique_Y_cm(i)/100, mean(subBER), std(subBER), max(subBER), prctile(subBER, 90));
+    fprintf('Depth Y = %5.1f cm     | %10.6f | %10.6f | %10.6f | %10.6f\n', ...
+        unique_Y_cm(i), mean(subBER), std(subBER), max(subBER), prctile(subBER, 90));
 end
 fprintf('-------------------------------------------------------\n');
 fprintf('--- Breakdown by Absolute Offset |X| ---\n');
 for i = 1:numAbsXPos
     idx = (abs(abs_X_cm - unique_abs_X_cm(i)) < 1e-4);
     subBER = BER_eval(idx);
-    fprintf('Offset |X| = %5.3f m   | %10.6f | %10.6f | %10.6f | %10.6f\n', ...
-        unique_abs_X_cm(i)/100, mean(subBER), std(subBER), max(subBER), prctile(subBER, 90));
+    fprintf('Offset |X| = %5.1f cm  | %10.6f | %10.6f | %10.6f | %10.6f\n', ...
+        unique_abs_X_cm(i), mean(subBER), std(subBER), max(subBER), prctile(subBER, 90));
 end
 fprintf('=======================================================\n\n');

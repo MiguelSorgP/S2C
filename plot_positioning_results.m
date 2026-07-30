@@ -17,7 +17,7 @@ clear; clc; close all;
 
 %% 1. Set File Paths and Import Data
 scriptDir = fileparts(mfilename('fullpath'));
-csvPath   = 'resultadosPnP\resultados_PnP_1.csv';
+csvPath   = 'resultadosPnP\resultados_PnP_Kvideo1.csv';
 
 if ~exist(csvPath, 'file')
     error('CSV file not found at: %s', csvPath);
